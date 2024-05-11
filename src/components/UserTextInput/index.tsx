@@ -71,7 +71,7 @@ const UserTextInput = <FormFieldValues extends FieldValues>({
   url,
   DisplayCountryPicker,
 }: UserTextInputProps<FormFieldValues>) => {
-  const [toggleIcon, setToggleIcon] = useState(icon);
+  const [toggleIcon, setToggleIcon] = useState(toggleicon);
 
   const handleIconPress = () => {
     if (toggleIcon === icon) {
@@ -116,7 +116,7 @@ const UserTextInput = <FormFieldValues extends FieldValues>({
                 onBlur={onBlur}
                 placeholder={placeholder}
                 secureTextEntry={
-                  toggleIcon === icon ? !secureTextEntry : secureTextEntry
+                  toggleIcon === toggleicon ? secureTextEntry : !secureTextEntry
                 }
                 placeholderTextColor={placeholderTextColor}
                 style={styles.Input}
@@ -146,13 +146,13 @@ export default UserTextInput;
 
 const styles = StyleSheet.create({
   MainContainer: {
-    width: wp(90),
+    width: wp(92),
     justifyContent: 'center',
     alignItems: 'center',
     gap: 3,
   },
   LabelContainer: {
-    width: wp(90),
+    width: wp(92),
     paddingHorizontal: 3,
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
   },
 
   InputContainer: {
-    width: wp(90),
+    width: wp(92),
     height: wp(12),
     borderWidth: 2,
     borderRadius: 5,
@@ -201,6 +201,9 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     fontSize: wp(4.5),
     fontFamily: 'Inter Regular',
+    // backgroundColor: 'pink',
+    // justifyContent: 'center',
+    // alignItems: 'center',
   },
   IconTOP: {
     flex: 1,

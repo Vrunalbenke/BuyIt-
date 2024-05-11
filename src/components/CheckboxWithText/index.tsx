@@ -1,49 +1,69 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React from 'react';
 import {Checkbox} from 'react-native-paper';
-import {ThemeProp} from 'react-native-paper/lib/typescript/types';
 import {Colors} from '../../resources/colors';
 import {
   widthPercentageToDP as wp,
   // heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import {Control, Controller, FieldValues, Path} from 'react-hook-form';
 
-type CheckboxWithTextProps = {
+type CheckboxWithTextProps<FormFieldValues extends FieldValues> = {
+  control: Control<FormFieldValues>;
+  name: keyof FormFieldValues;
   NormalText: string;
   TOPText?: string;
-  status: boolean;
+  TOPTextColor?: string;
+  isCheckBox?: boolean;
   disabled?: boolean;
-  onPress: () => void;
+  onPress: (name: keyof FormFieldValues) => void;
   onPressTOP?: () => void;
-  //   uncheckedColor: string;
-  //   color: string;
-  //   theme: ThemeProp;
 };
 
-const CheckboxWithText = ({
+const CheckboxWithText = <FormFieldValues extends FieldValues>({
+  control,
+  name,
   NormalText,
   TOPText,
-  status,
+  TOPTextColor,
+  isCheckBox = true,
   disabled,
   onPress,
   onPressTOP,
-}: CheckboxWithTextProps) => {
+}: CheckboxWithTextProps<FormFieldValues>) => {
   return (
-    <View style={styles.MainContainer}>
-      <Checkbox.Android
-        status={status ? 'checked' : 'unchecked'}
-        color={Colors.green}
-        uncheckedColor={Colors.darkLightGray}
-        onPress={onPress}
-        disabled={disabled}
-      />
-      {NormalText && <Text style={[styles.NormalText]}>{NormalText} </Text>}
-      {TOPText && (
-        <TouchableOpacity style={styles.TOPContainer} onPress={onPressTOP}>
-          <Text style={styles.TOPText}>{TOPText}</Text>
-        </TouchableOpacity>
-      )}
-    </View>
+    <Controller
+      control={control}
+      name={name as Path<FormFieldValues>}
+      render={({field: {value}, fieldState: {error}}) => {
+        return (
+          <View style={styles.MainContainer}>
+            {isCheckBox && (
+              <Checkbox.Android
+                status={value ? 'checked' : 'unchecked'}
+                color={Colors.green}
+                uncheckedColor={Colors.darkLightGray}
+                onPress={() => onPress(name)}
+                disabled={disabled}
+              />
+            )}
+            {NormalText && (
+              <Text style={[styles.NormalText]}>{NormalText} </Text>
+            )}
+            {TOPText && (
+              <TouchableOpacity
+                style={styles.TOPContainer}
+                onPress={onPressTOP}>
+                <Text style={[styles.TOPText, {color: TOPTextColor}]}>
+                  {TOPText}
+                </Text>
+              </TouchableOpacity>
+            )}
+            {error && <Text style={styles.Error}>*</Text>}
+          </View>
+        );
+      }}
+    />
   );
 };
 
@@ -59,14 +79,17 @@ const styles = StyleSheet.create({
   },
   NormalText: {
     fontSize: wp(4),
-    fontFamily: 'Inter Medium',
+    fontFamily: 'Inter Regular',
   },
   TOPContainer: {
     marginTop: 1,
   },
   TOPText: {
     fontSize: wp(4),
-    fontFamily: 'Inter Bold',
-    color: Colors.green,
+    fontFamily: 'Inter Medium',
+    // color: Colors.green,
+  },
+  Error: {
+    color: Colors.errorRed,
   },
 });

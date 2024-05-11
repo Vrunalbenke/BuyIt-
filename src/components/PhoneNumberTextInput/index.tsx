@@ -51,7 +51,7 @@ const DisplayCountryPicker = <FormFieldValues extends FieldValues>({
               onSelect={(country: Country) => {
                 console.log(typeof country.cca2, '&&&&', country);
                 onChange(country.cca2);
-                setValue(name2, country?.callingCode[0]);
+                setValue(name2, `+${country?.callingCode[0]}`);
               }}
               withCallingCodeButton={true}
               withEmoji={true}
@@ -105,9 +105,7 @@ const PhoneNumberTextInput = <FormFieldValues extends FieldValues>({
       label="Phone Number"
       placeholder={'1691691691'}
       disabled={false}
-      icon={'eye-outline'}
-      toggleicon={'eye-off-outline'}
-      secureTextEntry={true}
+      secureTextEntry={false}
       size={wp(7)}
       iconColor={'#899499'}
       WithCountryPicker={true}
@@ -138,5 +136,6 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRightWidth: 2,
     borderRightColor: Colors.darkLightGray,
+    // backgroundColor: 'red',
   },
 });

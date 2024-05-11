@@ -1,14 +1,20 @@
 export const Colors = {
+  // lightGreen: 'rgba(105, 197, 105, 1)',
   white: '#FFFFFF',
   black: '#000000',
+  lightGray: 'rgba(178, 178, 178, 1)',
   darkLightGray: '#CCCCCC',
   kellyGreen: '#4CBB17',
   gray: '#808080',
   darkGray: '#1f1f1f',
   errorRed: '#E53935',
-  green: '#008000',
+  green: 'rgba(105, 197, 105, 1)',
+  lightGreen: '#0ebb3f',
   offWhite: '#e6e6e6',
   blue: '#0000FF',
+  orange: '#ff954f',
+  transparent: 'transparent',
+  extremeLightGreen: '#eff8ee',
 };
 
 export const productColors = [
