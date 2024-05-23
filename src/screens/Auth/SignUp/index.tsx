@@ -19,6 +19,7 @@ import {useValidateMobileNumberMutation} from '../../../services/Auth';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParams} from '../../../navigation/StackNavigator';
 import {SignData} from '../../../navigation/type';
+import Toast from 'react-native-toast-message';
 
 export type SignUpFields = z.infer<typeof SignUpSchema>;
 
@@ -42,6 +43,7 @@ const SignUp = ({navigation}: SignUpProps) => {
     validateMobileNumber,
     {data: valideMobileData, isLoading, error, isSuccess},
   ] = useValidateMobileNumberMutation();
+  console.log(valideMobileData);
 
   const handleCheckBox = (name: any) => {
     const value = getValues(name);
@@ -53,9 +55,29 @@ const SignUp = ({navigation}: SignUpProps) => {
   };
 
   useEffect(() => {
-    if (isSuccess) {
+    console.log(error);
+    if (isSuccess && userData) {
+      Toast.show({
+        type: 'success',
+        text1: valideMobileData.Msg,
+        position: 'bottom',
+      });
       navigation.navigate('OTP', {
-        userData: userData,
+        country_code: userData.country_code,
+        device_id: userData.device_id,
+        email: userData.email,
+        fcm_token: userData.fcm_token,
+        name: userData.name,
+        password: userData.password,
+        phone_number: userData.phone_number,
+        isFromSignUp: true,
+        isSellerOrUser: true,
+      });
+    } else if (error) {
+      Toast.show({
+        type: 'error',
+        text1: error?.data?.message || 'Something went wrong',
+        position: 'bottom',
       });
     }
   }, [valideMobileData, isLoading, error, isSuccess]);
@@ -81,7 +103,7 @@ const SignUp = ({navigation}: SignUpProps) => {
   return (
     <ScrollableWrapper contentContainerStyle={styles.ScrollableWrapper}>
       <View style={styles.root}>
-        <Text style={styles.text}>VendIt!</Text>
+        <Text style={styles.TitleText}>VendIt!</Text>
         <View style={styles.TextInputContainer}>
           <UserTextInput
             control={control}
@@ -109,7 +131,7 @@ const SignUp = ({navigation}: SignUpProps) => {
               control={control}
               name={'country_cca2'}
               name2={'country_code'}
-              placeholder={'ilovevendit@app.com'}
+              placeholder={'6969696969'}
               disabled={false}
               setValue={setValue}
               label={''}
@@ -218,8 +240,8 @@ const styles = StyleSheet.create({
     paddingTop: 40,
     paddingBottom: 20,
   },
-  text: {
-    fontSize: 35,
+  TitleText: {
+    fontSize: wp(9),
     color: Colors.lightGreen,
     fontFamily: 'Inter Medium',
   },

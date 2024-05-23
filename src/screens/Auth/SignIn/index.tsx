@@ -17,12 +17,13 @@ import {useLoginMutation} from '../../../services/Auth';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParams} from '../../../navigation/StackNavigator';
+import Toast from 'react-native-toast-message';
 
 type LoginFields = z.infer<typeof loginSchema>;
 
 type SignInProps = NativeStackScreenProps<RootStackParams, 'SignIn'>;
 const SignIn = ({navigation}: SignInProps) => {
-  const {control, setValue, handleSubmit} = useForm<LoginFields>({
+  const {control, setValue, getValues, handleSubmit} = useForm<LoginFields>({
     defaultValues: {
       country_cca2: 'US',
       country_code: '+1',
@@ -36,27 +37,57 @@ const SignIn = ({navigation}: SignInProps) => {
   });
   const scheme = useContext(ThemeContext);
 
-  const [login, {data: LoginResponse, isError, error, isLoading}] =
-    useLoginMutation();
+  const [
+    login,
+    {data: LoginResponse, isError, error, isLoading, isSuccess, originalArgs},
+  ] = useLoginMutation();
+
+  if (originalArgs) {
+    console.log('URL passed:', originalArgs);
+  }
 
   useEffect(() => {
-    console.log(LoginResponse);
-    console.log(error);
-  }, [LoginResponse, isError, error]);
+    console.log('LoginResponse: ', LoginResponse);
+    console.log('error: ', error);
+
+    if (isSuccess) {
+      Toast.show({
+        type: 'success',
+        text1: 'Logged in',
+        position: 'bottom',
+      });
+    } else if (isError) {
+      Toast.show({
+        type: 'error',
+        text1: error?.data?.error || 'Something went wrong',
+        position: 'bottom',
+      });
+    }
+  }, [LoginResponse, isError, error, isSuccess]);
 
   const handleData = (data: LoginFields) => {
+    console.log('Pressed');
     login(data);
+  };
+
+  const handleForgotPassword = () => {
+    navigation.navigate('OTP', {
+      isFromSignUp: false,
+      isSellerOrUser: false,
+      phone_number: getValues('phone_number'),
+      country_cca2: getValues('country_cca2'),
+      country_code: getValues('country_code'),
+    });
   };
   return (
     <View style={styles.root}>
-      <Text style={styles.text}>VendIt!</Text>
+      <Text style={styles.TitleText}>VendIt!</Text>
       <View style={styles.TextInputContainer}>
         <PhoneNumberTextInput
           control={control}
           name={'country_cca2'}
-          // label="Email"
           name2={'country_code'}
-          placeholder={'ilovevendit@app.com'}
+          placeholder={'8282928372'}
           disabled={false}
           setValue={setValue}
           label={''}
@@ -84,7 +115,7 @@ const SignIn = ({navigation}: SignInProps) => {
           <TextIconButton
             NormalText={'Forgot Password?'}
             NormalTextColor={Colors.black}
-            onPress={() => console.log('Forgot Password')}
+            onPress={handleForgotPassword}
           />
         </View>
       </View>
@@ -124,8 +155,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     gap: 45,
   },
-  text: {
-    fontSize: 35,
+  TitleText: {
+    fontSize: wp(9),
     color: Colors.lightGreen,
     fontFamily: 'Inter Medium',
   },

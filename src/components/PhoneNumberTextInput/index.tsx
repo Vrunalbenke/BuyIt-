@@ -49,7 +49,6 @@ const DisplayCountryPicker = <FormFieldValues extends FieldValues>({
               theme={scheme === 'dark' ? DARK_THEME : DEFAULT_THEME}
               countryCode={value}
               onSelect={(country: Country) => {
-                console.log(typeof country.cca2, '&&&&', country);
                 onChange(country.cca2);
                 setValue(name2, `+${country?.callingCode[0]}`);
               }}
@@ -97,13 +96,14 @@ const PhoneNumberTextInput = <FormFieldValues extends FieldValues>({
   setValue,
   name2,
   maxLength,
+  placeholder,
 }: UserTextInputProps<FormFieldValues>) => {
   return (
     <UserTextInput
       control={control}
       name={'phone_number'}
       label="Phone Number"
-      placeholder={'1691691691'}
+      placeholder={placeholder}
       disabled={false}
       secureTextEntry={false}
       size={wp(7)}
@@ -129,13 +129,11 @@ export default PhoneNumberTextInput;
 
 const styles = StyleSheet.create({
   CountryPickerContainer: {
-    // flex: 3,
     paddingHorizontal: 5,
     justifyContent: 'center',
     alignItems: 'center',
     height: '100%',
     borderRightWidth: 2,
     borderRightColor: Colors.darkLightGray,
-    // backgroundColor: 'red',
   },
 });

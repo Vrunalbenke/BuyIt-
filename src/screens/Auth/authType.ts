@@ -22,7 +22,7 @@ export const loginSchema = z.object({
   device_id: z.string(),
   latitude: z.number(),
   longitude: z.number(),
-  email: z.string().email(),
+  // email: z.string().email(),
   fcm_token: z.string(),
 });
 
@@ -55,5 +55,29 @@ export const SignUpSchema = z
   })
   .refine(data => data.password === data.confirmPassword, {
     message: "Password and Confirm Password don't match",
+    path: ['confirmPassword'],
+  });
+
+export const forgotPasswordSchema = z.object({
+  country_cca2: z.enum(validCountries as [string, ...string[]]),
+  country_code: z.string(),
+  phone_number: z
+    .string()
+    .length(10, 'Phone number should be exactly 10 digits'),
+});
+
+export const resetPasswordSchema = z
+  .object({
+    new_password: z
+      .string()
+      .min(8, 'Password must be at least 8 characters long')
+      .regex(
+        passwordRegex,
+        'Password must contain at least one uppercase letter, one digit, and one special character',
+      ),
+    confirm_password: z.string(),
+  })
+  .refine(data => data.new_password === data.confirm_password, {
+    message: "New Password and Confirm Password don't match",
     path: ['confirmPassword'],
   });

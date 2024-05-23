@@ -17,6 +17,7 @@ type LargeButtonProps = {
   isDisable: boolean;
   isSkipBtn?: boolean;
   loader?: boolean;
+  isPasswordUpdate?: boolean;
 };
 
 const LargeButton = ({
@@ -25,6 +26,7 @@ const LargeButton = ({
   isDisable,
   isSkipBtn = false,
   loader = false,
+  isPasswordUpdate = false,
 }: LargeButtonProps) => {
   return (
     <TouchableOpacity
@@ -35,6 +37,8 @@ const LargeButton = ({
             ? Colors.transparent
             : isDisable
             ? Colors.lightGray
+            : isPasswordUpdate
+            ? Colors.white
             : Colors.green,
           borderColor: isSkipBtn ? Colors.orange : Colors.transparent,
           borderWidth: isSkipBtn ? 1 : 0,

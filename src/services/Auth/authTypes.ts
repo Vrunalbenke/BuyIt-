@@ -6,7 +6,6 @@ export type LoginRequest = {
   device_id: string;
   latitude: number;
   longitude: number;
-  email: string;
 };
 
 export type LoginResponse = {
@@ -21,7 +20,7 @@ export type LoginResponse = {
 };
 
 export type ValidateNumberRequest = {
-  name: string;
+  name: string | undefined;
   country_code: string;
   phone_number: string;
   is_existing_user: string;
@@ -33,4 +32,47 @@ export type ValidateNumberResponse = {
   };
   Msg: string;
   OTP: number;
+};
+
+export type ValidateOTPRequest = {
+  country_code: string;
+  phone_number: string;
+  OTP: number;
+};
+
+export type ValidateOTPResponse = {
+  message: string;
+};
+
+export type CreateUserRequest = {
+  country_code: string;
+  device_id: string;
+  email: string | undefined;
+  fcm_token: string;
+  name: string;
+  password: string;
+  phone_number: string;
+};
+
+export type CreateUserResponse = {
+  accessToken: {
+    expires: number;
+    token: string;
+  };
+  refreshToken: {
+    expires: number;
+    token: string;
+  };
+};
+
+export type ResetPasswordRequest = {
+  country_code: string;
+  phone_number: string;
+  new_password: string;
+  confirm_password: string;
+};
+
+export type ResetPasswordResponse = {
+  message?: string;
+  error?: string;
 };

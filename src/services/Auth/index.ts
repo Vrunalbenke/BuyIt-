@@ -1,10 +1,16 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
 import env from '../../env';
 import {
+  CreateUserRequest,
+  CreateUserResponse,
   LoginRequest,
   LoginResponse,
+  ResetPasswordRequest,
+  ResetPasswordResponse,
   ValidateNumberRequest,
   ValidateNumberResponse,
+  ValidateOTPRequest,
+  ValidateOTPResponse,
 } from './authTypes';
 
 export const AuthApi = createApi({
@@ -12,10 +18,6 @@ export const AuthApi = createApi({
   baseQuery: fetchBaseQuery({baseUrl: env.APP_URL}),
   tagTypes: [],
   endpoints: builder => ({
-    signIn: builder.query<void, string>({
-      query: () => '/login',
-      providesTags: [],
-    }),
     login: builder.mutation<LoginResponse, LoginRequest>({
       query: body => ({
         url: 'login',
@@ -33,11 +35,37 @@ export const AuthApi = createApi({
         body: body,
       }),
     }),
+    validateOTP: builder.mutation<ValidateOTPResponse, ValidateOTPRequest>({
+      query: body => ({
+        url: 'validateOTP',
+        method: 'POST',
+        body: body,
+      }),
+    }),
+    createUser: builder.mutation<CreateUserResponse, CreateUserRequest>({
+      query: body => ({
+        url: 'createUser',
+        method: 'POST',
+        body: body,
+      }),
+    }),
+    resetPassword: builder.mutation<
+      ResetPasswordResponse,
+      ResetPasswordRequest
+    >({
+      query: body => ({
+        url: 'resetPassword',
+        method: 'POST',
+        body: body,
+      }),
+    }),
   }),
 });
 
 export const {
-  useSignInQuery,
   useLoginMutation,
   useValidateMobileNumberMutation,
+  useValidateOTPMutation,
+  useCreateUserMutation,
+  useResetPasswordMutation,
 } = AuthApi;

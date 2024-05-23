@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParams} from '../../../navigation/StackNavigator';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -12,12 +13,196 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import OTPInput from '../../../components/OTPInput';
 import TouchableTextDuo from '../../../components/TouchableTextDuo';
 import LargeButton from '../../../components/LargeButton';
+import {
+  useCreateUserMutation,
+  useValidateMobileNumberMutation,
+  useValidateOTPMutation,
+} from '../../../services/Auth';
+import PhoneNumberTextInput from '../../../components/PhoneNumberTextInput';
+import {ThemeContext} from '../../../resources/themes';
+import {useForm} from 'react-hook-form';
+import {z} from 'zod';
+import {forgotPasswordSchema} from '../authType';
+import {zodResolver} from '@hookform/resolvers/zod';
+import Toast from 'react-native-toast-message';
+
+type ForgotPasswordFields = z.infer<typeof forgotPasswordSchema>;
 
 type OTPProps = NativeStackScreenProps<RootStackParams, 'OTP'>;
 const OTP = ({route, navigation}: OTPProps) => {
-  console.log(route.params.userData);
+  const {
+    device_id,
+    email,
+    fcm_token,
+    name,
+    password,
+    isFromSignUp,
+    isSellerOrUser,
+    phone_number,
+    country_cca2,
+    country_code,
+  } = route.params;
+  //Other Hooks
+  const scheme = useContext(ThemeContext);
+  const {control, setValue, getValues, handleSubmit} =
+    useForm<ForgotPasswordFields>({
+      resolver: zodResolver(forgotPasswordSchema),
+      defaultValues: {
+        country_code: country_code,
+        country_cca2: country_cca2,
+        phone_number: phone_number,
+      },
+    });
+  //useState
+  const [resendTimer, setResendTimer] = useState(120);
+  const [resendDisable, setResendDisable] = useState(false);
+  const [otp, setOTP] = useState<string>();
 
-  const handleSubmit = () => {};
+  //RTKQuery's
+  const [
+    validateMobileNumber,
+    {
+      data,
+      isSuccess: validateMobileNumberSuccess,
+      isLoading: validateMobileNumberLoading,
+      error: validateMobileNumberError,
+      isError: validateMobileNumberIsError,
+    },
+  ] = useValidateMobileNumberMutation();
+  const [
+    validateOTP,
+    {
+      isLoading: validateOTPLoading,
+      isSuccess: validateOTPSuccess,
+      data: validateOTPData,
+    },
+  ] = useValidateOTPMutation();
+  const [createUser, {data: createUserData, isSuccess: createUserIsSuccess}] =
+    useCreateUserMutation();
+
+  //useEffect's
+  useEffect(() => {
+    let interval: string | number | NodeJS.Timeout | undefined;
+
+    if (resendDisable) {
+      interval = setInterval(() => {
+        setResendTimer(prevTimer => {
+          if (prevTimer === 1) {
+            clearInterval(interval);
+            setResendDisable(false);
+            return 120;
+          } else {
+            return prevTimer - 1;
+          }
+        });
+      }, 1000);
+    }
+
+    return () => clearInterval(interval);
+  }, [resendDisable]);
+
+  useEffect(() => {
+    console.log(validateOTPData, 'Effect running', validateOTPSuccess);
+    if (
+      validateOTPSuccess &&
+      isSellerOrUser &&
+      country_code &&
+      phone_number &&
+      name &&
+      fcm_token &&
+      device_id &&
+      password
+    ) {
+      const userData = {
+        country_code: country_code,
+        device_id: device_id,
+        email: email,
+        fcm_token: fcm_token,
+        name: name,
+        password: password,
+        phone_number: phone_number,
+      };
+      console.log('creating user');
+      createUser(userData);
+    } else if (
+      !isSellerOrUser &&
+      validateOTPSuccess &&
+      country_code &&
+      phone_number
+    ) {
+      navigation.navigate('CreateNewPassword', {
+        country_code: country_code,
+        phone_number: phone_number,
+      });
+    }
+  }, [createUser, validateOTPSuccess]);
+
+  useEffect(() => {
+    if (createUserIsSuccess) {
+      console.log(createUserData);
+    }
+  }, [createUserData, createUserIsSuccess]);
+
+  useEffect(() => {
+    if (validateMobileNumberSuccess && !isFromSignUp) {
+      navigation.push('OTP', {
+        country_code: getValues('country_code'),
+        phone_number: getValues('phone_number'),
+        isFromSignUp: true,
+        isSellerOrUser: false,
+      });
+    }
+
+    if (validateMobileNumberIsError) {
+      Toast.show({
+        type: 'error',
+        text1: validateMobileNumberError?.data?.message,
+        position: 'bottom',
+      });
+    }
+  }, [validateMobileNumberSuccess, validateMobileNumberIsError]);
+
+  //Function's
+  const handleOTPInput = (OTPCode: string) => {
+    setOTP(OTPCode);
+  };
+
+  const handleResendOTP = () => {
+    if (country_code && name && phone_number) {
+      const ValidateMobile = {
+        country_code: country_code,
+        is_existing_user: isFromSignUp ? 'False' : 'True',
+        name: name,
+        phone_number: phone_number,
+      };
+      setResendDisable(true);
+      validateMobileNumber(ValidateMobile);
+    }
+  };
+
+  const handleOTPSubmit = () => {
+    if (country_code && phone_number) {
+      const OTPRequestData = {
+        country_code: country_code,
+        phone_number: phone_number,
+        OTP: Number(otp),
+      };
+      validateOTP(OTPRequestData);
+    }
+  };
+
+  const handleMobile = (ValidateMobileData: ForgotPasswordFields) => {
+    const MobileData = {
+      name: '',
+      country_code: ValidateMobileData.country_code,
+      phone_number: ValidateMobileData.phone_number,
+      is_existing_user: 'True',
+    };
+    console.log(MobileData);
+    validateMobileNumber(MobileData);
+  };
+  //console's
+  console.log(validateMobileNumberError, 'OTP from backend is ', data);
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.MainContainer}>
@@ -31,29 +216,51 @@ const OTP = ({route, navigation}: OTPProps) => {
             color={Colors.black}
           />
         </TouchableOpacity>
-        <Text style={styles.TitleText}>OTP Verification</Text>
+        <Text style={styles.TitleText}>
+          {isFromSignUp ? 'OTP Verification' : 'Forgot Password'}
+        </Text>
         <View style={styles.ImageContainer}>
           <Image
             source={require('../../../../assets/images/otp.png')}
             style={styles.OTPImage}
           />
         </View>
-        <View style={styles.OTPInputContainer}>
-          <OTPInput length={5} />
-          <TouchableTextDuo
-            NormalText={"Didn't receive the code?"}
-            TOPText={' Resend Code'}
-            onPress={() => {
-              console.log('Resend Code');
-            }}
-          />
-        </View>
+
+        {isFromSignUp ? (
+          <View style={styles.OTPInputContainer}>
+            <OTPInput length={5} onChangeText={handleOTPInput} />
+            <TouchableTextDuo
+              NormalText={"Didn't receive the code?"}
+              TOPText={'Resend Code'}
+              OTPCounter={resendTimer}
+              isDisable={resendDisable}
+              onPress={handleResendOTP}
+            />
+          </View>
+        ) : (
+          <View style={styles.OTPInputContainer}>
+            <PhoneNumberTextInput
+              control={control}
+              name={'country_cca2'}
+              name2={'country_code'}
+              placeholder={'6969696969'}
+              disabled={false}
+              setValue={setValue}
+              label={''}
+              maxLength={10}
+              placeholderTextColor={''}
+              disableOnlyCC={false}
+              TextInputStyle={undefined}
+              scheme={scheme}
+            />
+          </View>
+        )}
       </View>
       <View style={styles.BottomHalfContainer}>
         <LargeButton
-          BTNText="Confirm"
-          onPress={handleSubmit}
-          isDisable={false}
+          BTNText={isFromSignUp ? 'Confirm' : 'Continue'}
+          onPress={isFromSignUp ? handleOTPSubmit : handleSubmit(handleMobile)}
+          isDisable={validateOTPLoading || validateMobileNumberLoading}
           loader={true}
         />
       </View>
@@ -73,6 +280,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'flex-start',
     gap: 35,
+    paddingVertical: 10,
   },
   TitleText: {
     fontFamily: 'Inter Medium',
