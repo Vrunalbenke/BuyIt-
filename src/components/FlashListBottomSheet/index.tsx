@@ -1,60 +1,112 @@
-import {ActivityIndicator, Image, StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import {
+  ActivityIndicator,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import React, {memo, useEffect, useState} from 'react';
 import BottomSheet from '@gorhom/bottom-sheet';
 
 import {FlashList} from '@shopify/flash-list';
-import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
 import {Colors} from '../../resources/colors';
+import SearchbarInput from '../SearchbarInput';
+import FastImage from 'react-native-fast-image';
+import {businessTypesObject} from '../../screens/NativeStack/nativeTypes';
 
-type FlashListBottomSheetProps<T> = {
+type FlashListBottomSheetProps = {
   bottomSheetRef: React.Ref<BottomSheet>;
-  data: T[] | undefined;
-  keyExtractor: ((item: T, index: number) => string) | undefined;
+  data: object[] | undefined;
+  keyExtractor: ((item: any, index: number) => string) | undefined;
+  handleSetBusinessType: (item: businessTypesObject) => void;
 };
-const FlashListBottomSheet = <T,>({
-  bottomSheetRef,
-  data,
-  keyExtractor,
-}: FlashListBottomSheetProps<T>) => {
-  const snapPoints = ['25%', '50%', '75%', '100%'];
-  const handleRendering = ({item}) => {
-    console.log(item);
+const FlashListBottomSheet = memo(
+  ({
+    bottomSheetRef,
+    data,
+    keyExtractor,
+    // setValue,
+    handleSetBusinessType,
+  }: FlashListBottomSheetProps) => {
+    const snapPoints = ['100%'];
+    const [searchString, setSearchString] = useState<string>('');
+    const [filterBusinessTypes, setFilterBusinessTypes] = useState(data);
+    console.log('Rendering');
+    useEffect(() => {
+      setFilterBusinessTypes(data);
+    }, [data]);
+
+    useEffect(() => {
+      if (searchString === '') {
+        setFilterBusinessTypes(data);
+      } else if (data) {
+        const filteredData = data?.filter(item => {
+          return item?.name
+            ?.toLowerCase()
+            ?.includes(searchString.toLowerCase());
+        });
+        setFilterBusinessTypes(filteredData);
+      }
+    }, [searchString]);
+
+    const handleRendering = ({item}: businessTypesObject) => {
+      return (
+        <Pressable onPress={() => handleSetBusinessType(item)}>
+          <View key={item.id} style={styles.BusinessTypeContainer}>
+            <FastImage
+              style={styles.BusinessIcon}
+              source={{
+                uri: `http://${item?.business_icon}`,
+                headers: {Authorization: 'someAuthToken'},
+                priority: FastImage.priority.normal,
+                cache: FastImage.cacheControl.immutable,
+              }}
+              resizeMode={FastImage.resizeMode.contain}
+            />
+            <Text style={styles.NameText}>{item?.name}</Text>
+          </View>
+        </Pressable>
+      );
+    };
     return (
-      <View key={item.id} style={styles.BusinessTypeContainer}>
-        <Image
-          source={{uri: `http://${item?.business_icon}`}}
-          style={styles.BusinessIcon}
-          resizeMode="contain"
-        />
-        <Text style={styles.NameText}>{item?.name}</Text>
-      </View>
-    );
-  };
-  return (
-    <BottomSheet
-      ref={bottomSheetRef}
-      snapPoints={snapPoints}
-      enablePanDownToClose
-      style={styles.BottomSheet}>
-      <View style={styles.root}>
-        {data ? (
-          <FlashList
-            data={data}
-            keyExtractor={keyExtractor}
-            renderItem={handleRendering}
-            contentContainerStyle={styles.FlastListContentStyle}
-            estimatedItemSize={50}
-            ItemSeparatorComponent={() => <View style={styles.Separator} />}
-            bounces={false}
-            showsVerticalScrollIndicator={false}
+      <BottomSheet
+        index={-1}
+        ref={bottomSheetRef}
+        snapPoints={snapPoints}
+        enablePanDownToClose
+        style={styles.BottomSheet}>
+        <View style={styles.root}>
+          <SearchbarInput
+            value={searchString}
+            setValue={setSearchString}
+            placeholder={'Search'}
           />
-        ) : (
-          <ActivityIndicator size={'small'} />
-        )}
-      </View>
-    </BottomSheet>
-  );
-};
+          {data ? (
+            <FlashList
+              data={filterBusinessTypes}
+              keyExtractor={keyExtractor}
+              renderItem={handleRendering}
+              contentContainerStyle={styles.FlastListContentStyle}
+              estimatedItemSize={50}
+              ItemSeparatorComponent={() => <View style={styles.Separator} />}
+              bounces={false}
+              showsVerticalScrollIndicator={false}
+            />
+          ) : (
+            <ActivityIndicator
+              size={'small'}
+              style={styles.ActivityIndicator}
+            />
+          )}
+        </View>
+      </BottomSheet>
+    );
+  },
+);
 
 export default FlashListBottomSheet;
 
@@ -63,7 +115,9 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
   },
   root: {
-    flex: 1,
+    height: hp(86),
+    // flex: 1,
+    gap: 10,
   },
   FlastListContentStyle: {
     paddingHorizontal: 20,
@@ -86,5 +140,8 @@ const styles = StyleSheet.create({
   Separator: {
     height: wp(0.1),
     borderWidth: wp(0.1),
+  },
+  ActivityIndicator: {
+    marginVertical: 10,
   },
 });

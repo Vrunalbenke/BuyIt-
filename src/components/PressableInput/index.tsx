@@ -1,23 +1,18 @@
-import {
-  Image,
-  ImageSourcePropType,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import {Pressable, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import {Colors} from '../../resources/colors';
 import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import {Control, Controller, FieldValues, Path} from 'react-hook-form';
+import FastImage from 'react-native-fast-image';
 
 type PressableInputProps<FormFieldValues extends FieldValues> = {
   control: Control<FormFieldValues>;
   name: keyof FormFieldValues;
   label: string;
+  placeholder: string;
   disabled?: boolean;
   onPress: () => void;
-  url?: ImageSourcePropType;
+  url?: string | undefined;
 };
 const PressableInput = <FormFieldValues extends FieldValues>({
   control,
@@ -26,6 +21,7 @@ const PressableInput = <FormFieldValues extends FieldValues>({
   disabled,
   url,
   onPress,
+  placeholder,
 }: PressableInputProps<FormFieldValues>) => {
   return (
     <Controller
@@ -40,15 +36,21 @@ const PressableInput = <FormFieldValues extends FieldValues>({
                 <Text style={styles.MandatoryText}>*</Text>
               </View>
             )}
-            <Pressable onPress={onPress} style={styles.InputContainer}>
+            <Pressable
+              disabled={disabled}
+              onPress={onPress}
+              style={styles.InputContainer}>
               {url && (
                 <View style={styles.ImageContainer}>
-                  <Image
-                    source={{
-                      uri: `http://54.183.191.155/get_image?BabySitter.png`,
-                    }}
-                    //   source={{uri: `http://${url}`}}
+                  <FastImage
                     style={styles.ImageSize}
+                    source={{
+                      uri: `http://${url}`,
+                      headers: {Authorization: 'someAuthToken'},
+                      priority: FastImage.priority.normal,
+                      cache: FastImage.cacheControl.immutable,
+                    }}
+                    resizeMode={FastImage.resizeMode.contain}
                   />
                 </View>
               )}
@@ -56,12 +58,10 @@ const PressableInput = <FormFieldValues extends FieldValues>({
                 style={[
                   styles.Input,
                   {
-                    color: value.includes('Select')
-                      ? Colors.gray
-                      : Colors.black,
+                    color: value === undefined ? Colors.gray : Colors.black,
                   },
                 ]}>
-                {value}
+                {value ? value : placeholder}
               </Text>
             </Pressable>
             {error && <Text style={styles.ErrorText}>{error?.message}</Text>}
@@ -123,7 +123,6 @@ const styles = StyleSheet.create({
   ImageSize: {
     width: wp(10),
     height: wp(10),
-    borderRadius: wp(5),
   },
   Input: {
     flex: 8,

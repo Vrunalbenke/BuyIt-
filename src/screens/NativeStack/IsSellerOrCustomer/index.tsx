@@ -6,9 +6,17 @@ import {
   widthPercentageToDP as wp,
   // heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {RootStackParams} from '../../../navigation/StackNavigator';
 
-const IsSellerOrCustomer = () => {
-  const handleBusinessUser = () => {};
+const IsSellerOrCustomer = ({
+  navigation,
+}: NativeStackScreenProps<RootStackParams, 'IsSellerOrCustomer'>) => {
+  const handleBusinessUser = () => {
+    navigation.navigate('AddBusiness', {
+      isFromSignUp: true,
+    });
+  };
   const handleNormalUser = () => {};
   return (
     <View style={styles.root}>

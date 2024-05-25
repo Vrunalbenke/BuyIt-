@@ -14,10 +14,11 @@ import {
 } from 'react-native-responsive-screen';
 type ToggleSwitchProps = {
   label: string;
+  disabled: boolean;
   changeValue?: (toggle: boolean, label: string) => void;
 };
 
-const ToggleSwitch = ({label, changeValue}: ToggleSwitchProps) => {
+const ToggleSwitch = ({label, disabled, changeValue}: ToggleSwitchProps) => {
   const [toggle, setToggle] = useState(false);
 
   const animationState = useAnimationState({
@@ -56,7 +57,7 @@ const ToggleSwitch = ({label, changeValue}: ToggleSwitchProps) => {
 
   return (
     <View style={styles.root}>
-      <TouchableWithoutFeedback onPress={handleToggle}>
+      <TouchableWithoutFeedback onPress={handleToggle} disabled={disabled}>
         <MotiView
           style={[styles.ToggleSwitchContainer]}
           state={containerAnimationState}
@@ -74,7 +75,13 @@ const ToggleSwitch = ({label, changeValue}: ToggleSwitchProps) => {
           />
         </MotiView>
       </TouchableWithoutFeedback>
-      <Text style={styles.LabelText}>{label}</Text>
+      <Text
+        style={[
+          styles.LabelText,
+          {color: disabled ? Colors.gray : Colors.black},
+        ]}>
+        {label}
+      </Text>
     </View>
   );
 };
@@ -100,7 +107,6 @@ const styles = StyleSheet.create({
     height: wp(4),
     borderRadius: wp(2),
     backgroundColor: '#E2E2E2',
-    // backgroundColor: '#fff',
   },
   LabelText: {
     fontSize: wp(4.5),

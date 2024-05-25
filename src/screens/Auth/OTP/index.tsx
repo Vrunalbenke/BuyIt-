@@ -25,6 +25,7 @@ import {z} from 'zod';
 import {forgotPasswordSchema} from '../authType';
 import {zodResolver} from '@hookform/resolvers/zod';
 import Toast from 'react-native-toast-message';
+import {storage} from '../../../../App';
 
 type ForgotPasswordFields = z.infer<typeof forgotPasswordSchema>;
 
@@ -139,7 +140,9 @@ const OTP = ({route, navigation}: OTPProps) => {
 
   useEffect(() => {
     if (createUserIsSuccess) {
-      console.log(createUserData);
+      const tokenData = JSON.stringify(createUserData);
+      storage.set('token', tokenData);
+      navigation.navigate('IsSellerOrCustomer');
     }
   }, [createUserData, createUserIsSuccess]);
 

@@ -86,6 +86,7 @@ type UserTextInputProps<FormFieldValues extends FieldValues> = {
   scheme: string | null | undefined;
   setValue: UseFormSetValue<FormFieldValues>;
   name2: Path<FormFieldValues>;
+  Optional?: boolean;
 };
 
 const PhoneNumberTextInput = <FormFieldValues extends FieldValues>({
@@ -97,6 +98,7 @@ const PhoneNumberTextInput = <FormFieldValues extends FieldValues>({
   name2,
   maxLength,
   placeholder,
+  Optional,
 }: UserTextInputProps<FormFieldValues>) => {
   return (
     <UserTextInput
@@ -110,6 +112,7 @@ const PhoneNumberTextInput = <FormFieldValues extends FieldValues>({
       iconColor={'#899499'}
       WithCountryPicker={true}
       maxLength={maxLength}
+      Optional={Optional}
       DisplayCountryPicker={
         <DisplayCountryPicker
           control={control}

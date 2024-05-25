@@ -1,6 +1,13 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
 import env from '../../env';
-import {BusinessTypesResponse} from './businessTypes';
+import {
+  BusinessTypesResponse,
+  CreateBusinessRequest,
+  CreateBusinessResponse,
+  GetDefaultItemsRequest,
+  GetDefaultItemsResponse,
+} from './businessTypes';
+import {accessToken} from '../../screens/common';
 
 export const BusinessApi = createApi({
   reducerPath: 'BusinessApi',
@@ -9,7 +16,41 @@ export const BusinessApi = createApi({
     businessTypes: builder.query<BusinessTypesResponse, null>({
       query: () => '/types',
     }),
+    createBusiness: builder.mutation<
+      CreateBusinessResponse[],
+      CreateBusinessRequest
+    >({
+      query: body => ({
+        url: '/create',
+        method: 'POST',
+        body: body,
+        headers: {
+          'x-access-token':
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI1YTIxN2M5Yy02YTIwLTQwMzQtYjgyOC1mZDVhODVlMGI4NTciLCJleHAiOjE3MTY5OTE5MTAsInR5cGUiOiJhY2Nlc3MifQ.LT-DwMCbUHK5um2Hmc5Cq5Qbz9BGaB_0W7pOA1_mopE',
+          // 'x-access-token': accessToken,
+        },
+      }),
+    }),
+    getDefaultItems: builder.mutation<
+      GetDefaultItemsResponse,
+      GetDefaultItemsRequest
+    >({
+      query: body => ({
+        url: '/getDefaultItems',
+        method: 'POST',
+        body: body,
+        headers: {
+          'x-access-token':
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI1YTIxN2M5Yy02YTIwLTQwMzQtYjgyOC1mZDVhODVlMGI4NTciLCJleHAiOjE3MTY5OTE5MTAsInR5cGUiOiJhY2Nlc3MifQ.LT-DwMCbUHK5um2Hmc5Cq5Qbz9BGaB_0W7pOA1_mopE',
+          // 'x-access-token': accessToken,
+        },
+      }),
+    }),
   }),
 });
 
-export const {useBusinessTypesQuery} = BusinessApi;
+export const {
+  useBusinessTypesQuery,
+  useCreateBusinessMutation,
+  useGetDefaultItemsMutation,
+} = BusinessApi;
