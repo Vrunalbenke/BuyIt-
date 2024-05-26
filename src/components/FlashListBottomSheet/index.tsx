@@ -32,7 +32,7 @@ const FlashListBottomSheet = memo(
     // setValue,
     handleSetBusinessType,
   }: FlashListBottomSheetProps) => {
-    const snapPoints = ['100%'];
+    const snapPoints = ['50%', '75%', '100%'];
     const [searchString, setSearchString] = useState<string>('');
     const [filterBusinessTypes, setFilterBusinessTypes] = useState(data);
     console.log('Rendering');
@@ -57,16 +57,18 @@ const FlashListBottomSheet = memo(
       return (
         <Pressable onPress={() => handleSetBusinessType(item)}>
           <View key={item.id} style={styles.BusinessTypeContainer}>
-            <FastImage
-              style={styles.BusinessIcon}
-              source={{
-                uri: `http://${item?.business_icon}`,
-                headers: {Authorization: 'someAuthToken'},
-                priority: FastImage.priority.normal,
-                cache: FastImage.cacheControl.immutable,
-              }}
-              resizeMode={FastImage.resizeMode.contain}
-            />
+            {item?.business_icon && (
+              <FastImage
+                style={styles.BusinessIcon}
+                source={{
+                  uri: `http://${item?.business_icon}`,
+                  headers: {Authorization: 'someAuthToken'},
+                  priority: FastImage.priority.normal,
+                  cache: FastImage.cacheControl.immutable,
+                }}
+                resizeMode={FastImage.resizeMode.contain}
+              />
+            )}
             <Text style={styles.NameText}>{item?.name}</Text>
           </View>
         </Pressable>

@@ -60,3 +60,8 @@ export type GetDefaultItemsRequest = {
 export type GetDefaultItemsResponse = {
   [key: string]: string;
 };
+
+export type getUnitsRequest = {
+  business_type: string;
+  business_id: string;
+};

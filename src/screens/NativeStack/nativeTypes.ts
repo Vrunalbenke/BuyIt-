@@ -75,6 +75,7 @@ export const AddBusinessSchema = z
 
 export type businessTypesObject = {
   [x: string]: any;
+  id: number;
   business_icon: string;
   is_home: boolean;
   is_service: boolean;
@@ -87,8 +88,10 @@ export const AddItemSchema = z
     description: z.string(),
     isUnit: z.boolean(),
     unit: z.string().optional(),
-    price: z.string().regex(/-?d+(.d+)?/, 'Enter a Valid Price'),
-    quantity: z.string().regex(/-?d+(.d+)?/, 'Enter a Valid Quantity'),
+    price: z.string().regex(/^[-+]?\d+(\.\d{1,2})?$/, 'Enter a valid price'),
+    quantity: z
+      .string()
+      .regex(/^[-+]?\d+(\.\d{1,2})?$/, 'Enter a valid quantity'),
     url: z.string().optional(),
   })
   .superRefine((data, ctx) => {
