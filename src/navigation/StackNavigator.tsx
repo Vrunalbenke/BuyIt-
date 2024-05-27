@@ -36,6 +36,7 @@ export type RootStackParams = {
     business_type?: string;
     id?: string;
     from_business: boolean;
+    business_id: string;
   };
 };
 

@@ -84,6 +84,7 @@ export type businessTypesObject = {
 
 export const AddItemSchema = z
   .object({
+    business_id: z.string(),
     name: z.string(),
     description: z.string(),
     isUnit: z.boolean(),
@@ -91,7 +92,8 @@ export const AddItemSchema = z
     price: z.string().regex(/^[-+]?\d+(\.\d{1,2})?$/, 'Enter a valid price'),
     quantity: z
       .string()
-      .regex(/^[-+]?\d+(\.\d{1,2})?$/, 'Enter a valid quantity'),
+      .regex(/^[-+]?\d+(\.\d{1,2})?$/, 'Enter a valid quantity')
+      .optional(),
     url: z.string().optional(),
   })
   .superRefine((data, ctx) => {

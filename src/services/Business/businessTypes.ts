@@ -61,7 +61,30 @@ export type GetDefaultItemsResponse = {
   [key: string]: string;
 };
 
-export type getUnitsRequest = {
+export type GetUnitsRequest = {
   business_type: string;
   business_id: string;
+};
+
+export type AddItemRequest = {
+  business_id: string;
+  name: string;
+  description: string;
+  price: string;
+  unit: string;
+  quantity?: string;
+};
+
+export type AddItemResponse = {
+  data: {
+    business_id: number;
+    business_type: string;
+    description: string;
+    id: number;
+    name: string;
+    price: number;
+    quantity: number;
+    unit?: string;
+  };
+  message: string;
 };

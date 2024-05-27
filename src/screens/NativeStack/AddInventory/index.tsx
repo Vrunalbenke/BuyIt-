@@ -11,6 +11,7 @@ import PressableInput from '../../../components/PressableInput';
 import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet';
 import UserTextInput from '../../../components/UserTextInput';
 import {
+  useAddItemsMutation,
   useGetDefaultItemsMutation,
   useGetUnitsMutation,
 } from '../../../services/Business';
@@ -19,11 +20,24 @@ import FlashListBottomSheet from '../../../components/FlashListBottomSheet';
 import {z} from 'zod';
 import {AddItemSchema} from '../nativeTypes';
 import {zodResolver} from '@hookform/resolvers/zod';
+import Toast from 'react-native-toast-message';
+import FastImage from 'react-native-fast-image';
 
 type ItemType = {
   id: number;
   name: string;
   business_icon?: string;
+};
+
+type AddItemDataType = {
+  business_id: number;
+  business_type: string;
+  description: string;
+  id: number;
+  name: string;
+  price: number;
+  quantity: number;
+  unit?: string;
 };
 
 type AddInventoryFields = z.infer<typeof AddItemSchema>;
@@ -34,11 +48,15 @@ const AddInventory = ({
 }: NativeStackScreenProps<RootStackParams, 'AddInventory'>) => {
   const {control, handleSubmit, setValue, watch} = useForm<AddInventoryFields>({
     resolver: zodResolver(AddItemSchema),
+    defaultValues: {
+      business_id: '2',
+    },
   });
   const itemBottomSheetRef = useRef<BottomSheet>(null);
   const unitBottomSheetRef = useRef<BottomSheet>(null);
   const [itemData, setItemData] = useState<ItemType[]>();
   const [unitData, setUnitData] = useState<ItemType[]>();
+  const [recentlyAdded, setRecentlyAdded] = useState<AddItemDataType[]>([]);
   const [
     getDefaultItems,
     {
@@ -60,6 +78,11 @@ const AddInventory = ({
       error: getUnitsError,
     },
   ] = useGetUnitsMutation();
+
+  const [
+    addItem,
+    {data: AddItemData, isSuccess: AddItemIsSuccess, isError: AddItemIsError},
+  ] = useAddItemsMutation();
 
   useEffect(() => {
     if (route.params?.from_business || true) {
@@ -102,15 +125,36 @@ const AddInventory = ({
     }
   }, [getUnitsIsSuccess, getUnitsData]);
 
+  useEffect(() => {
+    if (AddItemIsSuccess) {
+      Toast.show({
+        type: 'success',
+        text1: route.params?.is_service
+          ? 'Service Added Successfully.'
+          : 'Product Added Successfully.',
+        position: 'bottom',
+      });
+      const ItemAddedArray = [...recentlyAdded];
+      ItemAddedArray.push(AddItemData?.data);
+      setRecentlyAdded([...ItemAddedArray]);
+    }
+    if (AddItemIsError) {
+      Toast.show({
+        type: 'error',
+        text1: 'Something went wrong',
+        position: 'bottom',
+      });
+    }
+  }, [AddItemIsError, AddItemIsSuccess, AddItemData]);
+
   const handleBackPress = () => {
     navigation.goBack();
   };
   const handleAddItem = (data: AddInventoryFields) => {
-    console.log(data);
     const {url, isUnit, ...rest} = data;
+    rest.unit = isUnit ? rest?.unit : '';
     console.log(rest);
-    rest.unit = rest?.unit ? rest?.unit : '';
-    console.log(rest);
+    addItem(rest);
   };
   const handleSetItem = (item: ItemType) => {
     setValue('name', item.name);
@@ -120,8 +164,9 @@ const AddInventory = ({
 
   const handleSetUnit = (item: ItemType) => {
     setValue('unit', item.name);
-    itemBottomSheetRef.current?.close();
+    unitBottomSheetRef.current?.close();
   };
+
   const handleItemBottomSheet = () => {
     if (itemData) {
       if (itemData?.length < 5 && itemData?.length > 0) {
@@ -231,6 +276,26 @@ const AddInventory = ({
             loader={true}
           />
         </View>
+        {recentlyAdded && getDefaultItemsData && (
+          <View style={styles.RecentlyAddedContainer}>
+            {recentlyAdded.map((item, index) => {
+              return (
+                <View key={index} style={styles.RecentlyAddedItemContainer}>
+                  <FastImage
+                    style={styles.ItemImage}
+                    source={{
+                      uri: `http://${getDefaultItemsData[item?.name]}`,
+                      headers: {Authorization: 'someAuthToken'},
+                      priority: FastImage.priority.normal,
+                      cache: FastImage.cacheControl.immutable,
+                    }}
+                    resizeMode={FastImage.resizeMode.contain}
+                  />
+                </View>
+              );
+            })}
+          </View>
+        )}
       </View>
       <FlashListBottomSheet
         bottomSheetRef={itemBottomSheetRef}
@@ -297,5 +362,17 @@ const styles = StyleSheet.create({
   BTNText: {
     fontSize: wp(4),
     fontFamily: 'Inter Regular',
+  },
+  RecentlyAddedContainer: {
+    width: wp(100),
+    paddingHorizontal: wp(4),
+    gap: 20,
+  },
+  ItemImage: {
+    width: wp(15),
+    height: wp(15),
+  },
+  RecentlyAddedItemContainer: {
+    borderWidth: 0.5,
   },
 });

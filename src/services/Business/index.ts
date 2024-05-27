@@ -1,12 +1,14 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
 import env from '../../env';
 import {
+  AddItemRequest,
+  AddItemResponse,
   BusinessTypesResponse,
   CreateBusinessRequest,
   CreateBusinessResponse,
   GetDefaultItemsRequest,
   GetDefaultItemsResponse,
-  getUnitsRequest,
+  GetUnitsRequest,
 } from './businessTypes';
 import {accessToken} from '../../screens/common';
 
@@ -47,7 +49,7 @@ export const BusinessApi = createApi({
         },
       }),
     }),
-    getUnits: builder.mutation<string[], getUnitsRequest>({
+    getUnits: builder.mutation<string[], GetUnitsRequest>({
       query: body => ({
         url: '/getUnits',
         method: 'POST',
@@ -55,6 +57,18 @@ export const BusinessApi = createApi({
         headers: {
           'x-access-token':
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI1YTIxN2M5Yy02YTIwLTQwMzQtYjgyOC1mZDVhODVlMGI4NTciLCJleHAiOjE3MTY5OTE5MTAsInR5cGUiOiJhY2Nlc3MifQ.LT-DwMCbUHK5um2Hmc5Cq5Qbz9BGaB_0W7pOA1_mopE',
+        },
+      }),
+    }),
+    addItems: builder.mutation<AddItemResponse, AddItemRequest>({
+      query: body => ({
+        url: '/addItem',
+        method: 'POST',
+        body: body,
+        headers: {
+          'x-access-token':
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI1YTIxN2M5Yy02YTIwLTQwMzQtYjgyOC1mZDVhODVlMGI4NTciLCJleHAiOjE3MTY5OTE5MTAsInR5cGUiOiJhY2Nlc3MifQ.LT-DwMCbUHK5um2Hmc5Cq5Qbz9BGaB_0W7pOA1_mopE',
+          // 'x-access-token': accessToken,
         },
       }),
     }),
@@ -66,4 +80,5 @@ export const {
   useCreateBusinessMutation,
   useGetDefaultItemsMutation,
   useGetUnitsMutation,
+  useAddItemsMutation,
 } = BusinessApi;
