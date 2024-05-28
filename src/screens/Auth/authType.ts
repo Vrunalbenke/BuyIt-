@@ -46,7 +46,7 @@ export const SignUpSchema = z
     longitude: z.number(),
     email: z.string().email().optional(),
     fcm_token: z.string(),
-    name: z.string().regex(/^[a-zA-Z]+$/, {
+    name: z.string().regex(/^[a-zA-Z ]+$/, {
       message: 'Name should contain only letters.',
     }),
     AllowSms: z.boolean(),

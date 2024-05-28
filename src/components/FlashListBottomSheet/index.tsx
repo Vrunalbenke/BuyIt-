@@ -66,7 +66,7 @@ const FlashListBottomSheet = memo(
                   priority: FastImage.priority.normal,
                   cache: FastImage.cacheControl.immutable,
                 }}
-                resizeMode={FastImage.resizeMode.contain}
+                resizeMode={FastImage.resizeMode.cover}
               />
             )}
             <Text style={styles.NameText}>{item?.name}</Text>

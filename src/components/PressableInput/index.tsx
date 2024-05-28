@@ -50,7 +50,7 @@ const PressableInput = <FormFieldValues extends FieldValues>({
                       priority: FastImage.priority.normal,
                       cache: FastImage.cacheControl.immutable,
                     }}
-                    resizeMode={FastImage.resizeMode.contain}
+                    resizeMode={FastImage.resizeMode.cover}
                   />
                 </View>
               )}

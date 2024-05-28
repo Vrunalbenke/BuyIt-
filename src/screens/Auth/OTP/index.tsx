@@ -143,6 +143,7 @@ const OTP = ({route, navigation}: OTPProps) => {
       const tokenData = JSON.stringify(createUserData);
       storage.set('token', tokenData);
       navigation.navigate('IsSellerOrCustomer');
+      console.log('Stored User Login Data -->', storage.getString('token'));
     }
   }, [createUserData, createUserIsSuccess]);
 

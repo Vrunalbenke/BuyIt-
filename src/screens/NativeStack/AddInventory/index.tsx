@@ -46,12 +46,13 @@ const AddInventory = ({
   route,
   navigation,
 }: NativeStackScreenProps<RootStackParams, 'AddInventory'>) => {
-  const {control, handleSubmit, setValue, watch} = useForm<AddInventoryFields>({
-    resolver: zodResolver(AddItemSchema),
-    defaultValues: {
-      business_id: '2',
-    },
-  });
+  const {control, handleSubmit, setValue, watch, reset} =
+    useForm<AddInventoryFields>({
+      resolver: zodResolver(AddItemSchema),
+      defaultValues: {
+        business_id: '7',
+      },
+    });
   const itemBottomSheetRef = useRef<BottomSheet>(null);
   const unitBottomSheetRef = useRef<BottomSheet>(null);
   const [itemData, setItemData] = useState<ItemType[]>();
@@ -81,17 +82,23 @@ const AddInventory = ({
 
   const [
     addItem,
-    {data: AddItemData, isSuccess: AddItemIsSuccess, isError: AddItemIsError},
+    {
+      data: AddItemData,
+      isSuccess: AddItemIsSuccess,
+      isError: AddItemIsError,
+      error: AddItemError,
+    },
   ] = useAddItemsMutation();
 
   useEffect(() => {
     if (route.params?.from_business || true) {
       const body = {
-        business_type: 'Tutor',
-        business_id: '2',
+        business_type: 'MexicanFoodTruck',
+        business_id: '7',
         // business_type: route.params?.business_type,
         // business_id: route.params?.id,
       };
+      console.log(body, 'body');
       getDefaultItems(body);
       getUnits(body);
     }
@@ -127,6 +134,7 @@ const AddInventory = ({
 
   useEffect(() => {
     if (AddItemIsSuccess) {
+      reset();
       Toast.show({
         type: 'success',
         text1: route.params?.is_service
@@ -139,13 +147,14 @@ const AddInventory = ({
       setRecentlyAdded([...ItemAddedArray]);
     }
     if (AddItemIsError) {
+      console.log('AddItemError --> ', AddItemError);
       Toast.show({
         type: 'error',
         text1: 'Something went wrong',
         position: 'bottom',
       });
     }
-  }, [AddItemIsError, AddItemIsSuccess, AddItemData]);
+  }, [AddItemIsError, AddItemIsSuccess, AddItemData, AddItemError]);
 
   const handleBackPress = () => {
     navigation.goBack();
@@ -277,24 +286,57 @@ const AddInventory = ({
           />
         </View>
         {recentlyAdded && getDefaultItemsData && (
-          <View style={styles.RecentlyAddedContainer}>
-            {recentlyAdded.map((item, index) => {
-              return (
-                <View key={index} style={styles.RecentlyAddedItemContainer}>
-                  <FastImage
-                    style={styles.ItemImage}
-                    source={{
-                      uri: `http://${getDefaultItemsData[item?.name]}`,
-                      headers: {Authorization: 'someAuthToken'},
-                      priority: FastImage.priority.normal,
-                      cache: FastImage.cacheControl.immutable,
-                    }}
-                    resizeMode={FastImage.resizeMode.contain}
-                  />
-                </View>
-              );
-            })}
-          </View>
+          <>
+            <Text style={styles.RecentlyAddedText}>Recently Added</Text>
+            <View style={styles.RecentlyAddedContainer}>
+              {recentlyAdded.map((item, index) => {
+                return (
+                  <View key={index} style={styles.RecentlyAddedItemContainer}>
+                    <FastImage
+                      style={styles.ItemImage}
+                      source={{
+                        uri: `http://${getDefaultItemsData[item?.name]}`,
+                        headers: {Authorization: 'someAuthToken'},
+                        priority: FastImage.priority.normal,
+                        cache: FastImage.cacheControl.immutable,
+                      }}
+                      resizeMode={FastImage.resizeMode.cover}
+                    />
+                    <View style={styles.RecentlyAddedItemRightContainer}>
+                      <View style={styles.ItemInfoContainer}>
+                        <View style={styles.ItemNameAndIconContainer}>
+                          <Text style={styles.ItemNameText}>{item?.name}</Text>
+                          <View style={styles.IconContainer}>
+                            <TouchableOpacity>
+                              <Ionicons
+                                name="create-outline"
+                                size={wp(5.5)}
+                                color={Colors.black}
+                              />
+                            </TouchableOpacity>
+                            <TouchableOpacity>
+                              <Ionicons
+                                name="trash-outline"
+                                size={wp(5.5)}
+                                color={Colors.black}
+                              />
+                            </TouchableOpacity>
+                          </View>
+                        </View>
+                        <Text style={styles.ItemDescText}>
+                          {item?.description}
+                        </Text>
+                      </View>
+                      <View style={styles.ItemUnitContainer}>
+                        <Text style={styles.ItemPriceText}>${item?.price}</Text>
+                        <Text style={styles.ItemUnitText}>/{item?.unit}</Text>
+                      </View>
+                    </View>
+                  </View>
+                );
+              })}
+            </View>
+          </>
         )}
       </View>
       <FlashListBottomSheet
@@ -363,16 +405,69 @@ const styles = StyleSheet.create({
     fontSize: wp(4),
     fontFamily: 'Inter Regular',
   },
+  RecentlyAddedText: {
+    paddingHorizontal: wp(4),
+    fontFamily: 'Inter Medium',
+    fontSize: wp(5),
+  },
   RecentlyAddedContainer: {
     width: wp(100),
     paddingHorizontal: wp(4),
     gap: 20,
   },
-  ItemImage: {
-    width: wp(15),
-    height: wp(15),
-  },
   RecentlyAddedItemContainer: {
     borderWidth: 0.5,
+    borderRadius: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: wp(92),
+  },
+  ItemImage: {
+    width: wp(25),
+    height: '100%',
+    borderTopLeftRadius: 10,
+    borderBottomLeftRadius: 10,
+  },
+  RecentlyAddedItemRightContainer: {
+    width: wp(67),
+    padding: wp(2),
+  },
+
+  IconContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 10,
+  },
+  ItemInfoContainer: {
+    gap: 5,
+  },
+  ItemNameAndIconContainer: {
+    flexDirection: 'row',
+  },
+  ItemNameText: {
+    fontFamily: 'Inter Medium',
+    fontSize: wp(5),
+    color: Colors.black,
+    width: wp(50),
+  },
+  ItemDescText: {
+    fontFamily: 'Inter Regular',
+    fontSize: wp(3.5),
+    color: Colors.black,
+  },
+  ItemUnitContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 1,
+  },
+  ItemPriceText: {
+    fontFamily: 'Inter Regular',
+    fontSize: wp(4),
+    color: Colors.black,
+  },
+  ItemUnitText: {
+    fontFamily: 'Inter Regular',
+    fontSize: wp(4),
+    color: Colors.black,
   },
 });
