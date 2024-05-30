@@ -115,6 +115,8 @@ export default FlashListBottomSheet;
 const styles = StyleSheet.create({
   BottomSheet: {
     borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    // backgroundColor: '#000',
   },
   root: {
     height: hp(86),

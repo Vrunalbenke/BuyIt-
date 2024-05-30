@@ -88,3 +88,13 @@ export type AddItemResponse = {
   };
   message: string;
 };
+
+export interface UpdateItemRequest extends AddItemRequest {
+  business_type: string;
+  business_name: string;
+}
+
+export type DeleteItemRequest = {
+  business_id: number;
+  item_id: number;
+};

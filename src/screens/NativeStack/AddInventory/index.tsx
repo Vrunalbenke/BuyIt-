@@ -1,27 +1,35 @@
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React, {useEffect, useRef, useState} from 'react';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {RootStackParams} from '../../../navigation/StackNavigator';
-import ScrollableWrapper from '../../../components/ScrollableWrapper';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import {Colors} from '../../../resources/colors';
-import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
-import {useForm} from 'react-hook-form';
-import PressableInput from '../../../components/PressableInput';
 import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import React, {useEffect, useRef, useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import FastImage from 'react-native-fast-image';
+import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
+import Toast from 'react-native-toast-message';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import {z} from 'zod';
+import FlashListBottomSheet from '../../../components/FlashListBottomSheet';
+import LargeButton from '../../../components/LargeButton';
+import PressableInput from '../../../components/PressableInput';
+import ScrollableWrapper from '../../../components/ScrollableWrapper';
 import UserTextInput from '../../../components/UserTextInput';
+import {RootStackParams} from '../../../navigation/StackNavigator';
+import {Colors} from '../../../resources/colors';
 import {
   useAddItemsMutation,
+  useDeleteItemMutation,
   useGetDefaultItemsMutation,
   useGetUnitsMutation,
+  useUpdateItemMutation,
 } from '../../../services/Business';
-import LargeButton from '../../../components/LargeButton';
-import FlashListBottomSheet from '../../../components/FlashListBottomSheet';
-import {z} from 'zod';
 import {AddItemSchema} from '../nativeTypes';
-import {zodResolver} from '@hookform/resolvers/zod';
-import Toast from 'react-native-toast-message';
-import FastImage from 'react-native-fast-image';
 
 type ItemType = {
   id: number;
@@ -58,6 +66,8 @@ const AddInventory = ({
   const [itemData, setItemData] = useState<ItemType[]>();
   const [unitData, setUnitData] = useState<ItemType[]>();
   const [recentlyAdded, setRecentlyAdded] = useState<AddItemDataType[]>([]);
+  const [isUpdating, setIsUpdating] = useState<boolean>(false);
+  const [updateData, setUpdateData] = useState<AddItemDataType>();
   const [
     getDefaultItems,
     {
@@ -87,8 +97,28 @@ const AddInventory = ({
       isSuccess: AddItemIsSuccess,
       isError: AddItemIsError,
       error: AddItemError,
+      isLoading: AddItemIsLoading,
     },
   ] = useAddItemsMutation();
+
+  const [
+    updateItem,
+    {
+      data: UpdateItemData,
+      isSuccess: UpdateItemIsSuccess,
+      isError: UpdateItemIsError,
+      error: UpdateItemError,
+    },
+  ] = useUpdateItemMutation();
+  const [
+    deleteItem,
+    {
+      data: DeleteItemData,
+      isSuccess: DeleteItemIsSuccess,
+      isError: DeleteItemIsError,
+      error: DeleteItemError,
+    },
+  ] = useDeleteItemMutation();
 
   useEffect(() => {
     if (route.params?.from_business || true) {
@@ -98,11 +128,20 @@ const AddInventory = ({
         // business_type: route.params?.business_type,
         // business_id: route.params?.id,
       };
-      console.log(body, 'body');
       getDefaultItems(body);
       getUnits(body);
     }
   }, []);
+  useEffect(() => {
+    console.log('DeleteItemData --> ', DeleteItemData);
+    if (DeleteItemIsSuccess) {
+      setRecentlyAdded(
+        recentlyAdded.filter(item => {
+          item.id !== 7;
+        }),
+      );
+    }
+  }, [DeleteItemData, DeleteItemIsSuccess]);
 
   const url = watch('url');
 
@@ -135,6 +174,7 @@ const AddInventory = ({
   useEffect(() => {
     if (AddItemIsSuccess) {
       reset();
+      setValue('business_id', '7');
       Toast.show({
         type: 'success',
         text1: route.params?.is_service
@@ -144,8 +184,11 @@ const AddInventory = ({
       });
       const ItemAddedArray = [...recentlyAdded];
       ItemAddedArray.push(AddItemData?.data);
+      console.log(AddItemData.data);
+      console.log(ItemAddedArray);
       setRecentlyAdded([...ItemAddedArray]);
     }
+    console.log(recentlyAdded);
     if (AddItemIsError) {
       console.log('AddItemError --> ', AddItemError);
       Toast.show({
@@ -156,14 +199,42 @@ const AddInventory = ({
     }
   }, [AddItemIsError, AddItemIsSuccess, AddItemData, AddItemError]);
 
+  useEffect(() => {
+    console.log(UpdateItemError, 'UpdateItemIsError', UpdateItemIsError);
+    if (UpdateItemIsSuccess) {
+      Toast.show({
+        type: 'success',
+        text1: 'Item Updated',
+        position: 'bottom',
+      });
+      let updatedArray = recentlyAdded.map(item => {
+        if (item.id === updateData.id) {
+          return updateItem;
+        }
+        return item;
+      });
+      console.log('updatedArray --> ', updatedArray);
+      // setRecentlyAdded([...updatedArray]);
+    }
+  }, [UpdateItemData, UpdateItemIsSuccess, UpdateItemIsError]);
+
   const handleBackPress = () => {
     navigation.goBack();
   };
   const handleAddItem = (data: AddInventoryFields) => {
     const {url, isUnit, ...rest} = data;
     rest.unit = isUnit ? rest?.unit : '';
-    console.log(rest);
-    addItem(rest);
+    if (isUpdating) {
+      rest.business_type = 'MexicanFoodTruck';
+      rest.business_name = 'nicholas truck';
+      rest.id = 8;
+      rest.business_id = Number(rest.business_id);
+      console.log('Updating rest', rest);
+      setUpdateData(rest);
+      updateItem(rest);
+    } else {
+      addItem(rest);
+    }
   };
   const handleSetItem = (item: ItemType) => {
     setValue('name', item.name);
@@ -201,6 +272,28 @@ const AddInventory = ({
     } else {
       unitBottomSheetRef.current?.snapToIndex(0);
     }
+  };
+
+  const handleEditItem = item => {
+    setIsUpdating(true);
+    console.log(item);
+    if (getDefaultItemsData && getUnitsData) {
+      for (const key in item) {
+        setValue(key, item[key].toString());
+        setValue('url', getDefaultItemsData[item.name]);
+        if (getUnitsData?.length > 0) {
+          setValue('isUnit', true);
+        }
+      }
+    }
+  };
+  const handleDeleteItem = item => {
+    const body = {
+      business_id: 7,
+      item_id: item.id,
+    };
+    console.log(body);
+    deleteItem(body);
   };
 
   return (
@@ -275,8 +368,19 @@ const AddInventory = ({
         <View style={styles.ButtonContainer}>
           <TouchableOpacity
             onPress={handleSubmit(handleAddItem)}
-            style={styles.TOPContainer}>
-            <Text style={styles.BTNText}>+ Add </Text>
+            style={[
+              styles.TOPContainer,
+              {
+                backgroundColor: AddItemIsLoading ? Colors.gray : Colors.orange,
+              },
+            ]}>
+            {AddItemIsLoading ? (
+              <ActivityIndicator size={'small'} color={Colors.darkGray} />
+            ) : (
+              <Text style={styles.BTNText}>
+                {isUpdating ? 'Update' : '+ Add'}
+              </Text>
+            )}
           </TouchableOpacity>
           <LargeButton
             BTNText="Next"
@@ -307,18 +411,20 @@ const AddInventory = ({
                         <View style={styles.ItemNameAndIconContainer}>
                           <Text style={styles.ItemNameText}>{item?.name}</Text>
                           <View style={styles.IconContainer}>
-                            <TouchableOpacity>
+                            <TouchableOpacity
+                              onPress={() => handleEditItem(item)}>
                               <Ionicons
                                 name="create-outline"
                                 size={wp(5.5)}
-                                color={Colors.black}
+                                color={Colors.orange}
                               />
                             </TouchableOpacity>
-                            <TouchableOpacity>
+                            <TouchableOpacity
+                              onPress={() => handleDeleteItem(item)}>
                               <Ionicons
                                 name="trash-outline"
                                 size={wp(5.5)}
-                                color={Colors.black}
+                                color={Colors.errorRed}
                               />
                             </TouchableOpacity>
                           </View>
@@ -398,7 +504,6 @@ const styles = StyleSheet.create({
   },
   TOPContainer: {
     padding: wp(2.5),
-    backgroundColor: Colors.orange,
     borderRadius: 5,
   },
   BTNText: {
@@ -431,6 +536,7 @@ const styles = StyleSheet.create({
   RecentlyAddedItemRightContainer: {
     width: wp(67),
     padding: wp(2),
+    gap: 5,
   },
 
   IconContainer: {
@@ -461,12 +567,12 @@ const styles = StyleSheet.create({
     gap: 1,
   },
   ItemPriceText: {
-    fontFamily: 'Inter Regular',
+    fontFamily: 'Inter Medium',
     fontSize: wp(4),
     color: Colors.black,
   },
   ItemUnitText: {
-    fontFamily: 'Inter Regular',
+    fontFamily: 'Inter Medium',
     fontSize: wp(4),
     color: Colors.black,
   },
