@@ -2,6 +2,7 @@ import {StyleSheet, TextInput, View} from 'react-native';
 import React from 'react';
 import {Colors} from '../../resources/colors';
 import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
+import SearchIcon from '../../../assets/svg/search.svg';
 
 type SearchbarInputProps = {
   value: string;
@@ -18,13 +19,16 @@ const SearchbarInput = ({
 }: SearchbarInputProps) => {
   return (
     <View style={styles.root}>
-      <TextInput
-        value={value}
-        onChangeText={setValue}
-        placeholder={placeholder}
-        placeholderTextColor={placeholderTextColor}
-        style={styles.Input}
-      />
+      <View style={styles.InputContainer}>
+        <SearchIcon height={wp(6)} width={wp(6)} fill={Colors.gray} />
+        <TextInput
+          value={value}
+          onChangeText={setValue}
+          placeholder={placeholder}
+          placeholderTextColor={placeholderTextColor}
+          style={styles.Input}
+        />
+      </View>
     </View>
   );
 };
@@ -38,11 +42,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  Input: {
-    borderRadius: 10,
+  InputContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    borderRadius: wp(2),
     backgroundColor: '#F2F2F2',
     width: wp(92),
     height: wp(12),
-    paddingLeft: 20,
+    paddingHorizontal: 10,
+    gap: 10,
+  },
+  Input: {
+    fontFamily: 'Inter Regular',
+    fontSize: wp(4.5),
   },
 });

@@ -16,7 +16,25 @@ import {accessToken} from '../../screens/common';
 
 export const BusinessApi = createApi({
   reducerPath: 'BusinessApi',
-  baseQuery: fetchBaseQuery({baseUrl: `${env.APP_URL}/business`}),
+  baseQuery: fetchBaseQuery({
+    baseUrl: `${env.APP_URL}/business`,
+    prepareHeaders: (headers, {endpoint}) => {
+      if (endpoint !== 'businessTypes' && accessToken) {
+        headers.set(
+          'x-access-token',
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI4YTQ1ZDM5ZC1iZTRmLTQ2ZjQtYWExNy1iMzdmNTY1MjBjYmEiLCJleHAiOjE3MTc1OTg5OTgsInR5cGUiOiJhY2Nlc3MifQ.5Ss3HC-rTs2qNDnETgkWLKqf1eUx9yF3q2Gz116oCag',
+        );
+      }
+      if (endpoint === 'markFavouriteBusinessType') {
+        headers.set(
+          'x-refresh-token',
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI4YTQ1ZDM5ZC1iZTRmLTQ2ZjQtYWExNy1iMzdmNTY1MjBjYmEiLCJleHAiOjE3MzQ1MTg5OTgsInR5cGUiOiJyZWZyZXNoIn0.ny7401rpmA0s9hZoCpSxsEIjq7IpsK7rkwT59iF2QrA',
+        );
+      }
+      return headers;
+    },
+  }),
+  tagTypes: ['favoriteBusinessType'],
   endpoints: builder => ({
     businessTypes: builder.query<BusinessTypesResponse, null>({
       query: () => '/types',
@@ -29,11 +47,6 @@ export const BusinessApi = createApi({
         url: '/create',
         method: 'POST',
         body: body,
-        headers: {
-          'x-access-token':
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI1YTIxN2M5Yy02YTIwLTQwMzQtYjgyOC1mZDVhODVlMGI4NTciLCJleHAiOjE3MTczNTQzNTAsInR5cGUiOiJhY2Nlc3MifQ.y0sVo7SMLKgF30OEccVe5T5dZtukUEEUoNVReoPK8g4',
-          // 'x-access-token': accessToken,
-        },
       }),
     }),
     getDefaultItems: builder.mutation<
@@ -44,11 +57,6 @@ export const BusinessApi = createApi({
         url: '/getDefaultItems',
         method: 'POST',
         body: body,
-        headers: {
-          'x-access-token':
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI1YTIxN2M5Yy02YTIwLTQwMzQtYjgyOC1mZDVhODVlMGI4NTciLCJleHAiOjE3MTczNTQzNTAsInR5cGUiOiJhY2Nlc3MifQ.y0sVo7SMLKgF30OEccVe5T5dZtukUEEUoNVReoPK8g4',
-          // 'x-access-token': accessToken,
-        },
       }),
     }),
     getUnits: builder.mutation<string[], GetUnitsRequest>({
@@ -56,10 +64,6 @@ export const BusinessApi = createApi({
         url: '/getUnits',
         method: 'POST',
         body: body,
-        headers: {
-          'x-access-token':
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI1YTIxN2M5Yy02YTIwLTQwMzQtYjgyOC1mZDVhODVlMGI4NTciLCJleHAiOjE3MTczNTQzNTAsInR5cGUiOiJhY2Nlc3MifQ.y0sVo7SMLKgF30OEccVe5T5dZtukUEEUoNVReoPK8g4',
-        },
       }),
     }),
     addItems: builder.mutation<AddItemResponse, AddItemRequest>({
@@ -67,11 +71,6 @@ export const BusinessApi = createApi({
         url: '/addItem',
         method: 'POST',
         body: body,
-        headers: {
-          'x-access-token':
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI1YTIxN2M5Yy02YTIwLTQwMzQtYjgyOC1mZDVhODVlMGI4NTciLCJleHAiOjE3MTczNTQzNTAsInR5cGUiOiJhY2Nlc3MifQ.y0sVo7SMLKgF30OEccVe5T5dZtukUEEUoNVReoPK8g4',
-          // 'x-access-token': accessToken,
-        },
       }),
     }),
     updateItem: builder.mutation<{message: string}, UpdateItemRequest>({
@@ -79,11 +78,6 @@ export const BusinessApi = createApi({
         url: 'updateItem',
         method: 'PUT',
         body: body,
-        headers: {
-          'x-access-token':
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI1YTIxN2M5Yy02YTIwLTQwMzQtYjgyOC1mZDVhODVlMGI4NTciLCJleHAiOjE3MTczNTQzNTAsInR5cGUiOiJhY2Nlc3MifQ.y0sVo7SMLKgF30OEccVe5T5dZtukUEEUoNVReoPK8g4',
-          // 'x-access-token': accessToken,
-        },
       }),
     }),
     deleteItem: builder.mutation<{message: string}, DeleteItemRequest>({
@@ -91,22 +85,31 @@ export const BusinessApi = createApi({
         url: '/deleteItem',
         method: 'DELETE',
         body: body,
-        headers: {
-          'x-access-token':
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI1YTIxN2M5Yy02YTIwLTQwMzQtYjgyOC1mZDVhODVlMGI4NTciLCJleHAiOjE3MTczNTQzNTAsInR5cGUiOiJhY2Nlc3MifQ.y0sVo7SMLKgF30OEccVe5T5dZtukUEEUoNVReoPK8g4',
-          // 'x-access-token': accessToken,
-        },
       }),
+    }),
+    getFavoriteBusinessTypes: builder.query<string[], null>({
+      query: () => '/getFavouriteBusinessTypes',
+      providesTags: ['favoriteBusinessType'],
+    }),
+    markFavoriteBusinessType: builder.mutation({
+      query: body => ({
+        url: '/markFavouriteBusinessType',
+        method: 'POST',
+        body: body,
+      }),
+      invalidatesTags: ['favoriteBusinessType'],
     }),
   }),
 });
 
 export const {
   useBusinessTypesQuery,
+  useGetFavoriteBusinessTypesQuery,
   useCreateBusinessMutation,
   useGetDefaultItemsMutation,
   useGetUnitsMutation,
   useAddItemsMutation,
   useUpdateItemMutation,
   useDeleteItemMutation,
+  useMarkFavoriteBusinessTypeMutation,
 } = BusinessApi;

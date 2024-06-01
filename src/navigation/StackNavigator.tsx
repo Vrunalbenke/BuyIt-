@@ -8,6 +8,7 @@ import PasswordUpdated from '../screens/Auth/PasswordUpdated';
 import IsSellerOrCustomer from '../screens/NativeStack/IsSellerOrCustomer';
 import AddBusiness from '../screens/NativeStack/AddBusiness';
 import AddInventory from '../screens/NativeStack/AddInventory';
+import BottomTabNavigator from './BottomTabNavigator';
 
 export type RootStackParams = {
   SignIn: undefined;
@@ -38,6 +39,7 @@ export type RootStackParams = {
     from_business: boolean;
     business_id: string;
   };
+  BottomTabNavigator: undefined;
 };
 
 const RootStack = createNativeStackNavigator<RootStackParams>();
@@ -45,7 +47,7 @@ const RootStack = createNativeStackNavigator<RootStackParams>();
 const StackNavigator = () => {
   return (
     <RootStack.Navigator
-      initialRouteName="AddInventory"
+      initialRouteName="BottomTabNavigator"
       screenOptions={{
         headerShown: false,
       }}>
@@ -63,6 +65,10 @@ const StackNavigator = () => {
       />
       <RootStack.Screen name="AddBusiness" component={AddBusiness} />
       <RootStack.Screen name="AddInventory" component={AddInventory} />
+      <RootStack.Screen
+        name="BottomTabNavigator"
+        component={BottomTabNavigator}
+      />
     </RootStack.Navigator>
   );
 };
