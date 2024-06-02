@@ -8,7 +8,7 @@ import {
 import React, {memo, useEffect, useState} from 'react';
 import BottomSheet from '@gorhom/bottom-sheet';
 
-import {FlashList} from '@shopify/flash-list';
+import {FlashList, ListRenderItem} from '@shopify/flash-list';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -53,7 +53,7 @@ const FlashListBottomSheet = memo(
       }
     }, [searchString]);
 
-    const handleRendering = ({item}: businessTypesObject) => {
+    const handleRendering: ListRenderItem<businessTypesObject> = ({item}) => {
       return (
         <Pressable onPress={() => handleSetBusinessType(item)}>
           <View key={item.id} style={styles.BusinessTypeContainer}>

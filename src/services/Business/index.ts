@@ -10,6 +10,8 @@ import {
   GetDefaultItemsRequest,
   GetDefaultItemsResponse,
   GetUnitsRequest,
+  SearchBusinessRequest,
+  SearchBusinessResponse,
   UpdateItemRequest,
 } from './businessTypes';
 import {accessToken} from '../../screens/common';
@@ -99,6 +101,15 @@ export const BusinessApi = createApi({
       }),
       invalidatesTags: ['favoriteBusinessType'],
     }),
+    searchBusiness: builder.mutation<
+      SearchBusinessResponse[],
+      SearchBusinessRequest
+    >({
+      query: body => ({
+        url: `/search?searchString=${body.searchString}&latitude=${body.latitude}&longitude=${body.longitude}&radius=${body.searchRadius}&useLocation=${body.useLocation}`,
+        method: 'POST',
+      }),
+    }),
   }),
 });
 
@@ -112,4 +123,5 @@ export const {
   useUpdateItemMutation,
   useDeleteItemMutation,
   useMarkFavoriteBusinessTypeMutation,
+  useSearchBusinessMutation,
 } = BusinessApi;

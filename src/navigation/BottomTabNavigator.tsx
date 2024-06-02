@@ -11,7 +11,12 @@ import CustomBottomTab from '../components/CustomBottomTab';
 
 export type RootBottomTabParams = {
   Home: undefined;
-  Location: undefined;
+  Location: {
+    isFromRecent: boolean;
+    openBusList: boolean;
+    timeStamp: Date;
+    isDraggable: boolean;
+  };
   Favorite: undefined;
   Profile: undefined;
 };

@@ -51,7 +51,9 @@ const BusinessTypeCard = ({item, index}: BusinessTypeCardProp) => {
       business_type:
         item.name === 'Pop-up Store'
           ? 'PopUpStore'
-          : item.name.replace(' ', ''),
+          : item.name === 'DJ'
+          ? 'Dj'
+          : item.name.replaceAll(' ', ''),
       is_favourite: item.isFavorite ? 'False' : 'True',
     };
     console.log(body);

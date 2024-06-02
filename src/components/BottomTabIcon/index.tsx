@@ -13,8 +13,8 @@ type BottomTabIconProp = {
 
 const BottomTabIcon = ({route, isFocused}: BottomTabIconProp) => {
   const renderIcon = (routeName: string, isRouteFocused: boolean) => {
-    let height: number = wp(8.8);
-    let width: number = wp(8.8);
+    let height: number = wp(7);
+    let width: number = wp(7);
 
     switch (routeName.name) {
       case 'Home':

@@ -35,11 +35,17 @@ const Home = () => {
 
   useEffect(() => {
     if (BusinessTypesIsSuccess) {
+      console.log(FavoriteBusinessTypesData);
       const BusinessTypesArray = Object.keys(BusinessTypesData).map(
         (key, index) => ({
           id: index + 1,
           name: key,
-          isFavorite: FavoriteBusinessTypesData?.includes(key),
+          isFavorite:
+            key === 'Pop-up Store'
+              ? FavoriteBusinessTypesData?.includes('Pop Up Store')
+              : key === 'DJ'
+              ? FavoriteBusinessTypesData?.includes('Dj')
+              : FavoriteBusinessTypesData?.includes(key),
           ...BusinessTypesData[key],
         }),
       );
@@ -96,7 +102,7 @@ const styles = StyleSheet.create({
     gap: 10,
     paddingVertical: wp(2),
     borderBottomWidth: 1.5,
-    borderBottomColor: '#E2E2E2',
+    borderBottomColor: '#d2d2d2',
   },
   TitleContainer: {
     flexDirection: 'row',
@@ -123,7 +129,7 @@ const styles = StyleSheet.create({
   },
   FlashListWrapper: {
     width: wp(100),
-    height: hp(68),
+    height: hp(70.5),
   },
   FlashList: {},
   FlashListContentStyle: {

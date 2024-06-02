@@ -98,3 +98,44 @@ export type DeleteItemRequest = {
   business_id: number;
   item_id: number;
 };
+
+export type SearchBusinessRequest = {
+  searchString: string;
+  latitude: number;
+  longitude: number;
+  searchRadius: number;
+  useLocation: string;
+};
+
+export type SearchBusinessResponse = {
+  alias: string;
+  business_type: string;
+  country_code: string;
+  created_at: string;
+  description?: string;
+  email: string;
+  facebook?: string;
+  id: string;
+  in_home: boolean;
+  instagram?: string;
+  is_service: boolean;
+  isopen: string;
+  latitude: number;
+  longitude: number;
+  distance: number;
+  name: string;
+  office_location?: {
+    latitude: number;
+    longitude: number;
+  };
+  opened_at: string;
+  phone_number: string;
+  prevloc: string;
+  radius_served?: string;
+  share_email: string;
+  share_phone: string;
+  subscription_status: string;
+  subscription_type: string;
+  updated_at: string;
+  website?: string;
+};
