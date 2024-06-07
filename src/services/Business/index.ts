@@ -14,7 +14,7 @@ import {
   SearchBusinessResponse,
   UpdateItemRequest,
 } from './businessTypes';
-import {accessToken} from '../../screens/common';
+import {accessToken, refreshToken} from '../../screens/common';
 
 export const BusinessApi = createApi({
   reducerPath: 'BusinessApi',
@@ -22,21 +22,18 @@ export const BusinessApi = createApi({
     baseUrl: `${env.APP_URL}/business`,
     prepareHeaders: (headers, {endpoint}) => {
       if (endpoint !== 'businessTypes' && accessToken) {
-        headers.set(
-          'x-access-token',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI4YTQ1ZDM5ZC1iZTRmLTQ2ZjQtYWExNy1iMzdmNTY1MjBjYmEiLCJleHAiOjE3MTc1OTg5OTgsInR5cGUiOiJhY2Nlc3MifQ.5Ss3HC-rTs2qNDnETgkWLKqf1eUx9yF3q2Gz116oCag',
-        );
+        headers.set('x-access-token', accessToken);
       }
-      if (endpoint === 'markFavouriteBusinessType') {
-        headers.set(
-          'x-refresh-token',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI4YTQ1ZDM5ZC1iZTRmLTQ2ZjQtYWExNy1iMzdmNTY1MjBjYmEiLCJleHAiOjE3MzQ1MTg5OTgsInR5cGUiOiJyZWZyZXNoIn0.ny7401rpmA0s9hZoCpSxsEIjq7IpsK7rkwT59iF2QrA',
-        );
+      if (
+        endpoint === 'markFavouriteBusinessType' ||
+        endpoint === 'getFavouriteBusinesses'
+      ) {
+        headers.set('x-refresh-token', refreshToken);
       }
       return headers;
     },
   }),
-  tagTypes: ['favoriteBusinessType'],
+  tagTypes: ['favoriteBusinessType', 'favoriteBusiness'],
   endpoints: builder => ({
     businessTypes: builder.query<BusinessTypesResponse, null>({
       query: () => '/types',
@@ -101,6 +98,10 @@ export const BusinessApi = createApi({
       }),
       invalidatesTags: ['favoriteBusinessType'],
     }),
+    getFavoriteBusiness: builder.query<SearchBusinessResponse[], null>({
+      query: () => '/getFavouriteBusinesses',
+      providesTags: ['favoriteBusiness'],
+    }),
     searchBusiness: builder.mutation<
       SearchBusinessResponse[],
       SearchBusinessRequest
@@ -110,12 +111,28 @@ export const BusinessApi = createApi({
         method: 'POST',
       }),
     }),
+    businessByType: builder.query<
+      SearchBusinessResponse[],
+      {business_type: string; latitude?: number; longitude?: number}
+    >({
+      query: body =>
+        `/type?business_type=${body.business_type}&latitude=${body.latitude}&longitude=${body.longitude}`,
+    }),
+    markFavoriteBusiness: builder.mutation({
+      query: body => ({
+        url: '/markFavouriteBusiness',
+        method: 'POST',
+        body: body,
+      }),
+      invalidatesTags: ['favoriteBusiness'],
+    }),
   }),
 });
 
 export const {
   useBusinessTypesQuery,
   useGetFavoriteBusinessTypesQuery,
+  useGetFavoriteBusinessQuery,
   useCreateBusinessMutation,
   useGetDefaultItemsMutation,
   useGetUnitsMutation,
@@ -123,5 +140,7 @@ export const {
   useUpdateItemMutation,
   useDeleteItemMutation,
   useMarkFavoriteBusinessTypeMutation,
+  useMarkFavoriteBusinessMutation,
   useSearchBusinessMutation,
+  useBusinessByTypeQuery,
 } = BusinessApi;

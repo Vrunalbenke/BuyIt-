@@ -77,8 +77,8 @@ const CustomBottomTab = ({
             const body = {
               searchString: '',
               useLocation: 'True',
-              latitude: 37.57381618303843,
-              longitude: -122.01406369190072,
+              latitude: 19.141176768019935,
+              longitude: 73.00878750444599,
               searchRadius: 5,
             };
             searchBusiness(body);

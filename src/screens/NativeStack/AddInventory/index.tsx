@@ -236,6 +236,22 @@ const AddInventory = ({
       addItem(rest);
     }
   };
+
+  const handleNext = () => {
+    if (!route.params.from_business) {
+      navigation.reset({
+        index: 0,
+        routes: [
+          {
+            name: 'BottomTabNavigator',
+            // params: {
+            //   isBusinessUser: false,
+            // },
+          },
+        ],
+      });
+    }
+  };
   const handleSetItem = (item: ItemType) => {
     setValue('name', item.name);
     setValue('url', item.business_icon);
@@ -384,7 +400,7 @@ const AddInventory = ({
           </TouchableOpacity>
           <LargeButton
             BTNText="Next"
-            onPress={() => {}}
+            onPress={handleNext}
             isDisable={false}
             loader={true}
           />

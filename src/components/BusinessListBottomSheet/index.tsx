@@ -22,10 +22,10 @@ const BusinessListBottomSheet = ({
   bottomSheetRef,
 }: BusinesssListBottomSheetProps) => {
   const snapPoints = ['50%', '75%', '100%'];
-  const {searchBusinessList} = useSelector(state => state.business);
+  const {searchBusinessList} = useSelector(state => state?.business);
 
   const handleRendering: ListRenderItem<SearchBusinessResponse> = ({item}) => {
-    console.log(item);
+    // console.log(item);
     return (
       <View style={styles.ItemContainer}>
         <View style={styles.LeftContainer}>

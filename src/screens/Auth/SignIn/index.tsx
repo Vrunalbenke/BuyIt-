@@ -18,6 +18,7 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParams} from '../../../navigation/StackNavigator';
 import Toast from 'react-native-toast-message';
+import {storage} from '../../../../App';
 
 type LoginFields = z.infer<typeof loginSchema>;
 
@@ -55,6 +56,19 @@ const SignIn = ({navigation}: SignInProps) => {
         type: 'success',
         text1: 'Logged in',
         position: 'bottom',
+      });
+      const tokenData = JSON.stringify(LoginResponse);
+      storage.set('token', tokenData);
+      navigation.reset({
+        index: 0,
+        routes: [
+          {
+            name: 'BottomTabNavigator',
+            // params: {
+            //   isBusinessUser: false,
+            // },
+          },
+        ],
       });
     } else if (isError) {
       Toast.show({

@@ -8,8 +8,16 @@ import {Colors} from '../../resources/colors';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {MotiView} from 'moti';
 import Toast from 'react-native-toast-message';
-import {useMarkFavoriteBusinessTypeMutation} from '../../services/Business';
+import {
+  useBusinessByTypeQuery,
+  useBusinessTypesQuery,
+  useMarkFavoriteBusinessTypeMutation,
+  useSearchBusinessMutation,
+} from '../../services/Business';
 import LottieView from 'lottie-react-native';
+import {setSearchBusinessList} from '../../Slice/businessSlice';
+import {useDispatch} from 'react-redux';
+import {useNavigation} from '@react-navigation/native';
 
 type BusinessTypeCardProp = {
   item: BusinessType;
@@ -17,6 +25,8 @@ type BusinessTypeCardProp = {
 };
 
 const BusinessTypeCard = ({item, index}: BusinessTypeCardProp) => {
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
   const [
     markFavoriteBusinessType,
     {
@@ -26,6 +36,13 @@ const BusinessTypeCard = ({item, index}: BusinessTypeCardProp) => {
       error: MFBTError,
     },
   ] = useMarkFavoriteBusinessTypeMutation();
+
+  const body = {
+    business_type: item.name.replace(/\s/g, ''),
+    // latitude: 37.57381618303843,
+    // longitude: -122.01406369190072,
+  };
+  const {data: BTListData} = useBusinessByTypeQuery(body);
 
   useEffect(() => {
     if (MFBTIsError) {
@@ -59,8 +76,18 @@ const BusinessTypeCard = ({item, index}: BusinessTypeCardProp) => {
     console.log(body);
     markFavoriteBusinessType(body);
   };
+
+  const handleBusinessCard = () => {
+    dispatch(setSearchBusinessList(BTListData));
+    navigation.navigate('Location', {
+      isFromRecent: false,
+      openBusList: true,
+      timeStamp: Date.now(),
+      isDraggable: false,
+    });
+  };
   return (
-    <Pressable key={index}>
+    <Pressable key={index} onPress={handleBusinessCard}>
       <MotiView
         style={styles.BusinessTypeContainer}
         from={{opacity: 0, translateY: 100}}
@@ -79,8 +106,14 @@ const BusinessTypeCard = ({item, index}: BusinessTypeCardProp) => {
           />
           <Text style={styles.NameText}>{item.name}</Text>
         </View>
-        <View style={styles.BottomContainer}>
-          <Text style={styles.InHomeText}>In-Home</Text>
+        <View
+          style={[
+            styles.BottomContainer,
+            {
+              justifyContent: item.is_home ? 'space-between' : 'flex-end',
+            },
+          ]}>
+          {item.is_home && <Text style={styles.InHomeText}>In-Home</Text>}
           <Pressable onPress={handleFavorite}>
             {item.isFavorite ? (
               // <LottieView
@@ -134,7 +167,7 @@ const styles = StyleSheet.create({
   },
   BottomContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    // justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
   },

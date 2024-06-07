@@ -53,6 +53,10 @@ const Home = () => {
     }
   }, [FavoriteBusinessTypesData, BusinessTypesData, BusinessTypesIsSuccess]);
 
+  const handleActivityIndicator = () => (
+    <ActivityIndicator size={'small'} color={Colors.gray} />
+  );
+
   return (
     <View style={styles.root}>
       <View style={styles.HeaderContainer}>
@@ -83,9 +87,7 @@ const Home = () => {
           style={styles.FlashList}
           contentContainerStyle={styles.FlashListContentStyle}
           ItemSeparatorComponent={() => <View style={styles.SeparatorStyle} />}
-          ListEmptyComponent={() => (
-            <ActivityIndicator size={'large'} color={Colors.gray} />
-          )}
+          ListEmptyComponent={handleActivityIndicator}
         />
       </View>
     </View>

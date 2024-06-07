@@ -34,6 +34,7 @@ import Toast from 'react-native-toast-message';
 type AddBusinessFields = z.infer<typeof AddBusinessSchema>;
 
 const AddBusiness = ({
+  route,
   navigation,
 }: NativeStackScreenProps<RootStackParams, 'AddBusiness'>) => {
   const {
@@ -96,6 +97,8 @@ const AddBusiness = ({
       });
       navigation.navigate('AddInventory', {
         is_service: CreateBusinessData[0].is_service,
+        from_business: !route.params.isFromSignUp,
+        business_id: CreateBusinessData[0].id,
       });
     }
     if (CreateBusinessIsError) {

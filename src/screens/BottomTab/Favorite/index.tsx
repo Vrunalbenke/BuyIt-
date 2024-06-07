@@ -1,14 +1,128 @@
-import React, {useState} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Text, StyleSheet, Pressable} from 'react-native';
 import {Colors} from '../../../resources/colors';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import SearchbarInput from '../../../components/SearchbarInput';
+import {
+  useBusinessTypesQuery,
+  useGetFavoriteBusinessQuery,
+  useGetFavoriteBusinessTypesQuery,
+  useMarkFavoriteBusinessMutation,
+} from '../../../services/Business';
+import {FlashList} from '@shopify/flash-list';
+import {generateRandomHexCode} from '../../../utils/RandomHexCodeGenerator';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import ScrollableWrapper from '../../../components/ScrollableWrapper';
+import {ActivityIndicator} from 'react-native';
+import {BusinessType} from '../Home';
+import BusinessTypeCard from '../../../components/BusinessTypeCard';
+import Toast from 'react-native-toast-message';
 
 const Favorite = () => {
   const [searchString, setSearchString] = useState('');
+  const [randomHexCodeArray, setRandomHexCodeArray] = useState<string[]>();
+
+  const [businessTypes, setBusinessTypes] = useState<BusinessType[]>();
+
+  const {data: BusinessTypesData, isSuccess: BusinessTypesIsSuccess} =
+    useBusinessTypesQuery(null);
+  const {data: FavoriteBusinessTypesData} =
+    useGetFavoriteBusinessTypesQuery(null);
+
+  const [markFavoriteBusiness, {isSuccess: MFBIsSuccess, isError: MFBIsError}] =
+    useMarkFavoriteBusinessMutation();
+
+  useEffect(() => {
+    if (BusinessTypesIsSuccess) {
+      const BusinessTypesArray = Object.keys(BusinessTypesData).map(
+        (key, index) => ({
+          id: index + 1,
+          name: key,
+          isFavorite:
+            key === 'Pop-up Store'
+              ? FavoriteBusinessTypesData?.includes('Pop Up Store')
+              : key === 'DJ'
+              ? FavoriteBusinessTypesData?.includes('Dj')
+              : FavoriteBusinessTypesData?.includes(key),
+          ...BusinessTypesData[key],
+        }),
+      );
+      setBusinessTypes(BusinessTypesArray.filter(item => item.isFavorite));
+    }
+  }, [FavoriteBusinessTypesData, BusinessTypesData, BusinessTypesIsSuccess]);
+
+  const {data: FBData, isSuccess: FBIsSuccess} =
+    useGetFavoriteBusinessQuery(null);
+
+  useEffect(() => {
+    if (FBIsSuccess) {
+      setRandomHexCodeArray(generateRandomHexCode(FBData.length));
+    }
+  }, [FBIsSuccess, FBData]);
+
+  useEffect(() => {
+    if (MFBIsSuccess) {
+      Toast.show({
+        type: 'success',
+        text1: 'Remove from favorite',
+        position: 'bottom',
+      });
+    } else if (MFBIsError) {
+      Toast.show({
+        type: 'error',
+        text1: 'Something went wrong',
+        position: 'bottom',
+      });
+    }
+  }, [MFBIsSuccess, MFBIsError]);
+
+  const handleFavoriteBusiness = (item: BusinessType) => {
+    const body = {
+      business_id: item.id,
+      is_favourite: 'False',
+    };
+    markFavoriteBusiness(body);
+  };
+  console.log('businessTypes -->', businessTypes);
+  const renderFavoriteBusiness = ({item, index}) => {
+    return (
+      <View style={styles.FBItemContainer}>
+        <View
+          style={[
+            styles.ImageContainer,
+            {
+              backgroundColor: randomHexCodeArray
+                ? randomHexCodeArray[index]
+                : Colors.green,
+            },
+          ]}>
+          <Text style={styles.ImageText}>{item.name.slice(0, 1)}</Text>
+        </View>
+        <View style={styles.ItemInfoContainer}>
+          <View style={styles.ItemNameDescContainer}>
+            <Text style={styles.NameText}>{item.name}</Text>
+            <Text style={styles.DescText}>{item.description}</Text>
+          </View>
+          <Pressable
+            onPress={() => {
+              handleFavoriteBusiness(item);
+            }}>
+            <Ionicons name="heart" size={wp(7)} color={Colors.orange} />
+          </Pressable>
+        </View>
+      </View>
+    );
+  };
+
+  const handleItemSeparator = () => <View style={styles.SeparatorContainer} />;
+
+  // const handleActivityIndicator = () => (
+  //   <ActivityIndicator size={'small'} color={Colors.gray} />
+  // );
+
   return (
     <View style={styles.root}>
       <View style={styles.HeaderContainer}>
@@ -21,7 +135,46 @@ const Favorite = () => {
           />
         </View>
       </View>
-      <View></View>
+      <ScrollableWrapper contentContainerStyle={styles.FavoriteContainer}>
+        {FBData?.length > 0 ? (
+          <FlashList
+            data={FBData}
+            bounces={false}
+            scrollEnabled={false}
+            estimatedItemSize={37}
+            showsVerticalScrollIndicator={false}
+            keyExtractor={item => item.id}
+            renderItem={renderFavoriteBusiness}
+            style={styles.FBFlashList}
+            contentContainerStyle={styles.FBFlashListContentStyle}
+            ItemSeparatorComponent={handleItemSeparator}
+            ListHeaderComponent={handleItemSeparator}
+            // ListEmptyComponent={handleActivityIndicator}
+          />
+        ) : businessTypes?.length > 0 ? (
+          <FlashList
+            data={businessTypes}
+            bounces={false}
+            scrollEnabled={false}
+            showsVerticalScrollIndicator={false}
+            numColumns={2}
+            estimatedItemSize={37}
+            keyExtractor={item => item.id.toString()}
+            renderItem={({item, index}) => {
+              return <BusinessTypeCard index={index} item={item} />;
+            }}
+            style={styles.FBFlashList}
+            contentContainerStyle={styles.FBTFlashListContentStyle}
+            ItemSeparatorComponent={handleItemSeparator}
+            // ListEmptyComponent={handleActivityIndicator}
+            ListHeaderComponent={handleItemSeparator}
+          />
+        ) : (
+          <Text style={styles.EmptyFavoriteBusinessText}>
+            Explore and add your favorite businesses
+          </Text>
+        )}
+      </ScrollableWrapper>
     </View>
   );
 };
@@ -35,7 +188,6 @@ const styles = StyleSheet.create({
   HeaderContainer: {
     width: wp(100),
     height: hp(14),
-    // backgroundColor: 'pink',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     borderBottomWidth: 1.5,
@@ -49,9 +201,76 @@ const styles = StyleSheet.create({
     color: Colors.green,
   },
   SearchContainer: {
-    shadowColor: '#000',
-    shadowOffset: {width: 1, height: 2},
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
+    backgroundColor: Colors.white,
+    // shadowColor: '#000',
+    // shadowOffset: {width: 1, height: 2},
+    // shadowOpacity: 0.2,
+    // shadowRadius: 3,
+  },
+  FavoriteContainer: {
+    // flex: 1,
+    width: wp(100),
+  },
+
+  FBFlashList: {
+    // width: wp(100),
+  },
+  FBFlashListContentStyle: {
+    paddingHorizontal: wp(4),
+  },
+  FBTFlashListContentStyle: {
+    paddingBottom: 20,
+  },
+  SeparatorContainer: {
+    height: wp(4),
+  },
+  FBItemContainer: {
+    flexDirection: 'row',
+    borderColor: Colors.gray,
+    borderWidth: 1,
+    borderRadius: 5,
+    padding: 10,
+    gap: 10,
+  },
+  ImageContainer: {
+    width: wp(15),
+    height: wp(15),
+    borderRadius: wp(7.5),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  ImageText: {
+    fontFamily: 'Inter Medium',
+    fontSize: wp(6),
+    color: Colors.white,
+  },
+  ItemInfoContainer: {
+    width: wp(70),
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  ItemNameDescContainer: {
+    gap: 5,
+  },
+  NameText: {
+    width: wp(55),
+    fontFamily: 'Inter Medium',
+    fontSize: wp(5),
+    color: Colors.black,
+  },
+  DescText: {
+    width: wp(55),
+    fontFamily: 'Inter Regular',
+    fontSize: wp(3.5),
+    flexWrap: 'wrap',
+    color: Colors.black,
+  },
+  EmptyFavoriteBusinessText: {
+    fontFamily: 'Inter Regular',
+    fontSize: wp(4),
+    color: Colors.black,
+    textAlign: 'center',
+    paddingTop: wp(4),
   },
 });
