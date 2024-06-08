@@ -76,3 +76,10 @@ export type ResetPasswordResponse = {
   message?: string;
   error?: string;
 };
+
+export type GetUserResponse = {
+  country_code: string;
+  email: string | null;
+  name: string;
+  phone_number: string;
+};

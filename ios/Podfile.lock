@@ -1001,6 +1001,27 @@ PODS:
     - Google-Maps-iOS-Utils (= 4.2.2)
     - GoogleMaps (= 7.4.0)
     - React-Core
+  - react-native-image-picker (7.1.2):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - react-native-maps (1.15.6):
     - React-Core
   - react-native-mmkv (2.12.2):
@@ -1372,6 +1393,7 @@ DEPENDENCIES:
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
   - react-native-google-maps (from `../node_modules/react-native-maps`)
+  - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-maps (from `../node_modules/react-native-maps`)
   - react-native-mmkv (from `../node_modules/react-native-mmkv`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
@@ -1484,6 +1506,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   react-native-google-maps:
     :path: "../node_modules/react-native-maps"
+  react-native-image-picker:
+    :path: "../node_modules/react-native-image-picker"
   react-native-maps:
     :path: "../node_modules/react-native-maps"
   react-native-mmkv:
@@ -1590,6 +1614,7 @@ SPEC CHECKSUMS:
   React-logger: 7e7403a2b14c97f847d90763af76b84b152b6fce
   React-Mapbuffer: 11029dcd47c5c9e057a4092ab9c2a8d10a496a33
   react-native-google-maps: 7ca1d252585c9ee2bbe2a3f64e4c061801b43d64
+  react-native-image-picker: c3afe5472ef870d98a4b28415fc0b928161ee5f7
   react-native-maps: 7b2c2cee95271592a92ba485eea1dec66a363a6e
   react-native-mmkv: 8c9a677e64a1ac89b0c6cf240feea528318b3074
   react-native-safe-area-context: dcab599c527c2d7de2d76507a523d20a0b83823d

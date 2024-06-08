@@ -9,6 +9,7 @@ import IsSellerOrCustomer from '../screens/NativeStack/IsSellerOrCustomer';
 import AddBusiness from '../screens/NativeStack/AddBusiness';
 import AddInventory from '../screens/NativeStack/AddInventory';
 import BottomTabNavigator from './BottomTabNavigator';
+import {accessToken} from '../screens/common';
 
 export type RootStackParams = {
   SignIn: undefined;
@@ -47,7 +48,7 @@ const RootStack = createNativeStackNavigator<RootStackParams>();
 const StackNavigator = () => {
   return (
     <RootStack.Navigator
-      initialRouteName="BottomTabNavigator"
+      initialRouteName={accessToken ? 'BottomTabNavigator' : 'SignIn'}
       screenOptions={{
         headerShown: false,
       }}>

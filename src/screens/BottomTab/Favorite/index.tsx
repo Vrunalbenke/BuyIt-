@@ -187,12 +187,12 @@ const styles = StyleSheet.create({
   },
   HeaderContainer: {
     width: wp(100),
-    height: hp(14),
+    height: hp(12),
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     borderBottomWidth: 1.5,
     borderBottomColor: '#d2d2d2',
-    paddingVertical: wp(4),
+    paddingVertical: wp(2),
   },
   HeaderText: {
     paddingHorizontal: wp(2),

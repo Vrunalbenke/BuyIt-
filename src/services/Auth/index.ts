@@ -3,6 +3,7 @@ import env from '../../env';
 import {
   CreateUserRequest,
   CreateUserResponse,
+  GetUserResponse,
   LoginRequest,
   LoginResponse,
   ResetPasswordRequest,
@@ -12,11 +13,22 @@ import {
   ValidateOTPRequest,
   ValidateOTPResponse,
 } from './authTypes';
+import {accessToken} from '../../screens/common';
 
 export const AuthApi = createApi({
   reducerPath: 'AuthApi',
-  baseQuery: fetchBaseQuery({baseUrl: env.APP_URL}),
+  baseQuery: fetchBaseQuery({
+    baseUrl: env.APP_URL,
+    prepareHeaders: (headers, {endpoint}) => {
+      if (endpoint === 'getUser') {
+        headers.set('x-access-token', accessToken);
+      }
+      return headers;
+    },
+  }),
+
   tagTypes: [],
+
   endpoints: builder => ({
     login: builder.mutation<LoginResponse, LoginRequest>({
       query: body => ({
@@ -59,6 +71,9 @@ export const AuthApi = createApi({
         body: body,
       }),
     }),
+    getUser: builder.query<GetUserResponse, null>({
+      query: () => '/user',
+    }),
   }),
 });
 
@@ -68,4 +83,5 @@ export const {
   useValidateOTPMutation,
   useCreateUserMutation,
   useResetPasswordMutation,
+  useGetUserQuery,
 } = AuthApi;

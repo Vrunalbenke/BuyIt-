@@ -39,6 +39,11 @@
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Allow access to select a photo from gallery</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Allow access to scan business QR code</string>
+
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>

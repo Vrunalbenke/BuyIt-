@@ -31,7 +31,7 @@ const BottomTabNavigator = () => {
   return (
     <RootBottomTab.Navigator
       tabBar={CustomBottomTabs}
-      initialRouteName="Favorite"
+      // initialRouteName="Favorite"
       screenOptions={{
         headerShown: false,
       }}>

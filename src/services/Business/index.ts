@@ -26,7 +26,7 @@ export const BusinessApi = createApi({
       }
       if (
         endpoint === 'markFavouriteBusinessType' ||
-        endpoint === 'getFavouriteBusinesses'
+        endpoint === 'getFavoriteBusiness'
       ) {
         headers.set('x-refresh-token', refreshToken);
       }
