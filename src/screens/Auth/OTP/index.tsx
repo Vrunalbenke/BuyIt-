@@ -26,6 +26,7 @@ import {forgotPasswordSchema} from '../authType';
 import {zodResolver} from '@hookform/resolvers/zod';
 import Toast from 'react-native-toast-message';
 import {storage} from '../../../../App';
+import {DeviceEventEmitter} from 'react-native';
 
 type ForgotPasswordFields = z.infer<typeof forgotPasswordSchema>;
 
@@ -142,6 +143,7 @@ const OTP = ({route, navigation}: OTPProps) => {
     if (createUserIsSuccess) {
       const tokenData = JSON.stringify(createUserData);
       storage.set('token', tokenData);
+      DeviceEventEmitter.emit('token', tokenData);
       navigation.navigate('IsSellerOrCustomer');
       console.log('Stored User Login Data -->', storage.getString('token'));
     }

@@ -1,44 +1,89 @@
-import React from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {View, Text, StyleSheet, Pressable} from 'react-native';
 import {Colors} from '../../../resources/colors';
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
-// import AccountProfileIcon from '../../../../assets/svg/accountProfile.svg';
+import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import ProfileIcon from '../../../../assets/svg/profile.svg';
-import {useGetUserQuery} from '../../../services/Auth';
-import LargeButton from '../../../components/LargeButton';
 import {storage} from '../../../../App';
 import {RootBottomTabParams} from '../../../navigation/BottomTabNavigator';
 import {BottomTabScreenProps} from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {FlashList} from '@shopify/flash-list';
+import ScreenList, {ItemObjectProp} from '../../../components/ScreenList';
+import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet';
+import EditProfileBottomSheet from '../../../components/EditProfileBottomSheet';
+import FastImage from 'react-native-fast-image';
+import {useSelector} from 'react-redux';
 
 const Profile = ({
   navigation,
 }: BottomTabScreenProps<RootBottomTabParams, 'Profile'>) => {
+  const EditBottomSheetRef = useRef<BottomSheet>(null);
+  const [profileImage, setProfileImage] = useState();
+  const {userData, userProfileImage} = useSelector(state => state?.user);
   const ScreenListData = [
     {
+      id: '1',
       title: 'Businesses',
       icon: 'briefcase-outline',
       naviagteTo: 'MyBusiness',
       navigationParams: '',
     },
     {
-      title: 'Setting',
-      icon: 'settings-outline',
+      id: '2',
+      title: 'Subscription',
+      icon: 'card-outline',
       naviagteTo: 'Setting',
       navigationParams: '',
     },
     {
+      id: '3',
       title: 'Setting',
       icon: 'settings-outline',
       naviagteTo: 'Setting',
       navigationParams: '',
     },
   ];
-  const {data: GUData} = useGetUserQuery(null);
-  console.log(GUData, 'User');
+
+  const LogoutData = {
+    id: '1',
+    title: 'Logout',
+    icon: 'person-outline',
+    rightIcon: 'log-out-outline',
+    naviagteTo: 'Setting',
+    navigationParams: '',
+  };
+
+  const handleLogout = () => {
+    storage.delete('token');
+    storage.delete('profileImage');
+    navigation.reset({
+      index: 0,
+      routes: [
+        {
+          name: 'SignIn',
+        },
+      ],
+    });
+  };
+
+  useEffect(() => {
+    console.log('userProfileImage', userProfileImage);
+    setProfileImage(userProfileImage);
+  }, [userProfileImage]);
+
+  const renderSeparator = () => {
+    return <View style={styles.ItemSeparator} />;
+  };
+
+  const handleScreenListNavigation = (item: ItemObjectProp) => {
+    navigation.navigate(item?.naviagteTo, {
+      ...item?.navigationParams,
+    });
+  };
+
+  const handleEditProfile = () => {
+    EditBottomSheetRef.current?.snapToIndex(0);
+  };
   return (
     <View style={styles.root}>
       <View style={styles.HeaderContainer}>
@@ -46,52 +91,64 @@ const Profile = ({
       </View>
       <View style={styles.ProfileContainer}>
         <View style={styles.ProfileLeftContainer}>
-          <View style={styles.ProfileIconContainer}>
-            <ProfileIcon
-              height={wp(20)}
-              width={wp(20)}
-              fill={Colors.darkGray}
+          {profileImage ? (
+            <FastImage
+              style={styles.ProfileImage}
+              source={{
+                uri: profileImage,
+                headers: {Authorization: 'someAuthToken'},
+                priority: FastImage.priority.normal,
+                cache: FastImage.cacheControl.immutable,
+              }}
+              resizeMode={FastImage.resizeMode.cover}
             />
-          </View>
-          <View style={styles.UserInfoContainer}>
-            <Text style={styles.NameText}>{GUData?.name}</Text>
-            <View style={styles.ContantInfoContainer}>
-              <Ionicons name="call" size={18} color={Colors.gray} />
-              <Text style={styles.phoneText}>{GUData?.phone_number}</Text>
+          ) : (
+            <View style={styles.ProfileIconContainer}>
+              <ProfileIcon
+                height={wp(20)}
+                width={wp(20)}
+                fill={Colors.orange}
+              />
             </View>
-            {!GUData?.email && (
+          )}
+          <View style={styles.UserInfoContainer}>
+            <Text style={styles.NameText}>{userData?.name}</Text>
+            <View style={styles.ContantInfoContainer}>
+              <Ionicons name="call" size={18} color={Colors.orange} />
+              <Text style={styles.phoneText}>{userData?.phone_number}</Text>
+            </View>
+            {userData?.email && (
               <View style={styles.ContantInfoContainer}>
-                <Ionicons name="mail" size={18} color={Colors.gray} />
-                <Text style={styles.EmailText}>{GUData?.email}</Text>
+                <Ionicons name="mail" size={18} color={Colors.orange} />
+                <Text style={styles.EmailText}>{userData?.email}</Text>
               </View>
             )}
           </View>
         </View>
+
         <View style={styles.EditIconPressable}>
-          <Pressable>
+          <Pressable onPress={handleEditProfile}>
             <Ionicons name="create-outline" size={20} color={Colors.orange} />
           </Pressable>
         </View>
       </View>
-
-      {/* <LargeButton
-        BTNText={'logout'}
-        onPress={() => {
-          storage.delete('token');
-          navigation.reset({
-            index: 0,
-            routes: [
-              {
-                name: 'SignIn',
-              },
-            ],
-          });
-        }}
-        isDisable={false}
-        isSkipBtn={false}
-        loader={false}
-        isPasswordUpdate={false}
-      /> */}
+      <View style={styles.ScreenListContainer}>
+        <FlashList
+          data={ScreenListData}
+          bounces={false}
+          estimatedItemSize={4}
+          showsVerticalScrollIndicator={false}
+          keyExtractor={item => item.id}
+          renderItem={({item}) => (
+            <ScreenList item={item} onPress={handleScreenListNavigation} />
+          )}
+          ItemSeparatorComponent={renderSeparator}
+        />
+      </View>
+      <View>
+        <ScreenList item={LogoutData} onPress={handleLogout} />
+      </View>
+      <EditProfileBottomSheet Ref={EditBottomSheetRef} UserData={userData} />
     </View>
   );
 };
@@ -123,6 +180,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: wp(20),
   },
+  ProfileImage: {
+    height: wp(20),
+    width: wp(20),
+    borderRadius: wp(10),
+  },
   ProfileLeftContainer: {
     flexDirection: 'row',
     gap: 10,
@@ -144,7 +206,7 @@ const styles = StyleSheet.create({
   },
   NameText: {
     fontFamily: 'Inter Medium',
-    fontSize: wp(4.5),
+    fontSize: wp(5),
   },
   phoneText: {
     fontFamily: 'Inter Regular',
@@ -155,9 +217,12 @@ const styles = StyleSheet.create({
     fontSize: wp(3.5),
   },
   EditIconPressable: {
-    // justifyContent: 'flex-start',
-    // alignItems: 'flex-start',
-    // backgroundColor: 'pink',
     height: '100%',
+  },
+  ScreenListContainer: {
+    flex: 1,
+  },
+  ItemSeparator: {
+    borderWidth: 0.5,
   },
 });

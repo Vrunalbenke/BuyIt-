@@ -20,6 +20,25 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLName</key>
+	<string>branchURIScheme</string>
+	<key>CFBundleURLSchemes</key>
+	<array>
+		<string>venditapp</string>
+	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>branchURIScheme</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>venditapp</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
@@ -37,13 +56,12 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Allow access to scan business QR code</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Allow access to select a photo from gallery</string>
-	<key>NSCameraUsageDescription</key>
-	<string>Allow access to scan business QR code</string>
-
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
@@ -93,5 +111,18 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>branch_key</key>
+	<dict>
+		<key>live</key>
+		<string>key_live_gEdTiUTJR6i9suP91GMoxifkCzcb0lxc</string>
+		<key>test</key>
+		<string>key_test_aCgReJINQ7f4qEU44I23addmrBgh3jtr</string>
+	</dict>
+	<key>branch_universal_link_domains</key>
+	<array>
+		<string>ot68s.app.link</string>
+		<string>ot68s-alternate.app.link</string>
+		<string>ot68s.test.app.link</string>
+	</array>
 </dict>
 </plist>

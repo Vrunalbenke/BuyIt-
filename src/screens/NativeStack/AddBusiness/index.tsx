@@ -26,17 +26,19 @@ import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSh
 import {
   useBusinessTypesQuery,
   useCreateBusinessMutation,
+  useUpdateBusinessMutation,
 } from '../../../services/Business';
 import PressableInput from '../../../components/PressableInput';
 import {zodResolver} from '@hookform/resolvers/zod';
 import Toast from 'react-native-toast-message';
 
-type AddBusinessFields = z.infer<typeof AddBusinessSchema>;
+export type AddBusinessFields = z.infer<typeof AddBusinessSchema>;
 
 const AddBusiness = ({
   route,
   navigation,
 }: NativeStackScreenProps<RootStackParams, 'AddBusiness'>) => {
+  const {isFromSignUp, isUpdate = false, EditBusiness = null} = route.params;
   const {
     control,
     setValue,
@@ -47,9 +49,6 @@ const AddBusiness = ({
     defaultValues: {
       country_cca2: 'US',
       country_code: '+1',
-      is_service: false,
-      share_email: 'False',
-      share_phone: 'False',
       useLocation: 'True',
       latitude: '18.447790',
       longitude: '73.882881',
@@ -74,6 +73,17 @@ const AddBusiness = ({
     },
   ] = useCreateBusinessMutation();
 
+  const [
+    updateBusiness,
+    {
+      data: UpdateBusinessData,
+      isSuccess: UpdateBusinessIsSuccess,
+      isLoading: UpdateBusinessIsLoading,
+      isError: UpdateBusinessIsError,
+      error: UpdateBusinessError,
+    },
+  ] = useUpdateBusinessMutation();
+
   useEffect(() => {
     if (businessTypesIsSuccess) {
       const businessTypesArray = Object.keys(businessTypesData).map(
@@ -86,20 +96,85 @@ const AddBusiness = ({
       setBusinessTypes(businessTypesArray);
     }
   }, [businessTypesIsSuccess, businessTypesData]);
+  useEffect(() => {
+    if (EditBusiness) {
+      const editData = EditBusiness;
+
+      const fieldsToSet: (keyof AddBusinessFields)[] = [
+        'country_cca2',
+        'country_code',
+        'phone_number',
+        'name',
+        'business_type',
+        'is_service',
+        'email',
+        'description',
+        'radius_served',
+        'website',
+        'facebook',
+        'instagram',
+        'share_email',
+        'share_phone',
+        'latitude',
+        'longitude',
+        'useLocation',
+      ];
+
+      fieldsToSet.forEach(field => {
+        if (
+          field in editData &&
+          editData[field] !== null &&
+          editData[field] !== 'None'
+        ) {
+          setValue(field, editData[field]);
+        }
+      });
+
+      if (editData.office_location) {
+        setValue('office_location', {
+          latitude: editData.office_location.latitude,
+          longitude: editData.office_location.longitude,
+        });
+      }
+
+      setValue('is_service', Boolean(editData.is_service));
+      setValue('share_email', editData.share_email);
+      setValue('share_phone', editData.share_phone);
+
+      if (editData.business_type) {
+        const businessType = businessTypes?.find(
+          type => type.name === editData.business_type,
+        );
+        if (businessType) {
+          setValue('url', businessType.business_icon);
+        }
+      }
+    }
+  }, [EditBusiness, setValue, businessTypes]);
 
   useEffect(() => {
     if (CreateBusinessIsSuccess) {
       console.log('Business Created -->', CreateBusinessData);
-      Toast.show({
-        type: 'success',
-        text1: 'Business Created SuccessFully',
-        position: 'bottom',
-      });
-      navigation.navigate('AddInventory', {
-        is_service: CreateBusinessData[0].is_service,
-        from_business: !route.params.isFromSignUp,
-        business_id: CreateBusinessData[0].id,
-      });
+      if (!isUpdate) {
+        Toast.show({
+          type: 'success',
+          text1: 'Business Created SuccessFully',
+          position: 'bottom',
+        });
+        navigation.navigate('AddInventory', {
+          is_service: CreateBusinessData[0].is_service,
+          from_business: !route.params.isFromSignUp,
+          business_id: CreateBusinessData[0].id,
+          business_type: CreateBusinessData[0].business_type,
+        });
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: 'Something went wrong',
+          position: 'bottom',
+        });
+        // navigation.goBack();
+      }
     }
     if (CreateBusinessIsError) {
       console.log('Business Error -->', CreateBusinessError);
@@ -114,7 +189,40 @@ const AddBusiness = ({
     CreateBusinessIsSuccess,
     CreateBusinessError,
     CreateBusinessIsError,
-    navigation,
+  ]);
+
+  useEffect(() => {
+    if (UpdateBusinessIsSuccess) {
+      console.log('Business Updated -->', UpdateBusinessData);
+      if (!isUpdate) {
+        Toast.show({
+          type: 'success',
+          text1: 'Business Updated SuccessFully',
+          position: 'bottom',
+        });
+
+        navigation.goBack();
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: 'Something went wrong',
+          position: 'bottom',
+        });
+      }
+    }
+    if (UpdateBusinessIsError) {
+      console.log('Updating Business Error -->', UpdateBusinessError);
+      Toast.show({
+        type: 'error',
+        text1: 'Something went wrong',
+        position: 'bottom',
+      });
+    }
+  }, [
+    UpdateBusinessData,
+    UpdateBusinessIsSuccess,
+    UpdateBusinessError,
+    UpdateBusinessIsError,
   ]);
 
   const handleToggle = (value: boolean, label: string) => {
@@ -126,6 +234,7 @@ const AddBusiness = ({
   };
 
   const handleAddBusiness = (data: AddBusinessFields) => {
+    console.log('Updated Business info', data);
     data.business_type =
       data.business_type === 'Pop-up Store' ? 'PopUpStore' : data.business_type;
     data.business_type = data.business_type.replace(/\s/g, '');
@@ -156,10 +265,55 @@ const AddBusiness = ({
       createBusiness(rest);
     }
   };
+
+  const handleUpdateBusiness = (data: AddBusinessFields) => {
+    console.log('Update Business Data ', data);
+    if (data.is_service) {
+      const {country_cca2, is_service, url, useLocation, ...rest} = data;
+      if (!rest.email) {
+        rest.email = '';
+      }
+      if (!rest.description) {
+        rest.description = '';
+      }
+      if (!rest.phone_number) {
+        rest.phone_number = '';
+      }
+      rest['business_id'] = EditBusiness?.id;
+      console.log('Before calling Update business API', rest);
+      updateBusiness(rest);
+    } else {
+      const {
+        country_cca2,
+        is_service,
+        url,
+        radius_served,
+        office_location,
+        website,
+        facebook,
+        instagram,
+        useLocation,
+        ...rest
+      } = data;
+      if (!rest.email) {
+        rest.email = '';
+      }
+      if (!rest.description) {
+        rest.description = '';
+      }
+      if (!rest.phone_number) {
+        rest.phone_number = '';
+      }
+      rest['id'] = EditBusiness?.id;
+      updateBusiness(rest);
+    }
+  };
   const url = watch('url');
   const email = watch('email');
   const phone = watch('phone_number');
   const isService = watch('is_service');
+  const shareEmail = watch('share_email');
+  const sharePhone = watch('share_phone');
 
   const handleSetBusinessType = useCallback(
     (item: businessTypesObject) => {
@@ -174,7 +328,7 @@ const AddBusiness = ({
 
   const handleBottomSheet = () => {
     if (businessTypesData) {
-      bottomSheetRef.current?.snapToIndex(0);
+      bottomSheetRef.current?.snapToIndex(2);
     }
   };
   return (
@@ -330,20 +484,28 @@ const AddBusiness = ({
             label="Email"
             changeValue={handleToggle}
             disabled={email === undefined || email === ''}
+            value={shareEmail}
           />
           <ToggleSwitch
             label="Phone"
             changeValue={handleToggle}
             disabled={isService ? false : phone === undefined}
+            value={sharePhone}
           />
           {errors.share_phone?.message && errors.share_email?.message && (
             <Text style={styles.ErrorText}>{errors.share_phone?.message}</Text>
           )}
         </View>
         <LargeButton
-          BTNText="Next"
-          onPress={handleSubmit(handleAddBusiness)}
-          isDisable={CreateBusinessIsLoading}
+          BTNText={isUpdate ? 'Update' : 'Next'}
+          onPress={
+            isUpdate
+              ? handleSubmit(handleUpdateBusiness)
+              : handleSubmit(handleAddBusiness)
+          }
+          isDisable={
+            isUpdate ? UpdateBusinessIsLoading : CreateBusinessIsLoading
+          }
           loader={true}
         />
       </View>

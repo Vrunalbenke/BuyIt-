@@ -4,6 +4,7 @@ import HomeIcon from '../../../assets/svg/home.svg';
 import LocationIcon from '../../../assets/svg/location.svg';
 import FavoriteIcon from '../../../assets/svg/favorite.svg';
 import ProfileIcon from '../../../assets/svg/profile.svg';
+import ChatsIcon from '../../../assets/svg/chats.svg';
 import {Colors} from '../../resources/colors';
 import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 type BottomTabIconProp = {
@@ -44,6 +45,14 @@ const BottomTabIcon = ({route, isFocused}: BottomTabIconProp) => {
       case 'Profile':
         return (
           <ProfileIcon
+            height={height}
+            width={width}
+            fill={isRouteFocused ? Colors.green : Colors.white}
+          />
+        );
+      case 'Chats':
+        return (
+          <ChatsIcon
             height={height}
             width={width}
             fill={isRouteFocused ? Colors.green : Colors.white}

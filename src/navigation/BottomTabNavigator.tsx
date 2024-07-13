@@ -8,6 +8,7 @@ import Location from '../screens/BottomTab/Location';
 import Favorite from '../screens/BottomTab/Favorite';
 import Profile from '../screens/BottomTab/Profile';
 import CustomBottomTab from '../components/CustomBottomTab';
+import Chats from '../screens/BottomTab/Chats';
 
 export type RootBottomTabParams = {
   Home: undefined;
@@ -19,6 +20,7 @@ export type RootBottomTabParams = {
   };
   Favorite: undefined;
   Profile: undefined;
+  Chats: undefined;
 };
 
 const RootBottomTab = createBottomTabNavigator<RootBottomTabParams>();
@@ -38,6 +40,7 @@ const BottomTabNavigator = () => {
       <RootBottomTab.Screen name={'Home'} component={Home} />
       <RootBottomTab.Screen name={'Location'} component={Location} />
       <RootBottomTab.Screen name={'Favorite'} component={Favorite} />
+      <RootBottomTab.Screen name={'Chats'} component={Chats} />
       <RootBottomTab.Screen name={'Profile'} component={Profile} />
     </RootBottomTab.Navigator>
   );

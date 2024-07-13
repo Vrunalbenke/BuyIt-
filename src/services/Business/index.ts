@@ -126,6 +126,33 @@ export const BusinessApi = createApi({
       }),
       invalidatesTags: ['favoriteBusiness'],
     }),
+    getBusinessProduct: builder.query<null, null>({
+      query: alias => `/getItems?alias=${alias}`,
+    }),
+    getProductsImages: builder.mutation({
+      query: body => ({
+        url: '/getDefaultItems',
+        method: 'POST',
+        body: body,
+        headers: {
+          'x-access-token': accessToken,
+        },
+      }),
+    }),
+
+    getOwnedBusinesses: builder.query({
+      query: () => '/getOwned',
+    }),
+    updateBusiness: builder.mutation({
+      query: body => ({
+        url: '/update',
+        method: 'PUT',
+        body: body,
+        headers: {
+          'x-access-token': accessToken,
+        },
+      }),
+    }),
   }),
 });
 
@@ -133,6 +160,7 @@ export const {
   useBusinessTypesQuery,
   useGetFavoriteBusinessTypesQuery,
   useGetFavoriteBusinessQuery,
+  useGetBusinessProductQuery,
   useCreateBusinessMutation,
   useGetDefaultItemsMutation,
   useGetUnitsMutation,
@@ -143,4 +171,7 @@ export const {
   useMarkFavoriteBusinessMutation,
   useSearchBusinessMutation,
   useBusinessByTypeQuery,
+  useGetProductsImagesMutation,
+  useGetOwnedBusinessesQuery,
+  useUpdateBusinessMutation,
 } = BusinessApi;

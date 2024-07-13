@@ -13,12 +13,15 @@ import {ThemeContext} from '../../../resources/themes';
 import LargeButton from '../../../components/LargeButton';
 import {Colors} from '../../../resources/colors';
 import TextIconButton from '../../../components/TextIconButton';
-import {useLoginMutation} from '../../../services/Auth';
+import {useLazyGetUserQuery, useLoginMutation} from '../../../services/Auth';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParams} from '../../../navigation/StackNavigator';
 import Toast from 'react-native-toast-message';
 import {storage} from '../../../../App';
+import {DeviceEventEmitter} from 'react-native';
+import {useDispatch} from 'react-redux';
+import {setUser} from '../../../Slice/userSlice';
 
 type LoginFields = z.infer<typeof loginSchema>;
 
@@ -37,28 +40,38 @@ const SignIn = ({navigation}: SignInProps) => {
     resolver: zodResolver(loginSchema),
   });
   const scheme = useContext(ThemeContext);
+  const dispatch = useDispatch();
 
   const [
     login,
     {data: LoginResponse, isError, error, isLoading, isSuccess, originalArgs},
   ] = useLoginMutation();
 
+  const [
+    trigger,
+    {
+      data: GUData,
+      isSuccess: GUIsSuccess,
+      error: GUError,
+      isError: GUIsError,
+      isLoading: GUIsLoading,
+    },
+  ] = useLazyGetUserQuery();
+
   if (originalArgs) {
     console.log('URL passed:', originalArgs);
   }
 
   useEffect(() => {
-    console.log('LoginResponse: ', LoginResponse);
-    console.log('error: ', error);
-
-    if (isSuccess) {
-      Toast.show({
-        type: 'success',
-        text1: 'Logged in',
-        position: 'bottom',
-      });
-      const tokenData = JSON.stringify(LoginResponse);
-      storage.set('token', tokenData);
+    if (GUIsSuccess) {
+      console.log(originalArgs?.country_cca2, 'User data', GUData);
+      const data = {
+        country_flag: originalArgs?.country_cca2,
+        ...GUData,
+      };
+      dispatch(setUser(data));
+      storage.set('user', JSON.stringify(data));
+      DeviceEventEmitter.emit('user', data);
       navigation.reset({
         index: 0,
         routes: [
@@ -70,7 +83,25 @@ const SignIn = ({navigation}: SignInProps) => {
           },
         ],
       });
+    } else if (GUIsError) {
+      console.log(GUError, 'Error While getting user');
+    }
+  }, [GUData, GUIsSuccess, GUIsError, GUError]);
+
+  useEffect(() => {
+    if (isSuccess) {
+      console.log('LoginResponse: ', LoginResponse);
+      Toast.show({
+        type: 'success',
+        text1: 'Logged in',
+        position: 'bottom',
+      });
+      const tokenData = JSON.stringify(LoginResponse);
+      storage.set('token', tokenData);
+      DeviceEventEmitter.emit('token', tokenData);
+      trigger();
     } else if (isError) {
+      console.log('error: ', error);
       Toast.show({
         type: 'error',
         text1: error?.data?.error || 'Something went wrong',
@@ -138,7 +169,7 @@ const SignIn = ({navigation}: SignInProps) => {
         <LargeButton
           BTNText="Next"
           onPress={handleSubmit(handleData)}
-          isDisable={isLoading}
+          isDisable={isLoading || GUIsLoading}
           loader={true}
         />
         <LargeButton

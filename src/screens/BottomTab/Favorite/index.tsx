@@ -16,7 +16,6 @@ import {FlashList} from '@shopify/flash-list';
 import {generateRandomHexCode} from '../../../utils/RandomHexCodeGenerator';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ScrollableWrapper from '../../../components/ScrollableWrapper';
-import {ActivityIndicator} from 'react-native';
 import {BusinessType} from '../Home';
 import BusinessTypeCard from '../../../components/BusinessTypeCard';
 import Toast from 'react-native-toast-message';
@@ -25,7 +24,7 @@ const Favorite = () => {
   const [searchString, setSearchString] = useState('');
   const [randomHexCodeArray, setRandomHexCodeArray] = useState<string[]>();
 
-  const [businessTypes, setBusinessTypes] = useState<BusinessType[]>();
+  const [businessTypes, setBusinessTypes] = useState<BusinessType[]>([]);
 
   const {data: BusinessTypesData, isSuccess: BusinessTypesIsSuccess} =
     useBusinessTypesQuery(null);
@@ -49,6 +48,10 @@ const Favorite = () => {
               : FavoriteBusinessTypesData?.includes(key),
           ...BusinessTypesData[key],
         }),
+      );
+      console.log(
+        '🦓🦓🦓🦓🦓🦓🦓🦓🦓🦓',
+        BusinessTypesArray.filter(item => item.isFavorite),
       );
       setBusinessTypes(BusinessTypesArray.filter(item => item.isFavorite));
     }
@@ -86,6 +89,7 @@ const Favorite = () => {
     };
     markFavoriteBusiness(body);
   };
+
   console.log('businessTypes -->', businessTypes);
   const renderFavoriteBusiness = ({item, index}) => {
     return (
@@ -136,7 +140,7 @@ const Favorite = () => {
         </View>
       </View>
       <ScrollableWrapper contentContainerStyle={styles.FavoriteContainer}>
-        {FBData?.length > 0 ? (
+        {FBData !== undefined && FBData?.length > 0 && (
           <FlashList
             data={FBData}
             bounces={false}
@@ -151,7 +155,8 @@ const Favorite = () => {
             ListHeaderComponent={handleItemSeparator}
             // ListEmptyComponent={handleActivityIndicator}
           />
-        ) : businessTypes?.length > 0 ? (
+        )}
+        {businessTypes?.length > 0 && (
           <FlashList
             data={businessTypes}
             bounces={false}
@@ -169,11 +174,13 @@ const Favorite = () => {
             // ListEmptyComponent={handleActivityIndicator}
             ListHeaderComponent={handleItemSeparator}
           />
-        ) : (
-          <Text style={styles.EmptyFavoriteBusinessText}>
-            Explore and add your favorite businesses
-          </Text>
         )}
+        {businessTypes?.length === 0 &&
+          (FBData === undefined || FBData?.length === 0) && (
+            <Text style={styles.EmptyFavoriteBusinessText}>
+              Explore and add your favorite businesses
+            </Text>
+          )}
       </ScrollableWrapper>
     </View>
   );
@@ -233,9 +240,9 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   ImageContainer: {
-    width: wp(15),
-    height: wp(15),
-    borderRadius: wp(7.5),
+    width: wp(13),
+    height: wp(13),
+    borderRadius: wp(6.5),
     justifyContent: 'center',
     alignItems: 'center',
   },

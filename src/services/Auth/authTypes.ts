@@ -65,14 +65,14 @@ export type CreateUserResponse = {
   };
 };
 
-export type ResetPasswordRequest = {
+export type RPasswordRequest = {
   country_code: string;
   phone_number: string;
   new_password: string;
   confirm_password: string;
 };
 
-export type ResetPasswordResponse = {
+export type RPasswordResponse = {
   message?: string;
   error?: string;
 };
@@ -82,4 +82,22 @@ export type GetUserResponse = {
   email: string | null;
   name: string;
   phone_number: string;
+};
+
+export type UpdateUserResponse = {
+  message?: string;
+  error?: string;
+};
+
+export type UpdateUserRequest = {
+  email: string;
+  name: string;
+};
+export type USRadiusRequest = {
+  device_id: string;
+  search_radius: number;
+};
+
+export type USRadiusResponse = {
+  message: string;
 };

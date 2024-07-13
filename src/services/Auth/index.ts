@@ -6,14 +6,18 @@ import {
   GetUserResponse,
   LoginRequest,
   LoginResponse,
-  ResetPasswordRequest,
-  ResetPasswordResponse,
+  RPasswordRequest,
+  RPasswordResponse,
+  UpdateUserRequest,
+  UpdateUserResponse,
   ValidateNumberRequest,
   ValidateNumberResponse,
   ValidateOTPRequest,
   ValidateOTPResponse,
+  USRadiusRequest,
+  USRadiusResponse,
 } from './authTypes';
-import {accessToken} from '../../screens/common';
+import {accessToken, refreshToken} from '../../screens/common';
 
 export const AuthApi = createApi({
   reducerPath: 'AuthApi',
@@ -22,12 +26,14 @@ export const AuthApi = createApi({
     prepareHeaders: (headers, {endpoint}) => {
       if (endpoint === 'getUser') {
         headers.set('x-access-token', accessToken);
+      } else if (endpoint === 'updateUser') {
+        headers.set('x-access-token', accessToken);
       }
       return headers;
     },
   }),
 
-  tagTypes: [],
+  tagTypes: ['user'],
 
   endpoints: builder => ({
     login: builder.mutation<LoginResponse, LoginRequest>({
@@ -61,10 +67,7 @@ export const AuthApi = createApi({
         body: body,
       }),
     }),
-    resetPassword: builder.mutation<
-      ResetPasswordResponse,
-      ResetPasswordRequest
-    >({
+    resetPassword: builder.mutation<RPasswordResponse, RPasswordRequest>({
       query: body => ({
         url: 'resetPassword',
         method: 'POST',
@@ -73,6 +76,26 @@ export const AuthApi = createApi({
     }),
     getUser: builder.query<GetUserResponse, null>({
       query: () => '/user',
+      providesTags: ['user'],
+    }),
+    updateUser: builder.mutation<UpdateUserResponse, UpdateUserRequest>({
+      query: body => ({
+        url: 'user/update',
+        method: 'POST',
+        body: body,
+      }),
+      invalidatesTags: ['user'],
+    }),
+    updateSearchRadius: builder.mutation<USRadiusResponse, USRadiusRequest>({
+      query: body => ({
+        url: '/user/update_search_radius',
+        method: 'POST',
+        body: body,
+        headers: {
+          'x-access-token': accessToken,
+          'x-refresh-token': refreshToken,
+        },
+      }),
     }),
   }),
 });
@@ -83,5 +106,8 @@ export const {
   useValidateOTPMutation,
   useCreateUserMutation,
   useResetPasswordMutation,
+  useLazyGetUserQuery,
   useGetUserQuery,
+  useUpdateUserMutation,
+  useUpdateSearchRadiusMutation,
 } = AuthApi;

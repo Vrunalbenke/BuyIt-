@@ -57,9 +57,7 @@ const AddInventory = ({
   const {control, handleSubmit, setValue, watch, reset} =
     useForm<AddInventoryFields>({
       resolver: zodResolver(AddItemSchema),
-      defaultValues: {
-        business_id: '7',
-      },
+      defaultValues: {},
     });
   const itemBottomSheetRef = useRef<BottomSheet>(null);
   const unitBottomSheetRef = useRef<BottomSheet>(null);
@@ -121,17 +119,15 @@ const AddInventory = ({
   ] = useDeleteItemMutation();
 
   useEffect(() => {
-    if (route.params?.from_business || true) {
-      const body = {
-        business_type: 'MexicanFoodTruck',
-        business_id: '7',
-        // business_type: route.params?.business_type,
-        // business_id: route.params?.id,
-      };
-      getDefaultItems(body);
-      getUnits(body);
-    }
+    const body = {
+      business_type: route.params.business_type,
+      business_id: route.params.business_id,
+    };
+    setValue('business_id', route.params.business_id);
+    getDefaultItems(body);
+    getUnits(body);
   }, []);
+
   useEffect(() => {
     console.log('DeleteItemData --> ', DeleteItemData);
     if (DeleteItemIsSuccess) {
@@ -154,6 +150,7 @@ const AddInventory = ({
           business_icon: business_icon,
         }),
       );
+      console.log('Item to be selected', itemArray);
       setItemData(itemArray);
     }
   }, [getDefaultItemsIsSuccess, getDefaultItemsData]);
@@ -164,6 +161,7 @@ const AddInventory = ({
         id: index + 1,
         name: element,
       }));
+      console.log('🥩🥩🥩🥩🥩🥩', unitArray);
       setUnitData(unitArray);
       if (getUnitsData.length > 0) {
         setValue('isUnit', true);
@@ -223,6 +221,7 @@ const AddInventory = ({
   };
   const handleAddItem = (data: AddInventoryFields) => {
     const {url, isUnit, ...rest} = data;
+    console.log('Adding item -->', data);
     rest.unit = isUnit ? rest?.unit : '';
     if (isUpdating) {
       rest.business_type = 'MexicanFoodTruck';
@@ -331,15 +330,27 @@ const AddInventory = ({
           </Text>
         </View>
         <View style={styles.InputContainer}>
-          <PressableInput
-            control={control}
-            name={'name'}
-            label="Item name"
-            disabled={false}
-            onPress={handleItemBottomSheet}
-            url={url}
-            placeholder="Select a item"
-          />
+          {itemData && itemData?.length > 0 ? (
+            <PressableInput
+              control={control}
+              name={'name'}
+              label="Item name"
+              disabled={false}
+              onPress={handleItemBottomSheet}
+              url={url}
+              placeholder="Select a item"
+            />
+          ) : (
+            <UserTextInput
+              control={control}
+              name={'name'}
+              label="Item name"
+              placeholder={'name'}
+              disabled={false}
+              size={wp(7)}
+              inputMode={'text'}
+            />
+          )}
           <UserTextInput
             control={control}
             name={'description'}
@@ -351,15 +362,17 @@ const AddInventory = ({
             Optional={false}
             multiline={true}
           />
-          <PressableInput
-            control={control}
-            name={'unit'}
-            label="Unit"
-            disabled={false}
-            onPress={handleUnitBottomSheet}
-            // url={url}
-            placeholder={'unit'}
-          />
+          {unitData && (
+            <PressableInput
+              control={control}
+              name={'unit'}
+              label="Unit"
+              disabled={false}
+              onPress={handleUnitBottomSheet}
+              // url={url}
+              placeholder={'unit'}
+            />
+          )}
           <UserTextInput
             control={control}
             name={'price'}
@@ -370,16 +383,18 @@ const AddInventory = ({
             inputMode={'text'}
             Optional={false}
           />
-          <UserTextInput
-            control={control}
-            name={'quantity'}
-            label="Quantity"
-            placeholder={'quantity'}
-            disabled={false}
-            size={wp(7)}
-            inputMode={'text'}
-            Optional={true}
-          />
+          {!route.params.is_service && (
+            <UserTextInput
+              control={control}
+              name={'quantity'}
+              label="Quantity"
+              placeholder={'quantity'}
+              disabled={false}
+              size={wp(7)}
+              inputMode={'text'}
+              Optional={true}
+            />
+          )}
         </View>
         <View style={styles.ButtonContainer}>
           <TouchableOpacity

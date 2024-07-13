@@ -15,6 +15,9 @@ import {
 } from '../../../services/Business';
 import BusinessTypeCard from '../../../components/BusinessTypeCard';
 import {ActivityIndicator} from 'react-native';
+import {setProfileImage, setUser} from '../../../Slice/userSlice';
+import {UserData, userProfileImage} from '../../common';
+import {useDispatch} from 'react-redux';
 
 export type BusinessType = {
   business_icon: string;
@@ -27,11 +30,17 @@ export type BusinessType = {
 const Home = () => {
   const [searchValue, setSearchValue] = useState<string>('');
   const [businessTypes, setBusinessTypes] = useState<BusinessType[]>();
+  const dispatch = useDispatch();
 
   const {data: BusinessTypesData, isSuccess: BusinessTypesIsSuccess} =
     useBusinessTypesQuery(null);
   const {data: FavoriteBusinessTypesData} =
     useGetFavoriteBusinessTypesQuery(null);
+
+  useEffect(() => {
+    dispatch(setUser(UserData));
+    dispatch(setProfileImage(userProfileImage));
+  }, []);
 
   useEffect(() => {
     if (BusinessTypesIsSuccess) {
@@ -130,8 +139,9 @@ const styles = StyleSheet.create({
     color: Colors.green,
   },
   FlashListWrapper: {
+    flex: 1,
     width: wp(100),
-    height: hp(70.5),
+    // height: hp(70.5),
   },
   FlashList: {},
   FlashListContentStyle: {

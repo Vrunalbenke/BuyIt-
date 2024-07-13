@@ -28,8 +28,8 @@ export const AddBusinessSchema = z
       .optional(),
     share_email: z.string(),
     share_phone: z.string(),
-    latitude: z.string(),
-    longitude: z.string(),
+    latitude: z.string().optional(),
+    longitude: z.string().optional(),
     useLocation: z.string(),
     url: z.string().optional(),
   })

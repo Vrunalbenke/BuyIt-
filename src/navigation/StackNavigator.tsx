@@ -6,10 +6,16 @@ import OTP from '../screens/Auth/OTP';
 import CreateNewPassword from '../screens/Auth/CreateNewPassword';
 import PasswordUpdated from '../screens/Auth/PasswordUpdated';
 import IsSellerOrCustomer from '../screens/NativeStack/IsSellerOrCustomer';
-import AddBusiness from '../screens/NativeStack/AddBusiness';
+import AddBusiness, {
+  AddBusinessFields,
+} from '../screens/NativeStack/AddBusiness';
 import AddInventory from '../screens/NativeStack/AddInventory';
 import BottomTabNavigator from './BottomTabNavigator';
 import {accessToken} from '../screens/common';
+import MyBusiness from '../screens/NativeStack/MyBusiness';
+import Setting from '../screens/NativeStack/Setting';
+import MyProducts from '../screens/NativeStack/MyProducts';
+import {SearchBusinessResponse} from '../services/Business/businessTypes';
 
 export type RootStackParams = {
   SignIn: undefined;
@@ -32,15 +38,24 @@ export type RootStackParams = {
   };
   PasswordUpdated: undefined;
   IsSellerOrCustomer: undefined;
-  AddBusiness: {isFromSignUp: boolean};
+  AddBusiness: {
+    isFromSignUp: boolean;
+    isUpdate?: boolean;
+    EditBusiness?: AddBusinessFields;
+  };
   AddInventory: {
     is_service: boolean;
-    business_type?: string;
-    id?: string;
+    business_type: string;
+    // id?: string;
     from_business: boolean;
     business_id: string;
   };
   BottomTabNavigator: undefined;
+  MyBusiness: undefined;
+  Setting: undefined;
+  MyProducts: {
+    business: SearchBusinessResponse;
+  };
 };
 
 const RootStack = createNativeStackNavigator<RootStackParams>();
@@ -66,6 +81,9 @@ const StackNavigator = () => {
       />
       <RootStack.Screen name="AddBusiness" component={AddBusiness} />
       <RootStack.Screen name="AddInventory" component={AddInventory} />
+      <RootStack.Screen name="MyBusiness" component={MyBusiness} />
+      <RootStack.Screen name="MyProducts" component={MyProducts} />
+      <RootStack.Screen name="Setting" component={Setting} />
       <RootStack.Screen
         name="BottomTabNavigator"
         component={BottomTabNavigator}

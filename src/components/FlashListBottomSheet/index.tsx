@@ -21,6 +21,7 @@ import {businessTypesObject} from '../../screens/NativeStack/nativeTypes';
 type FlashListBottomSheetProps = {
   bottomSheetRef: React.Ref<BottomSheet>;
   data: object[] | undefined;
+  PanDownToClose?: boolean;
   keyExtractor: ((item: any, index: number) => string) | undefined;
   handleSetBusinessType: (item: businessTypesObject) => void;
 };
@@ -28,6 +29,7 @@ const FlashListBottomSheet = memo(
   ({
     bottomSheetRef,
     data,
+    PanDownToClose = false,
     keyExtractor,
     // setValue,
     handleSetBusinessType,
@@ -61,7 +63,7 @@ const FlashListBottomSheet = memo(
               <FastImage
                 style={styles.BusinessIcon}
                 source={{
-                  uri: `http://${item?.business_icon}`,
+                  uri: `https://${item?.business_icon}`,
                   headers: {Authorization: 'someAuthToken'},
                   priority: FastImage.priority.normal,
                   cache: FastImage.cacheControl.immutable,
@@ -79,15 +81,22 @@ const FlashListBottomSheet = memo(
         index={-1}
         ref={bottomSheetRef}
         snapPoints={snapPoints}
-        enablePanDownToClose
-        style={styles.BottomSheet}>
-        <View style={styles.root}>
+        enablePanDownToClose={PanDownToClose}
+        style={styles.BottomSheet}
+        // onChange={handleSheetChanges}
+      >
+        <View
+          style={[
+            styles.root,
+            // {height: bottomSheetHeight ? bottomSheetHeight : hp(42)},
+          ]}>
           <SearchbarInput
             value={searchString}
             setValue={setSearchString}
             placeholder={'Search'}
           />
           {data ? (
+            // <View style={{flex: 1}}>
             <FlashList
               data={filterBusinessTypes}
               keyExtractor={keyExtractor}
@@ -99,6 +108,7 @@ const FlashListBottomSheet = memo(
               showsVerticalScrollIndicator={false}
             />
           ) : (
+            // </View>
             <ActivityIndicator
               size={'small'}
               style={styles.ActivityIndicator}
@@ -117,6 +127,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     // backgroundColor: '#000',
+    backgroundColor: 'pink',
   },
   root: {
     height: hp(86),

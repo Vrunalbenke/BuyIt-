@@ -2,11 +2,11 @@ import React, {useEffect, useRef, useState} from 'react';
 import {StyleSheet} from 'react-native';
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
 import env from '../../../env';
-import {Text} from 'react-native';
 import {BottomTabScreenProps} from '@react-navigation/bottom-tabs';
 import {RootBottomTabParams} from '../../../navigation/BottomTabNavigator';
 import BusinessListBottomSheet from '../../../components/BusinessListBottomSheet';
 import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet';
+import BusinessDetailBottomSheet from '../../../components/BusinessDetailBottomSheet';
 
 const Location = ({
   route,
@@ -19,11 +19,12 @@ const Location = ({
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
+  const [businessDetail, setBusinessDetail] = useState();
   const mapRef = useRef(null);
-  const businessListRef = useRef<BottomSheet>(null);
+  const businessListRef = useRef<BottomSheet | null>(null);
+  const businessDetailRef = useRef<BottomSheet | null>(null);
 
   useEffect(() => {
-    console.log('In Effect');
     if (isFromRecent) {
       console.log('Is From Recent', isFromRecent);
     } else if (openBusList) {
@@ -45,7 +46,15 @@ const Location = ({
         showsMyLocationButton={true}>
         {/* <Text>hii</Text> */}
       </MapView>
-      <BusinessListBottomSheet bottomSheetRef={businessListRef} />
+      <BusinessListBottomSheet
+        bottomSheetRef={businessListRef}
+        busniessDetailRef={businessDetailRef}
+        setBusinessDetail={setBusinessDetail}
+      />
+      <BusinessDetailBottomSheet
+        bottomSheetRef={businessDetailRef}
+        business={businessDetail}
+      />
     </>
   );
 };

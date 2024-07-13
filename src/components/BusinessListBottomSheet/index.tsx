@@ -1,10 +1,8 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import BottomSheet from '@gorhom/bottom-sheet';
-import {View, Text} from 'react-native';
+import {View, Text, Pressable} from 'react-native';
 import {FlashList, ListRenderItem} from '@shopify/flash-list';
 import {ActivityIndicator} from 'react-native';
-import {useSearchBusinessMutation} from '../../services/Business';
-import Toast from 'react-native-toast-message';
 import {SearchBusinessResponse} from '../../services/Business/businessTypes';
 import {StyleSheet} from 'react-native';
 import {
@@ -15,53 +13,67 @@ import {useSelector} from 'react-redux';
 import {Colors} from '../../resources/colors';
 
 type BusinesssListBottomSheetProps = {
-  bottomSheetRef: React.Ref<BottomSheet>;
+  bottomSheetRef: React.RefObject<BottomSheet | null>;
+  busniessDetailRef: React.RefObject<BottomSheet | null>;
+  setBusinessDetail: React.Dispatch<React.SetStateAction<any>>;
 };
 
 const BusinessListBottomSheet = ({
   bottomSheetRef,
+  busniessDetailRef,
+  setBusinessDetail,
 }: BusinesssListBottomSheetProps) => {
   const snapPoints = ['50%', '75%', '100%'];
   const {searchBusinessList} = useSelector(state => state?.business);
+  console.log('searchBusinessList', searchBusinessList);
+
+  const handleBusiness = item => {
+    console.log(item);
+    setBusinessDetail(item);
+    bottomSheetRef.current?.close();
+    busniessDetailRef.current?.snapToIndex(1);
+  };
 
   const handleRendering: ListRenderItem<SearchBusinessResponse> = ({item}) => {
     // console.log(item);
     return (
-      <View style={styles.ItemContainer}>
-        <View style={styles.LeftContainer}>
-          <Text style={styles.BusinessNameText}>{item.name}</Text>
-          <Text style={styles.BusinessMilesText}>
-            {item.distance} miles away
-          </Text>
-        </View>
-        <View
-          style={[
-            styles.RightContainer,
-            {justifyContent: item.in_home ? 'space-between' : 'flex-end'},
-          ]}>
-          {item.in_home && (
-            <Text style={styles.BusinessInHomeText}>In-Home</Text>
-          )}
-          <Text
+      <Pressable onPress={() => handleBusiness(item)}>
+        <View style={styles.ItemContainer}>
+          <View style={styles.LeftContainer}>
+            <Text style={styles.BusinessNameText}>{item.name}</Text>
+            <Text style={styles.BusinessMilesText}>
+              {item.distance} miles away
+            </Text>
+          </View>
+          <View
             style={[
-              styles.BusinessOpenCloseText,
-              {
-                color: item.isopen ? Colors.green : Colors.errorRed,
-              },
+              styles.RightContainer,
+              {justifyContent: item.in_home ? 'space-between' : 'flex-end'},
             ]}>
-            {item.isopen ? 'Open' : 'Closed'}
-          </Text>
+            {item.in_home && (
+              <Text style={styles.BusinessInHomeText}>In-Home</Text>
+            )}
+            <Text
+              style={[
+                styles.BusinessOpenCloseText,
+                {
+                  color: item.isopen ? Colors.green : Colors.errorRed,
+                },
+              ]}>
+              {item.isopen ? 'Open' : 'Closed'}
+            </Text>
+          </View>
         </View>
-      </View>
+      </Pressable>
     );
   };
 
   return (
     <BottomSheet
-      // index={-1}
+      index={0}
       ref={bottomSheetRef}
       snapPoints={snapPoints}
-      enablePanDownToClose
+      // enablePanDownToClose
       style={styles.BottomSheet}>
       <View style={styles.root}>
         {searchBusinessList ? (
@@ -71,7 +83,7 @@ const BusinessListBottomSheet = ({
             renderItem={handleRendering}
             contentContainerStyle={styles.FlastListContentStyle}
             estimatedItemSize={50}
-            ItemSeparatorComponent={() => <View style={styles.Separator} />}
+            // ItemSeparatorComponent={() => <View style={styles.Separator} />}
             bounces={false}
             showsVerticalScrollIndicator={false}
           />
@@ -108,11 +120,12 @@ const styles = StyleSheet.create({
   },
   ItemContainer: {
     width: wp(100),
-    padding: wp(4),
+    paddingHorizontal: wp(4),
+    paddingVertical: wp(2),
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    height: wp(12),
+    // height: wp(12),
   },
   LeftContainer: {
     flex: 3,

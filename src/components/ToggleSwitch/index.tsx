@@ -1,10 +1,4 @@
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native';
+import {StyleSheet, Text, Pressable, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {MotiView, useAnimationState} from 'moti';
 import {Colors} from '../../resources/colors';
@@ -16,10 +10,20 @@ type ToggleSwitchProps = {
   label: string;
   disabled: boolean;
   changeValue?: (toggle: boolean, label: string) => void;
+  value: string;
 };
 
-const ToggleSwitch = ({label, disabled, changeValue}: ToggleSwitchProps) => {
+const ToggleSwitch = ({
+  label,
+  disabled,
+  changeValue,
+  value,
+}: ToggleSwitchProps) => {
   const [toggle, setToggle] = useState(false);
+  useEffect(() => {
+    setToggle(value === 'True' ? true : false);
+  }, [value]);
+  // console.log(label, ' toggle ', value, toggle);
 
   const animationState = useAnimationState({
     off: {
@@ -43,7 +47,7 @@ const ToggleSwitch = ({label, disabled, changeValue}: ToggleSwitchProps) => {
   useEffect(() => {
     animationState.transitionTo(toggle ? 'on' : 'off');
     containerAnimationState.transitionTo(toggle ? 'on' : 'off');
-  }, []);
+  }, [toggle]);
 
   const handleToggle = () => {
     setToggle(prev => !prev);
@@ -57,7 +61,7 @@ const ToggleSwitch = ({label, disabled, changeValue}: ToggleSwitchProps) => {
 
   return (
     <View style={styles.root}>
-      <TouchableWithoutFeedback onPress={handleToggle} disabled={disabled}>
+      <Pressable onPress={handleToggle} disabled={disabled}>
         <MotiView
           style={[styles.ToggleSwitchContainer]}
           state={containerAnimationState}
@@ -74,14 +78,16 @@ const ToggleSwitch = ({label, disabled, changeValue}: ToggleSwitchProps) => {
             }}
           />
         </MotiView>
-      </TouchableWithoutFeedback>
-      <Text
-        style={[
-          styles.LabelText,
-          {color: disabled ? Colors.gray : Colors.black},
-        ]}>
-        {label}
-      </Text>
+      </Pressable>
+      {label && (
+        <Text
+          style={[
+            styles.LabelText,
+            {color: disabled ? Colors.gray : Colors.black},
+          ]}>
+          {label}
+        </Text>
+      )}
     </View>
   );
 };
