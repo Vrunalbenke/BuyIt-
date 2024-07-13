@@ -1,6 +1,12 @@
 import BottomSheet, {BottomSheetScrollView} from '@gorhom/bottom-sheet';
 import React, {useEffect, useState} from 'react';
-import {Pressable, StyleSheet, Text, View} from 'react-native';
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import {SceneMap, TabView} from 'react-native-tab-view';
 import {Colors} from '../../resources/colors';
@@ -9,9 +15,14 @@ import {
   useGetBusinessProductQuery,
   useGetProductsImagesMutation,
 } from '../../services/Business';
-import ProductCard from '../ProductCard';
+import ProductCard from '../../components/ProductCard';
 import {SearchBusinessResponse} from '../../services/Business/businessTypes';
 import {generateRandomHexCode} from '../../utils/RandomHexCodeGenerator';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 
 const FirstRoute = ({business}) => {
   const handleFavorite = () => {};
@@ -153,11 +164,7 @@ const SecondRoute = ({business, ProductData, PIData}) => {
   );
 };
 const ThirdRoute = ({business}) => (
-  <View
-    style={{
-      justifyContent: 'center',
-      alignItems: 'center',
-    }}>
+  <View style={styles.ThirdRouteContainer}>
     <Text style={{color: Colors.green, fontSize: wp(10)}}>
       {business?.alias}
     </Text>
@@ -184,8 +191,12 @@ const BusinessDetailBottomSheet = ({
   business,
 }: BusinessDetailBottomSheetProps) => {
   const [index, setIndex] = useState(0);
+
+  const {width} = useWindowDimensions();
+  const TAB_WIDTH = width / 3;
+  console.log(TAB_WIDTH, 'width');
   const [routes] = useState([
-    {key: 'first', title: 'BusinessInfo'},
+    {key: 'first', title: 'Details'},
     {key: 'second', title: 'Products'},
     {key: 'third', title: 'Reviews'},
   ]);
@@ -211,6 +222,34 @@ const BusinessDetailBottomSheet = ({
     console.log('Error while getting product image ', PIError);
   }, [PIIsError]);
 
+  const renderTabBar = props => {
+    const AnimatedStyle = useAnimatedStyle(() => {
+      return {transform: [{translateX: withTiming(TAB_WIDTH * index)}]};
+    });
+
+    return (
+      <View style={styles.tabBar}>
+        <Animated.View
+          style={[styles.AnimatedView, {width: TAB_WIDTH}, AnimatedStyle]}>
+          <View style={styles.slidingTab} />
+        </Animated.View>
+        {props.navigationState.routes.map((route, i) => {
+          return (
+            <Pressable style={[styles.tabItem]} onPress={() => setIndex(i)}>
+              <Animated.Text
+                style={[
+                  styles.TopTabBarText,
+                  {color: index === i ? Colors.white : Colors.green},
+                ]}>
+                {route.title}
+              </Animated.Text>
+            </Pressable>
+          );
+        })}
+      </View>
+    );
+  };
+
   return (
     <BottomSheet
       index={-1}
@@ -219,11 +258,12 @@ const BusinessDetailBottomSheet = ({
       // enablePanDownToClose
       enableHandlePanningGesture
       enableContentPanningGesture
-      enableOverDrag={true} // or set to false if you don't want over drag
+      enableOverDrag={true}
       overDragResistanceFactor={1}>
       <TabView
         navigationState={{index, routes}}
         renderScene={renderScene(business, ProductData, PIData)}
+        renderTabBar={renderTabBar}
         onIndexChange={setIndex}
         initialLayout={{width: wp(100)}}
       />
@@ -350,5 +390,42 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter Regular',
     fontSize: wp(3.5),
     color: Colors.orange,
+  },
+  ThirdRouteContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  tabBar: {
+    flexDirection: 'row',
+    borderBottomWidth: 0.5,
+    borderBottomColor: Colors.darkGray,
+    paddingVertical: 10,
+    // backgroundColor: Colors.green,
+    gap: 7,
+  },
+  AnimatedView: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  tabItem: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 5,
+    borderRadius: wp(4),
+  },
+  TAB_WIDTH: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  slidingTab: {
+    width: wp(24),
+    height: wp(10),
+    borderRadius: wp(2),
+    backgroundColor: Colors.green,
+  },
+  TopTabBarText: {
+    fontSize: wp(4.7),
+    fontFamily: 'Inter Medium',
   },
 });

@@ -14,7 +14,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {Colors} from '../../resources/colors';
-import SearchbarInput from '../SearchbarInput';
+import SearchbarInput from '../../components/SearchbarInput';
 import FastImage from 'react-native-fast-image';
 import {businessTypesObject} from '../../screens/NativeStack/nativeTypes';
 

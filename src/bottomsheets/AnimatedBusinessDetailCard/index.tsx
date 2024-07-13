@@ -6,7 +6,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import BusinessDetailCard from '../BusinessDetailCard';
+import BusinessDetailCard from '../../components/BusinessDetailCard';
 import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Colors} from '../../resources/colors';

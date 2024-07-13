@@ -10,7 +10,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {FlashList} from '@shopify/flash-list';
 import ScreenList, {ItemObjectProp} from '../../../components/ScreenList';
 import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet';
-import EditProfileBottomSheet from '../../../components/EditProfileBottomSheet';
+import EditProfileBottomSheet from '../../../bottomsheets/EditProfileBottomSheet';
 import FastImage from 'react-native-fast-image';
 import {useSelector} from 'react-redux';
 

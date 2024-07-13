@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -13,7 +13,7 @@ import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import {FlashList} from '@shopify/flash-list';
 import {useGetOwnedBusinessesQuery} from '../../../services/Business';
 import {generateRandomHexCode} from '../../../utils/RandomHexCodeGenerator';
-import AnimatedBusinessDetailCard from '../../../components/AnimatedBusinessDetailCard';
+import AnimatedBusinessDetailCard from '../../../bottomsheets/AnimatedBusinessDetailCard';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParams} from '../../../navigation/StackNavigator';
 import {AddBusinessFields} from '../AddBusiness';

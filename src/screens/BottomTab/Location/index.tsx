@@ -4,9 +4,9 @@ import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
 import env from '../../../env';
 import {BottomTabScreenProps} from '@react-navigation/bottom-tabs';
 import {RootBottomTabParams} from '../../../navigation/BottomTabNavigator';
-import BusinessListBottomSheet from '../../../components/BusinessListBottomSheet';
+import BusinessListBottomSheet from '../../../bottomsheets/BusinessListBottomSheet';
 import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet';
-import BusinessDetailBottomSheet from '../../../components/BusinessDetailBottomSheet';
+import BusinessDetailBottomSheet from '../../../bottomsheets/BusinessDetailBottomSheet';
 
 const Location = ({
   route,

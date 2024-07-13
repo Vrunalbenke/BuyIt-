@@ -21,7 +21,7 @@ import ToggleSwitch from '../../../components/ToggleSwitch';
 import LargeButton from '../../../components/LargeButton';
 import {z} from 'zod';
 import {AddBusinessSchema, businessTypesObject} from '../nativeTypes';
-import FlashListBottomSheet from '../../../components/FlashListBottomSheet';
+import FlashListBottomSheet from '../../../bottomsheets/FlashListBottomSheet';
 import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet';
 import {
   useBusinessTypesQuery,
@@ -52,6 +52,12 @@ const AddBusiness = ({
       useLocation: 'True',
       latitude: '18.447790',
       longitude: '73.882881',
+      share_email: EditBusiness?.share_email
+        ? EditBusiness?.share_email
+        : 'False',
+      share_phone: EditBusiness?.share_phone
+        ? EditBusiness?.share_phone
+        : 'False',
     },
     resolver: zodResolver(AddBusinessSchema),
   });
@@ -126,7 +132,22 @@ const AddBusiness = ({
           editData[field] !== null &&
           editData[field] !== 'None'
         ) {
-          setValue(field, editData[field]);
+          if (field === 'business_type') {
+            if (editData[field] === 'PopUpStore') {
+              setValue(field, 'Pop-up Store');
+            } else {
+              setValue(
+                field,
+                editData.business_type.replace(/([a-z])([A-Z])/g, '$1 $2'),
+              );
+            }
+          } else if (field === 'share_email' || field === 'share_phone') {
+          } else if (field === 'latitude' || field === 'longitude') {
+            setValue(field, editData[field]?.toString());
+          } else {
+            setValue(field, editData[field]);
+            console.log(field, ' set to ', editData[field]);
+          }
         }
       });
 
@@ -135,17 +156,22 @@ const AddBusiness = ({
           latitude: editData.office_location.latitude,
           longitude: editData.office_location.longitude,
         });
+        console.log(editData.office_location);
       }
 
-      setValue('is_service', Boolean(editData.is_service));
-      setValue('share_email', editData.share_email);
-      setValue('share_phone', editData.share_phone);
-
       if (editData.business_type) {
-        const businessType = businessTypes?.find(
-          type => type.name === editData.business_type,
-        );
+        const businessType = businessTypes?.find(type => {
+          if (editData.business_type === 'PopUpStore') {
+            type.name === 'Pop-up Store';
+          } else {
+            return (
+              type.name ===
+              editData.business_type.replace(/([a-z])([A-Z])/g, '$1 $2')
+            );
+          }
+        });
         if (businessType) {
+          console.log('types', businessType);
           setValue('url', businessType.business_icon);
         }
       }
@@ -194,21 +220,13 @@ const AddBusiness = ({
   useEffect(() => {
     if (UpdateBusinessIsSuccess) {
       console.log('Business Updated -->', UpdateBusinessData);
-      if (!isUpdate) {
-        Toast.show({
-          type: 'success',
-          text1: 'Business Updated SuccessFully',
-          position: 'bottom',
-        });
+      Toast.show({
+        type: 'success',
+        text1: 'Business Updated SuccessFully',
+        position: 'bottom',
+      });
 
-        navigation.goBack();
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Something went wrong',
-          position: 'bottom',
-        });
-      }
+      navigation.goBack();
     }
     if (UpdateBusinessIsError) {
       console.log('Updating Business Error -->', UpdateBusinessError);
@@ -314,6 +332,22 @@ const AddBusiness = ({
   const isService = watch('is_service');
   const shareEmail = watch('share_email');
   const sharePhone = watch('share_phone');
+  const website = watch('website');
+  const facebook = watch('facebook');
+  const instagram = watch('instagram');
+
+  console.log(
+    website,
+    ' website ,',
+    facebook,
+    ' facebook,',
+    instagram,
+    ' instagram,',
+    shareEmail,
+    ' shareEmail,',
+    sharePhone,
+    ' sharePhone',
+  );
 
   const handleSetBusinessType = useCallback(
     (item: businessTypesObject) => {

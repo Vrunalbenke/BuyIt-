@@ -19,11 +19,7 @@ const ToggleSwitch = ({
   changeValue,
   value,
 }: ToggleSwitchProps) => {
-  const [toggle, setToggle] = useState(false);
-  useEffect(() => {
-    setToggle(value === 'True' ? true : false);
-  }, [value]);
-  // console.log(label, ' toggle ', value, toggle);
+  const [toggle, setToggle] = useState(value === 'True' ? true : false);
 
   const animationState = useAnimationState({
     off: {
@@ -51,13 +47,16 @@ const ToggleSwitch = ({
 
   const handleToggle = () => {
     setToggle(prev => !prev);
-    console.log(toggle);
     if (changeValue) {
       changeValue(toggle, label);
     }
     animationState.transitionTo(toggle ? 'on' : 'off');
     containerAnimationState.transitionTo(toggle ? 'on' : 'off');
   };
+
+  useEffect(() => {
+    console.log(label, ' changed to', toggle);
+  }, [toggle]);
 
   return (
     <View style={styles.root}>

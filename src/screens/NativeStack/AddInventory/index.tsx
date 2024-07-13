@@ -15,7 +15,7 @@ import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import Toast from 'react-native-toast-message';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {z} from 'zod';
-import FlashListBottomSheet from '../../../components/FlashListBottomSheet';
+import FlashListBottomSheet from '../../../bottomsheets/FlashListBottomSheet';
 import LargeButton from '../../../components/LargeButton';
 import PressableInput from '../../../components/PressableInput';
 import ScrollableWrapper from '../../../components/ScrollableWrapper';
