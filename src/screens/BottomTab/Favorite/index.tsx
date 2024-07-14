@@ -49,10 +49,6 @@ const Favorite = () => {
           ...BusinessTypesData[key],
         }),
       );
-      console.log(
-        '🦓🦓🦓🦓🦓🦓🦓🦓🦓🦓',
-        BusinessTypesArray.filter(item => item.isFavorite),
-      );
       setBusinessTypes(BusinessTypesArray.filter(item => item.isFavorite));
     }
   }, [FavoriteBusinessTypesData, BusinessTypesData, BusinessTypesIsSuccess]);

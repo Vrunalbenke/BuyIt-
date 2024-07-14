@@ -34,10 +34,13 @@ const BusinessListBottomSheet = ({
     busniessDetailRef.current?.snapToIndex(1);
   };
 
-  const handleRendering: ListRenderItem<SearchBusinessResponse> = ({item}) => {
+  const handleRendering: ListRenderItem<SearchBusinessResponse> = ({
+    item,
+    index,
+  }) => {
     // console.log(item);
     return (
-      <Pressable onPress={() => handleBusiness(item)}>
+      <Pressable key={index} onPress={() => handleBusiness(item)}>
         <View style={styles.ItemContainer}>
           <View style={styles.LeftContainer}>
             <Text style={styles.BusinessNameText}>{item.name}</Text>
