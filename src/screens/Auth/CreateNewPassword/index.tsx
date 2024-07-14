@@ -4,8 +4,7 @@ import {
   widthPercentageToDP as wp,
   // heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {ThemeContext} from '../../../resources/themes';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
+import {ThemeContext, themes} from '../../../resources/themes';
 import UserTextInput from '../../../components/UserTextInput';
 import {useForm} from 'react-hook-form';
 import LargeButton from '../../../components/LargeButton';
@@ -15,6 +14,7 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParams} from '../../../navigation/StackNavigator';
 import {useResetPasswordMutation} from '../../../services/Auth';
+import {Colors} from '../../../resources/colors';
 
 type CreateNewPasswordFields = z.infer<typeof resetPasswordSchema>;
 
@@ -46,7 +46,16 @@ const CreateNewPassword = ({route, navigation}: CreateNewPasswordProps) => {
     resetPassword(RequestData);
   };
   return (
-    <View style={styles.root}>
+    <View
+      style={[
+        styles.root,
+        {
+          backgroundColor:
+            scheme === 'dark'
+              ? themes.dark.backgroundColor
+              : themes.light.backgroundColor,
+        },
+      ]}>
       <View style={styles.TopContainer}>
         <View style={styles.TitleAndSubTitleContainer}>
           <Text
@@ -59,7 +68,7 @@ const CreateNewPassword = ({route, navigation}: CreateNewPasswordProps) => {
           <Text
             style={[
               styles.SubTitleText,
-              {color: scheme === 'dark' ? Colors.white : Colors.black},
+              {color: scheme === 'dark' ? Colors.offWhite : Colors.black},
             ]}>
             Your new Password Must be Different from Previouly used password
           </Text>

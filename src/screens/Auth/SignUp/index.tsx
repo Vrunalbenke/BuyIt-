@@ -4,7 +4,7 @@ import LargeButton from '../../../components/LargeButton';
 import CheckboxWithText from '../../../components/CheckboxWithText';
 import PhoneNumberTextInput from '../../../components/PhoneNumberTextInput';
 import UserTextInput from '../../../components/UserTextInput';
-import {ThemeContext} from '../../../resources/themes';
+import {ThemeContext, themes} from '../../../resources/themes';
 import {
   widthPercentageToDP as wp,
   // heightPercentageToDP as hp,
@@ -25,6 +25,7 @@ export type SignUpFields = z.infer<typeof SignUpSchema>;
 
 type SignUpProps = NativeStackScreenProps<RootStackParams, 'SignUp'>;
 const SignUp = ({navigation}: SignUpProps) => {
+  const scheme = useContext(ThemeContext);
   const {control, handleSubmit, setValue, getValues} = useForm<SignUpFields>({
     defaultValues: {
       country_cca2: 'US',
@@ -37,7 +38,6 @@ const SignUp = ({navigation}: SignUpProps) => {
     },
     resolver: zodResolver(SignUpSchema),
   });
-  const scheme = useContext(ThemeContext);
   const [userData, setUserData] = useState<SignData>();
   const [
     validateMobileNumber,
@@ -102,7 +102,16 @@ const SignUp = ({navigation}: SignUpProps) => {
   };
   return (
     <ScrollableWrapper contentContainerStyle={styles.ScrollableWrapper}>
-      <View style={styles.root}>
+      <View
+        style={[
+          styles.root,
+          {
+            backgroundColor:
+              scheme === 'dark'
+                ? themes.dark.backgroundColor
+                : themes.light.backgroundColor,
+          },
+        ]}>
         <Text style={styles.TitleText}>VendIt!</Text>
         <View style={styles.TextInputContainer}>
           <UserTextInput
@@ -183,7 +192,7 @@ const SignUp = ({navigation}: SignUpProps) => {
               control={control}
               name={'PrivacyPolicy'}
               NormalText={'I agree to the'}
-              TOPText={'Terms and Condition'}
+              TOPText={'Terms and Condition '}
               TOPTextColor={Colors.green}
               disabled={false}
               onPress={handleCheckBox}
@@ -195,7 +204,7 @@ const SignUp = ({navigation}: SignUpProps) => {
               control={control}
               name={'TermsAndCondition'}
               NormalText={'I agree to the'}
-              TOPText={'Privacy Policy'}
+              TOPText={'Privacy Policy '}
               TOPTextColor={Colors.green}
               disabled={false}
               onPress={handleCheckBox}
@@ -214,7 +223,13 @@ const SignUp = ({navigation}: SignUpProps) => {
             loader={true}
           />
           <View style={styles.BottomSignUpTextContainer}>
-            <Text style={styles.HaveAccountText}>Already have an account?</Text>
+            <Text
+              style={[
+                styles.HaveAccountText,
+                {color: scheme === 'dark' ? Colors.white : Colors.darkGray},
+              ]}>
+              Already have an account?
+            </Text>
             <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
               <Text style={styles.SignUpText}> Sign In</Text>
             </TouchableOpacity>
@@ -228,14 +243,11 @@ const SignUp = ({navigation}: SignUpProps) => {
 export default SignUp;
 
 const styles = StyleSheet.create({
-  ScrollableWrapper: {
-    backgroundColor: '#FFF',
-  },
+  ScrollableWrapper: {},
   root: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFF',
     gap: 35,
     paddingTop: 40,
     paddingBottom: 20,
@@ -270,7 +282,6 @@ const styles = StyleSheet.create({
   HaveAccountText: {
     fontFamily: 'Inter Regular',
     fontSize: wp(4),
-    color: Colors.black,
   },
   SignUpText: {
     fontFamily: 'Inter Medium',

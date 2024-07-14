@@ -9,7 +9,7 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {Control, Controller, FieldValues, Path} from 'react-hook-form';
 import {Colors} from '../../resources/colors';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -17,6 +17,7 @@ import {
   widthPercentageToDP as wp,
   // heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import {ThemeContext} from '../../resources/themes';
 
 type UserTextInputProps<FormFieldValues extends FieldValues> = {
   control: Control<FormFieldValues>;
@@ -71,6 +72,7 @@ const UserTextInput = <FormFieldValues extends FieldValues>({
   url,
   DisplayCountryPicker,
 }: UserTextInputProps<FormFieldValues>) => {
+  const scheme = useContext(ThemeContext);
   const [toggleIcon, setToggleIcon] = useState(toggleicon);
 
   const handleIconPress = () => {
@@ -89,7 +91,13 @@ const UserTextInput = <FormFieldValues extends FieldValues>({
           <View style={styles.MainContainer}>
             {label && (
               <View style={styles.LabelContainer}>
-                <Text style={styles.LabelText}>{label}</Text>
+                <Text
+                  style={[
+                    styles.LabelText,
+                    {color: scheme === 'dark' ? Colors.gray : Colors.darkGray},
+                  ]}>
+                  {label}
+                </Text>
                 {/* <View style={styles.LabelRightContainer}> */}
                 {Optional ? (
                   <Text style={styles.OptionalText}>Optional</Text>
@@ -119,7 +127,10 @@ const UserTextInput = <FormFieldValues extends FieldValues>({
                   toggleIcon === toggleicon ? secureTextEntry : !secureTextEntry
                 }
                 placeholderTextColor={placeholderTextColor}
-                style={styles.Input}
+                style={[
+                  styles.Input,
+                  {color: scheme === 'dark' ? Colors.white : Colors.black},
+                ]}
                 editable={!disabled}
                 autoCapitalize={'none'}
                 autoCorrect={false}
@@ -161,7 +172,6 @@ const styles = StyleSheet.create({
   LabelText: {
     fontFamily: 'Inter Medium',
     fontSize: wp(4),
-    color: Colors.darkGray,
   },
 
   OptionalText: {
@@ -201,10 +211,6 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     fontSize: wp(4.5),
     fontFamily: 'Inter Regular',
-    // color: Colors.black,
-    // backgroundColor: 'pink',
-    // justifyContent: 'center',
-    // alignItems: 'center',
   },
   IconTOP: {
     flex: 1,

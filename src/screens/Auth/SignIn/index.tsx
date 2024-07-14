@@ -9,7 +9,7 @@ import {
 import {z} from 'zod';
 import {loginSchema} from '../authType';
 import PhoneNumberTextInput from '../../../components/PhoneNumberTextInput';
-import {ThemeContext} from '../../../resources/themes';
+import {ThemeContext, themes} from '../../../resources/themes';
 import LargeButton from '../../../components/LargeButton';
 import {Colors} from '../../../resources/colors';
 import TextIconButton from '../../../components/TextIconButton';
@@ -27,6 +27,7 @@ type LoginFields = z.infer<typeof loginSchema>;
 
 type SignInProps = NativeStackScreenProps<RootStackParams, 'SignIn'>;
 const SignIn = ({navigation}: SignInProps) => {
+  const scheme = useContext(ThemeContext);
   const {control, setValue, getValues, handleSubmit} = useForm<LoginFields>({
     defaultValues: {
       country_cca2: 'US',
@@ -39,7 +40,6 @@ const SignIn = ({navigation}: SignInProps) => {
     },
     resolver: zodResolver(loginSchema),
   });
-  const scheme = useContext(ThemeContext);
   const dispatch = useDispatch();
 
   const [
@@ -125,7 +125,16 @@ const SignIn = ({navigation}: SignInProps) => {
     });
   };
   return (
-    <View style={styles.root}>
+    <View
+      style={[
+        styles.root,
+        {
+          backgroundColor:
+            scheme === 'dark'
+              ? themes.dark.backgroundColor
+              : themes.light.backgroundColor,
+        },
+      ]}>
       <Text style={styles.TitleText}>VendIt!</Text>
       <View style={styles.TextInputContainer}>
         <PhoneNumberTextInput
@@ -159,7 +168,7 @@ const SignIn = ({navigation}: SignInProps) => {
           />
           <TextIconButton
             NormalText={'Forgot Password?'}
-            NormalTextColor={Colors.black}
+            NormalTextColor={scheme === 'dark' ? Colors.white : Colors.black}
             onPress={handleForgotPassword}
           />
         </View>
@@ -174,13 +183,33 @@ const SignIn = ({navigation}: SignInProps) => {
         />
         <LargeButton
           BTNText="Skip"
-          onPress={() => console.log('User Skips')}
+          onPress={() =>
+            navigation.reset({
+              index: 0,
+              routes: [
+                {
+                  name: 'BottomTabNavigator',
+                  // params: {
+                  //   isBusinessUser: false,
+                  // },
+                },
+              ],
+            })
+          }
           isDisable={false}
           isSkipBtn={true}
         />
 
         <View style={styles.BottomSignUpTextContainer}>
-          <Text style={styles.HaveAccountText}>Don't have an account?</Text>
+          <Text
+            style={[
+              styles.HaveAccountText,
+              {
+                color: scheme === 'dark' ? Colors.white : Colors.black,
+              },
+            ]}>
+            Don't have an account?
+          </Text>
           <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
             <Text style={styles.SignUpText}> Sign Up</Text>
           </TouchableOpacity>
@@ -197,7 +226,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFF',
     gap: 45,
   },
   TitleText: {

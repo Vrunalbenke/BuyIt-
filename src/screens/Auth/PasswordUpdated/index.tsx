@@ -14,7 +14,14 @@ const PasswordUpdated = ({
   navigation,
 }: NativeStackScreenProps<RootStackParams, 'PasswordUpdated'>) => {
   const handleLogin = () => {
-    navigation.navigate('SignIn');
+    navigation.reset({
+      index: 0,
+      routes: [
+        {
+          name: 'SignIn',
+        },
+      ],
+    });
   };
   return (
     <View style={styles.root}>
@@ -66,6 +73,7 @@ const styles = StyleSheet.create({
   TitleText: {
     fontSize: wp(7),
     fontFamily: 'Inter Regular',
+    color: Colors.white,
   },
   LottieContainer: {
     flex: 1,
@@ -83,6 +91,7 @@ const styles = StyleSheet.create({
   SubText: {
     fontFamily: 'Inter Regular',
     fontSize: wp(4),
+    color: Colors.white,
   },
   BottomContainer: {
     flex: 1,

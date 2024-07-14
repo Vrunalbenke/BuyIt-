@@ -27,6 +27,7 @@ const SearchbarInput = ({
           placeholder={placeholder}
           placeholderTextColor={placeholderTextColor}
           style={styles.Input}
+          multiline={false}
         />
       </View>
     </View>
@@ -56,5 +57,7 @@ const styles = StyleSheet.create({
   Input: {
     fontFamily: 'Inter Regular',
     fontSize: wp(4.5),
+    color: Colors.black,
+    width: wp(86),
   },
 });

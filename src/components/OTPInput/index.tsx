@@ -134,8 +134,10 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     // marginHorizontal: 5,
     textAlign: 'center',
-    fontSize: 18,
+    fontSize: wp(5),
+    fontFamily: 'Inter Medium',
     backgroundColor: Colors.extremeLightGreen,
+    color: Colors.black,
   },
 });
 

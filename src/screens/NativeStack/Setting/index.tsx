@@ -1,6 +1,13 @@
 import {FlashList} from '@shopify/flash-list';
-import React, {useEffect, useState} from 'react';
-import {Pressable, StyleSheet, View, DeviceEventEmitter} from 'react-native';
+import React, {useContext, useEffect, useState} from 'react';
+import {
+  Pressable,
+  StyleSheet,
+  View,
+  DeviceEventEmitter,
+  Text,
+  Appearance,
+} from 'react-native';
 import ScreenList, {ItemObjectProp} from '../../../components/ScreenList';
 import {Colors} from '../../../resources/colors';
 import ScreenListDropdown, {
@@ -14,10 +21,13 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import Toast from 'react-native-toast-message';
 import {useUpdateSearchRadiusMutation} from '../../../services/Auth';
+import {ThemeContext, themes} from '../../../resources/themes';
+import ToggleSwitch from '../../../components/ToggleSwitch';
 
 const Setting = ({
   navigation,
 }: NativeStackScreenProps<RootStackParams, 'Setting'>) => {
+  const scheme = useContext(ThemeContext);
   const ScreenListData = [
     {
       id: '1',
@@ -105,7 +115,15 @@ const Setting = ({
   const [selectedRadius, setSelectedRadius] = useState<string>(
     radius.toString() || '5',
   );
+  const [theme, setTheme] = useState<string>();
 
+  useEffect(() => {
+    const res = storage.getString('theme');
+    if (res) {
+      setTheme(res);
+      console.log('Changing Theme ', res);
+    }
+  }, []);
   const [
     updateSearchRadius,
     {
@@ -161,11 +179,39 @@ const Setting = ({
     }
   };
   const renderSeparator = () => {
-    return <View style={styles.ItemSeparator} />;
+    return (
+      <View
+        style={[
+          styles.ItemSeparator,
+          {borderColor: scheme === 'dark' ? Colors.gray : Colors.black},
+        ]}
+      />
+    );
+  };
+
+  const handleToggle = () => {
+    if (scheme === 'dark') {
+      setTheme('light');
+      Appearance.setColorScheme('light');
+      storage.set('theme', 'light');
+    } else {
+      setTheme('dark');
+      Appearance.setColorScheme('dark');
+      storage.set('theme', 'dark');
+    }
   };
 
   return (
-    <View style={styles.root}>
+    <View
+      style={[
+        styles.root,
+        {
+          backgroundColor:
+            scheme === 'dark'
+              ? themes.dark.backgroundColor
+              : themes.light.backgroundColor,
+        },
+      ]}>
       <View style={styles.BackBTNContainer}>
         <Pressable
           onPress={() => {
@@ -173,8 +219,8 @@ const Setting = ({
           }}>
           <Ionicons
             name={'chevron-back-outline'}
-            size={wp(6.5)}
-            color={Colors.black}
+            size={wp(8)}
+            color={Colors.green}
           />
         </Pressable>
       </View>
@@ -209,6 +255,21 @@ const Setting = ({
         }}
         ItemSeparatorComponent={renderSeparator}
       />
+      <View style={styles.ThemeContainer}>
+        <Text
+          style={[
+            styles.ThemeText,
+            {color: scheme === 'dark' ? Colors.white : Colors.black},
+          ]}>
+          Theme
+        </Text>
+        <ToggleSwitch
+          // label="Email"
+          changeValue={handleToggle}
+          disabled={false}
+          value={theme === 'dark' ? 'True' : 'False'}
+        />
+      </View>
     </View>
   );
 };
@@ -226,5 +287,14 @@ const styles = StyleSheet.create({
   },
   ItemSeparator: {
     borderWidth: 0.5,
+  },
+  ThemeContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: wp(5),
+  },
+  ThemeText: {
+    fontSize: wp(5),
+    fontFamily: 'Inter Regular',
   },
 });

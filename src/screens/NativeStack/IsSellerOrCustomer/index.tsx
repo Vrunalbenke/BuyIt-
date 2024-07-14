@@ -1,5 +1,5 @@
 import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, {useContext} from 'react';
 import {Colors} from '../../../resources/colors';
 import LargeButton from '../../../components/LargeButton';
 import {
@@ -8,22 +8,50 @@ import {
 } from 'react-native-responsive-screen';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParams} from '../../../navigation/StackNavigator';
+import {ThemeContext, themes} from '../../../resources/themes';
 
 const IsSellerOrCustomer = ({
   navigation,
 }: NativeStackScreenProps<RootStackParams, 'IsSellerOrCustomer'>) => {
+  const scheme = useContext(ThemeContext);
+
   const handleBusinessUser = () => {
     navigation.navigate('AddBusiness', {
       isFromSignUp: true,
     });
   };
-  const handleNormalUser = () => {};
+  const handleNormalUser = () => {
+    navigation.reset({
+      index: 0,
+      routes: [
+        {
+          name: 'BottomTabNavigator',
+          // params: {
+          //   isBusinessUser: false,
+          // },
+        },
+      ],
+    });
+  };
   return (
-    <View style={styles.root}>
+    <View
+      style={[
+        styles.root,
+        {
+          backgroundColor:
+            scheme === 'dark'
+              ? themes.dark.backgroundColor
+              : themes.light.backgroundColor,
+        },
+      ]}>
       <View style={styles.TopContainer}>
         <View style={styles.TextContainer}>
           <Text style={styles.TitleText}>VendIt!</Text>
-          <Text style={styles.SubTitleText}>
+          <Text
+            style={[
+              styles.SubTitleText,
+              {color: scheme === 'dark' ? Colors.white : Colors.black},
+            ]}>
             Do you want to sell goods or services?
           </Text>
         </View>
@@ -56,7 +84,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFF',
     // gap: 45,
   },
   TopContainer: {
@@ -77,7 +104,6 @@ const styles = StyleSheet.create({
   },
   SubTitleText: {
     fontSize: wp(4),
-    color: Colors.black,
     fontFamily: 'Inter Regular',
   },
   ButtonContainer: {

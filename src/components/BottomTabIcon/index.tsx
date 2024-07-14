@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {View} from 'react-native';
 import HomeIcon from '../../../assets/svg/home.svg';
 import LocationIcon from '../../../assets/svg/location.svg';
@@ -7,12 +7,14 @@ import ProfileIcon from '../../../assets/svg/profile.svg';
 import ChatsIcon from '../../../assets/svg/chats.svg';
 import {Colors} from '../../resources/colors';
 import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
+import {ThemeContext, themes} from '../../resources/themes';
 type BottomTabIconProp = {
   route: string;
   isFocused: boolean;
 };
 
 const BottomTabIcon = ({route, isFocused}: BottomTabIconProp) => {
+  const scheme = useContext(ThemeContext);
   const renderIcon = (routeName: string, isRouteFocused: boolean) => {
     let height: number = wp(7);
     let width: number = wp(7);
@@ -23,7 +25,13 @@ const BottomTabIcon = ({route, isFocused}: BottomTabIconProp) => {
           <HomeIcon
             height={height}
             width={width}
-            fill={isRouteFocused ? Colors.green : Colors.white}
+            fill={
+              isRouteFocused
+                ? Colors.green
+                : scheme === 'dark'
+                ? themes.dark.backgroundColor
+                : Colors.white
+            }
           />
         );
       case 'Location':
@@ -31,7 +39,13 @@ const BottomTabIcon = ({route, isFocused}: BottomTabIconProp) => {
           <LocationIcon
             height={height}
             width={width}
-            fill={isRouteFocused ? Colors.green : Colors.white}
+            fill={
+              isRouteFocused
+                ? Colors.green
+                : scheme === 'dark'
+                ? themes.dark.backgroundColor
+                : Colors.white
+            }
           />
         );
       case 'Favorite':
@@ -39,7 +53,13 @@ const BottomTabIcon = ({route, isFocused}: BottomTabIconProp) => {
           <FavoriteIcon
             height={height}
             width={width}
-            fill={isRouteFocused ? Colors.green : Colors.white}
+            fill={
+              isRouteFocused
+                ? Colors.green
+                : scheme === 'dark'
+                ? themes.dark.backgroundColor
+                : Colors.white
+            }
           />
         );
       case 'Profile':
@@ -47,7 +67,13 @@ const BottomTabIcon = ({route, isFocused}: BottomTabIconProp) => {
           <ProfileIcon
             height={height}
             width={width}
-            fill={isRouteFocused ? Colors.green : Colors.white}
+            fill={
+              isRouteFocused
+                ? Colors.green
+                : scheme === 'dark'
+                ? themes.dark.backgroundColor
+                : Colors.white
+            }
           />
         );
       case 'Chats':
@@ -55,7 +81,13 @@ const BottomTabIcon = ({route, isFocused}: BottomTabIconProp) => {
           <ChatsIcon
             height={height}
             width={width}
-            fill={isRouteFocused ? Colors.green : Colors.white}
+            fill={
+              isRouteFocused
+                ? Colors.green
+                : scheme === 'dark'
+                ? themes.dark.backgroundColor
+                : Colors.white
+            }
           />
         );
       default:

@@ -7,7 +7,7 @@ import {
   // heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 type ToggleSwitchProps = {
-  label: string;
+  label?: string;
   disabled: boolean;
   changeValue?: (toggle: boolean, label: string) => void;
   value: string;
@@ -19,7 +19,11 @@ const ToggleSwitch = ({
   changeValue,
   value,
 }: ToggleSwitchProps) => {
-  const [toggle, setToggle] = useState(value === 'True' ? true : false);
+  const [toggle, setToggle] = useState(false);
+
+  useEffect(() => {
+    setToggle(value === 'True' ? true : false);
+  }, [value]);
 
   const animationState = useAnimationState({
     off: {
@@ -53,10 +57,6 @@ const ToggleSwitch = ({
     animationState.transitionTo(toggle ? 'on' : 'off');
     containerAnimationState.transitionTo(toggle ? 'on' : 'off');
   };
-
-  useEffect(() => {
-    console.log(label, ' changed to', toggle);
-  }, [toggle]);
 
   return (
     <View style={styles.root}>

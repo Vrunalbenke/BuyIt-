@@ -1,10 +1,11 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React, {memo} from 'react';
+import React, {memo, useContext} from 'react';
 import {
   widthPercentageToDP as wp,
   // heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {Colors} from '../../resources/colors';
+import {ThemeContext} from '../../resources/themes';
 
 type TouchableTextDuoProps = {
   NormalText: string;
@@ -22,9 +23,16 @@ const TouchableTextDuo = memo(
     isDisable,
     onPress,
   }: TouchableTextDuoProps) => {
+    const scheme = useContext(ThemeContext);
     return (
       <View style={styles.MainContainer}>
-        <Text style={styles.NormalText}>{NormalText}</Text>
+        <Text
+          style={[
+            styles.NormalText,
+            {color: scheme === 'dark' ? Colors.white : Colors.black},
+          ]}>
+          {NormalText}
+        </Text>
         <TouchableOpacity
           onPress={onPress}
           style={styles.TOPContainer}
@@ -52,7 +60,6 @@ const styles = StyleSheet.create({
   NormalText: {
     fontFamily: 'Inter Regular',
     fontSize: wp(4),
-    color: Colors.black,
   },
   TOPContainer: {
     justifyContent: 'flex-end',

@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {BottomTabBarProps} from '@react-navigation/bottom-tabs';
 import {StyleSheet} from 'react-native';
 import {View, Text, Pressable} from 'react-native';
@@ -12,6 +12,7 @@ import {useSearchBusinessMutation} from '../../services/Business';
 import {setSearchBusinessList} from '../../Slice/businessSlice';
 import {useDispatch} from 'react-redux';
 import Toast from 'react-native-toast-message';
+import {ThemeContext, themes} from '../../resources/themes';
 
 const CustomBottomTab = ({
   state,
@@ -20,6 +21,7 @@ const CustomBottomTab = ({
 }: BottomTabBarProps) => {
   const dispatch = useDispatch();
   const insets = useSafeAreaInsets();
+  const scheme = useContext(ThemeContext);
   const {width} = useWindowDimensions();
   // const MARGIN = 10;
   const TAB_BAR_WIDTH = width;
@@ -59,7 +61,15 @@ const CustomBottomTab = ({
           {width: TAB_WIDTH},
           translateAnimation,
         ]}>
-        <View style={styles.slidingTab} />
+        <View
+          style={[
+            styles.slidingTab,
+            {
+              backgroundColor:
+                scheme === 'dark' ? themes.dark.backgroundColor : Colors.white,
+            },
+          ]}
+        />
       </Animated.View>
       {state.routes.map((route, index) => {
         const {options} = descriptors[route.key];
@@ -169,7 +179,6 @@ const styles = StyleSheet.create({
     width: wp(12),
     height: wp(12),
     borderRadius: wp(6),
-    backgroundColor: 'white',
   },
   contentContainer: {
     flex: 1,

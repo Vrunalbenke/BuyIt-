@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Text, View, StyleSheet} from 'react-native';
 import {Colors} from '../../../resources/colors';
 import {Pressable} from 'react-native';
@@ -18,6 +18,7 @@ import {ActivityIndicator} from 'react-native';
 import {setProfileImage, setUser} from '../../../Slice/userSlice';
 import {UserData, userProfileImage} from '../../common';
 import {useDispatch} from 'react-redux';
+import {ThemeContext, themes} from '../../../resources/themes';
 
 export type BusinessType = {
   business_icon: string;
@@ -28,6 +29,7 @@ export type BusinessType = {
   isFavorite: boolean | undefined;
 };
 const Home = () => {
+  const scheme = useContext(ThemeContext);
   const [searchValue, setSearchValue] = useState<string>('');
   const [businessTypes, setBusinessTypes] = useState<BusinessType[]>();
   const dispatch = useDispatch();
@@ -67,10 +69,31 @@ const Home = () => {
   );
 
   return (
-    <View style={styles.root}>
-      <View style={styles.HeaderContainer}>
+    <View
+      style={[
+        styles.root,
+        {
+          backgroundColor:
+            scheme === 'dark'
+              ? themes.dark.backgroundColor
+              : themes.light.backgroundColor,
+        },
+      ]}>
+      <View
+        style={[
+          styles.HeaderContainer,
+          {
+            borderBottomColor: scheme === 'dark' ? Colors.gray : '#d2d2d2',
+          },
+        ]}>
         <View style={styles.TitleContainer}>
-          <Text style={styles.TitleText}>What are you looking for?</Text>
+          <Text
+            style={[
+              styles.TitleText,
+              {color: scheme === 'dark' ? Colors.white : Colors.black},
+            ]}>
+            What are you looking for?
+          </Text>
           <Pressable style={styles.ScanPressable}>
             <Text style={styles.ScannerText}>Scan</Text>
             <ScannerIcon height={wp(7)} width={wp(7)} fill={Colors.green} />
@@ -107,13 +130,11 @@ export default Home;
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Colors.white,
   },
   HeaderContainer: {
     gap: 10,
     paddingVertical: wp(2),
     borderBottomWidth: 1.5,
-    borderBottomColor: '#d2d2d2',
   },
   TitleContainer: {
     flexDirection: 'row',
@@ -125,7 +146,6 @@ const styles = StyleSheet.create({
   TitleText: {
     fontFamily: 'Inter Medium',
     fontSize: wp(5),
-    color: Colors.black,
   },
   ScanPressable: {
     flexDirection: 'row',

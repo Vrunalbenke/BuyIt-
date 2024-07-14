@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {View, Text, StyleSheet, Pressable} from 'react-native';
 import {Colors} from '../../../resources/colors';
 import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
@@ -13,10 +13,12 @@ import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSh
 import EditProfileBottomSheet from '../../../bottomsheets/EditProfileBottomSheet';
 import FastImage from 'react-native-fast-image';
 import {useSelector} from 'react-redux';
+import {ThemeContext, themes} from '../../../resources/themes';
 
 const Profile = ({
   navigation,
 }: BottomTabScreenProps<RootBottomTabParams, 'Profile'>) => {
+  const scheme = useContext(ThemeContext);
   const EditBottomSheetRef = useRef<BottomSheet>(null);
   const [profileImage, setProfileImage] = useState();
   const {userData, userProfileImage} = useSelector(state => state?.user);
@@ -54,8 +56,7 @@ const Profile = ({
   };
 
   const handleLogout = () => {
-    storage.delete('token');
-    storage.delete('profileImage');
+    storage.clearAll();
     navigation.reset({
       index: 0,
       routes: [
@@ -72,7 +73,14 @@ const Profile = ({
   }, [userProfileImage]);
 
   const renderSeparator = () => {
-    return <View style={styles.ItemSeparator} />;
+    return (
+      <View
+        style={[
+          styles.ItemSeparator,
+          {borderColor: scheme === 'dark' ? Colors.gray : Colors.black},
+        ]}
+      />
+    );
   };
 
   const handleScreenListNavigation = (item: ItemObjectProp) => {
@@ -85,7 +93,16 @@ const Profile = ({
     EditBottomSheetRef.current?.snapToIndex(0);
   };
   return (
-    <View style={styles.root}>
+    <View
+      style={[
+        styles.root,
+        {
+          backgroundColor:
+            scheme === 'dark'
+              ? themes.dark.backgroundColor
+              : themes.light.backgroundColor,
+        },
+      ]}>
       <View style={styles.HeaderContainer}>
         <Text style={styles.HeaderText}>Account Details</Text>
       </View>
@@ -105,8 +122,8 @@ const Profile = ({
           ) : (
             <View style={styles.ProfileIconContainer}>
               <ProfileIcon
-                height={wp(20)}
-                width={wp(20)}
+                height={wp(18)}
+                width={wp(18)}
                 fill={Colors.orange}
               />
             </View>
@@ -194,6 +211,8 @@ const styles = StyleSheet.create({
     height: wp(20),
     borderRadius: wp(10),
     backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   UserInfoContainer: {
     justifyContent: 'center',

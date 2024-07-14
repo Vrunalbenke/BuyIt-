@@ -4,12 +4,13 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import React from 'react';
+import React, {useContext} from 'react';
 import {
   widthPercentageToDP as wp,
   // heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {Colors} from '../../resources/colors';
+import {ThemeContext, themes} from '../../resources/themes';
 
 type LargeButtonProps = {
   BTNText: string;
@@ -28,6 +29,7 @@ const LargeButton = ({
   loader = false,
   isPasswordUpdate = false,
 }: LargeButtonProps) => {
+  const scheme = useContext(ThemeContext);
   return (
     <TouchableOpacity
       style={[
@@ -56,7 +58,15 @@ const LargeButton = ({
       <Text
         style={[
           styles.BTNText,
-          {color: isDisable ? Colors.white : Colors.black},
+          {
+            color: isPasswordUpdate
+              ? Colors.black
+              : scheme === 'dark'
+              ? Colors.white
+              : isDisable
+              ? Colors.darkGray
+              : Colors.black,
+          },
         ]}>
         {BTNText}
       </Text>

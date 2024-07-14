@@ -104,7 +104,9 @@ const BusinessTypeCard = ({item, index}: BusinessTypeCardProp) => {
             }}
             resizeMode={FastImage.resizeMode.cover}
           />
-          <Text style={styles.NameText}>{item.name}</Text>
+          <Text style={[styles.NameText, {color: Colors.black}]}>
+            {item.name}
+          </Text>
         </View>
         <View
           style={[
@@ -148,8 +150,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: wp(3),
-    gap: wp(5),
+    gap: wp(2),
     marginHorizontal: wp(2),
+    backgroundColor: Colors.white,
   },
   ImageContainer: {
     justifyContent: 'center',

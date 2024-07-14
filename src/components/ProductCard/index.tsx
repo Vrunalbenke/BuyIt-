@@ -4,7 +4,7 @@ import {StyleSheet, View} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
+import {Colors} from '../../resources/colors';
 const ProductCard = ({ProductData, ProductImage, IsService, colorCode}) => {
   return (
     <View style={styles.MainContainer}>

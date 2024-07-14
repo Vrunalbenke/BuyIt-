@@ -1,5 +1,5 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React from 'react';
+import React, {useContext} from 'react';
 import {Checkbox} from 'react-native-paper';
 import {Colors} from '../../resources/colors';
 import {
@@ -7,6 +7,7 @@ import {
   // heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {Control, Controller, FieldValues, Path} from 'react-hook-form';
+import {ThemeContext} from '../../resources/themes';
 
 type CheckboxWithTextProps<FormFieldValues extends FieldValues> = {
   control: Control<FormFieldValues>;
@@ -31,6 +32,7 @@ const CheckboxWithText = <FormFieldValues extends FieldValues>({
   onPress,
   onPressTOP,
 }: CheckboxWithTextProps<FormFieldValues>) => {
+  const scheme = useContext(ThemeContext);
   return (
     <Controller
       control={control}
@@ -48,7 +50,9 @@ const CheckboxWithText = <FormFieldValues extends FieldValues>({
               />
             )}
             {NormalText && (
-              <Text style={[styles.NormalText]}>{NormalText} </Text>
+              <Text style={[styles.NormalText, {color: Colors.gray}]}>
+                {NormalText}{' '}
+              </Text>
             )}
             {TOPText && (
               <TouchableOpacity

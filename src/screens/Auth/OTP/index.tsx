@@ -9,7 +9,6 @@ import {
   widthPercentageToDP as wp,
   // heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import OTPInput from '../../../components/OTPInput';
 import TouchableTextDuo from '../../../components/TouchableTextDuo';
 import LargeButton from '../../../components/LargeButton';
@@ -19,7 +18,7 @@ import {
   useValidateOTPMutation,
 } from '../../../services/Auth';
 import PhoneNumberTextInput from '../../../components/PhoneNumberTextInput';
-import {ThemeContext} from '../../../resources/themes';
+import {ThemeContext, themes} from '../../../resources/themes';
 import {useForm} from 'react-hook-form';
 import {z} from 'zod';
 import {forgotPasswordSchema} from '../authType';
@@ -174,6 +173,7 @@ const OTP = ({route, navigation}: OTPProps) => {
   };
 
   const handleResendOTP = () => {
+    console.log(country_cca2, "What's one's need?", name);
     if (country_code && name && phone_number) {
       const ValidateMobile = {
         country_code: country_code,
@@ -193,6 +193,7 @@ const OTP = ({route, navigation}: OTPProps) => {
         phone_number: phone_number,
         OTP: Number(otp),
       };
+      console.log('OTP Data', OTPRequestData);
       validateOTP(OTPRequestData);
     }
   };
@@ -210,7 +211,16 @@ const OTP = ({route, navigation}: OTPProps) => {
   //console's
   console.log(validateMobileNumberError, 'OTP from backend is ', data);
   return (
-    <SafeAreaView style={styles.root}>
+    <View
+      style={[
+        styles.root,
+        {
+          backgroundColor:
+            scheme === 'dark'
+              ? themes.dark.backgroundColor
+              : themes.light.backgroundColor,
+        },
+      ]}>
       <View style={styles.MainContainer}>
         <TouchableOpacity
           onPress={() => {
@@ -219,10 +229,14 @@ const OTP = ({route, navigation}: OTPProps) => {
           <Ionicons
             name={'chevron-back-outline'}
             size={wp(8)}
-            color={Colors.black}
+            color={Colors.green}
           />
         </TouchableOpacity>
-        <Text style={styles.TitleText}>
+        <Text
+          style={[
+            styles.TitleText,
+            {color: scheme === 'dark' ? Colors.white : Colors.black},
+          ]}>
           {isFromSignUp ? 'OTP Verification' : 'Forgot Password'}
         </Text>
         <View style={styles.ImageContainer}>
@@ -270,7 +284,7 @@ const OTP = ({route, navigation}: OTPProps) => {
           loader={true}
         />
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -279,7 +293,6 @@ export default OTP;
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Colors.white,
   },
   MainContainer: {
     flex: 1,

@@ -1,9 +1,10 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {StyleSheet, View, Pressable, Text} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Colors} from '../../resources/colors';
 import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import {FlashList} from '@shopify/flash-list';
+import {ThemeContext} from '../../resources/themes';
 
 export type ItemObjectProp = {
   id: string;
@@ -34,6 +35,7 @@ const ScreenListDropdown = ({
   handleData,
   selectedValue,
 }: ScreenListProps) => {
+  const scheme = useContext(ThemeContext);
   const [toggleDD, setToggleDD] = useState<boolean>(false);
 
   return (
@@ -59,15 +61,25 @@ const ScreenListDropdown = ({
       ]}>
       <View style={[styles.ScreenListContainer]}>
         <View style={styles.LeftContainer}>
-          <Ionicons name={item.icon} size={wp(6)} color={Colors.black} />
-          <Text style={styles.TitleText}>{item.title}</Text>
+          <Ionicons
+            name={item.icon}
+            size={wp(6)}
+            color={scheme === 'dark' ? Colors.white : Colors.black}
+          />
+          <Text
+            style={[
+              styles.TitleText,
+              {color: scheme === 'dark' ? Colors.white : Colors.black},
+            ]}>
+            {item.title}
+          </Text>
         </View>
 
         <Pressable onPress={() => onPress(setToggleDD)}>
           <Ionicons
             name={toggleDD ? 'chevron-down-outline' : 'chevron-forward-outline'}
             size={wp(6)}
-            color={Colors.black}
+            color={scheme === 'dark' ? Colors.white : Colors.black}
           />
         </Pressable>
       </View>
@@ -90,6 +102,8 @@ const ScreenListDropdown = ({
                       color:
                         selectedValue === item?.abbreviation
                           ? Colors.green
+                          : scheme === 'dark'
+                          ? Colors.white
                           : Colors.black,
                     },
                   ]}>
@@ -99,7 +113,14 @@ const ScreenListDropdown = ({
             )}
             estimatedItemSize={5}
             showsVerticalScrollIndicator={false}
-            ItemSeparatorComponent={() => <View style={styles.ItemSeparator} />}
+            ItemSeparatorComponent={() => (
+              <View
+                style={[
+                  styles.ItemSeparator,
+                  {borderColor: scheme === 'dark' ? Colors.gray : Colors.black},
+                ]}
+              />
+            )}
           />
         </View>
       )}
@@ -131,7 +152,6 @@ const styles = StyleSheet.create({
   },
   ItemSeparator: {
     borderWidth: 0.5,
-    borderColor: Colors.darkLightGray,
   },
   ListContainer: {
     paddingHorizontal: wp(4),
