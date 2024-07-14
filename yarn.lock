@@ -4391,9 +4391,9 @@ human-signals@^2.1.0:
   integrity sha512-B4FFZ6q/T2jhhksgkbEW3HBvWIfDW85snkQgawt07S7J5QXTk6BkNV+0yAeZrM5QpMAdYlocGoljn0sJ/WQkFw==
 
 i18next@^23.11.5:
-  version "23.12.0"
-  resolved "https://registry.yarnpkg.com/i18next/-/i18next-23.12.0.tgz#e2512b8e70767842f6d17979b708779ac5047cb3"
-  integrity sha512-aEoMCs1wDYeBhG5uv1vavhVX/IXbp/unxBqME+H3Zxxe62JyB/IUcNkciQsC4klnb/B1hnoPCEY6zCM/0xDwZg==
+  version "23.12.1"
+  resolved "https://registry.yarnpkg.com/i18next/-/i18next-23.12.1.tgz#1cdb4d6dde62404e128ae1212af586d14c70d389"
+  integrity sha512-l4y291ZGRgUhKuqVSiqyuU2DDzxKStlIWSaoNBR4grYmh0X+pRYbFpTMs3CnJ5ECKbOI8sQcJ3PbTUfLgPRaMA==
   dependencies:
     "@babel/runtime" "^7.23.2"
 
@@ -6368,10 +6368,10 @@ react-native-maps@^1.15.6:
   dependencies:
     "@types/geojson" "^7946.0.13"
 
-react-native-mmkv@^2.12.2:
-  version "2.12.2"
-  resolved "https://registry.yarnpkg.com/react-native-mmkv/-/react-native-mmkv-2.12.2.tgz#4bba0f5f04e2cf222494cce3a9794ba6a4894dee"
-  integrity sha512-6058Aq0p57chPrUutLGe9fYoiDVDNMU2PKV+lLFUJ3GhoHvUrLdsS1PDSCLr00yqzL4WJQ7TTzH+V8cpyrNcfg==
+react-native-mmkv-storage@^0.9.1:
+  version "0.9.1"
+  resolved "https://registry.yarnpkg.com/react-native-mmkv-storage/-/react-native-mmkv-storage-0.9.1.tgz#0db7e8c1726713dce68704bb8795dc64096c8cbb"
+  integrity sha512-FzSx4PKxK2ocT/OuKGlaVziWZyQYHYLUx9595i1oXY263C5mG19PN5RiBgEGL2S5lK4VGUCzO85GAcsrNPtpOg==
 
 react-native-pager-view@^6.3.1:
   version "6.3.3"

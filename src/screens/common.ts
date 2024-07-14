@@ -2,6 +2,8 @@ import {DeviceEventEmitter} from 'react-native';
 import {storage} from '../../App';
 import {LoginResponse} from '../services/Auth/authTypes';
 
+// Create a new instance of MMKV
+
 const getToken = storage.getString('token');
 const TokenData = getToken ? JSON.parse(getToken) : undefined;
 
@@ -21,8 +23,7 @@ export let lang = language ? language : 'en';
 let user = storage.getString('user');
 export let UserData = user ? JSON.parse(user) : undefined;
 
-DeviceEventEmitter.addListener('token', (Logintoken: LoginResponse) => {
-  const newTokenData = JSON.parse(Logintoken);
+DeviceEventEmitter.addListener('token', (newTokenData: LoginResponse) => {
   accessToken = newTokenData?.accessToken?.token;
   refreshToken = newTokenData?.refreshToken?.token;
 });

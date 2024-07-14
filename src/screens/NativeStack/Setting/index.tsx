@@ -147,7 +147,7 @@ const Setting = ({
   };
 
   const handleData = (item: ListDataProps) => {
-    storage.set(item?.type, item?.abbreviation);
+    storage.setString(item?.type, item?.abbreviation);
     DeviceEventEmitter.emit(item?.type, item?.abbreviation);
     if (item.type === 'lang') {
       setSelectedLang(item.abbreviation);

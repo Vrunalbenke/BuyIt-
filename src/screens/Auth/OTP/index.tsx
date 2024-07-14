@@ -142,8 +142,8 @@ const OTP = ({route, navigation}: OTPProps) => {
   useEffect(() => {
     if (createUserIsSuccess) {
       const tokenData = JSON.stringify(createUserData);
-      storage.set('token', tokenData);
-      DeviceEventEmitter.emit('token', tokenData);
+      storage.setString('token', tokenData);
+      DeviceEventEmitter.emit('token', createUserData);
       navigation.navigate('IsSellerOrCustomer');
       console.log('Stored User Login Data -->', storage.getString('token'));
     }

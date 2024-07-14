@@ -76,7 +76,7 @@ const EditProfileBottomSheet = ({
       };
       dispatch(setUser(userData));
       console.log(userData, 'User data', GUData);
-      storage.set('user', JSON.stringify(userData));
+      storage.setString('user', JSON.stringify(userData));
       DeviceEventEmitter.emit('user', userData);
     } else if (GUIsError) {
       console.log(GUError, 'Error While getting user');
@@ -105,7 +105,7 @@ const EditProfileBottomSheet = ({
       Ref?.current?.close();
       if (profileURI && profileURI !== userProfileImage) {
         dispatch(setProfileImage(profileURI));
-        storage.set('profileImage', profileURI);
+        storage.setString('profileImage', profileURI);
         DeviceEventEmitter.emit('profileImage', profileURI);
       }
     }

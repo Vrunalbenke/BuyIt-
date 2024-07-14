@@ -70,7 +70,7 @@ const SignIn = ({navigation}: SignInProps) => {
         ...GUData,
       };
       dispatch(setUser(data));
-      storage.set('user', JSON.stringify(data));
+      storage.setString('user', JSON.stringify(data));
       DeviceEventEmitter.emit('user', data);
       navigation.reset({
         index: 0,
@@ -97,8 +97,8 @@ const SignIn = ({navigation}: SignInProps) => {
         position: 'bottom',
       });
       const tokenData = JSON.stringify(LoginResponse);
-      storage.set('token', tokenData);
-      DeviceEventEmitter.emit('token', tokenData);
+      storage.setString('token', tokenData);
+      DeviceEventEmitter.emit('token', LoginResponse);
       trigger();
     } else if (isError) {
       console.log('error: ', error);

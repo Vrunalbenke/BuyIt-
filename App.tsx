@@ -13,9 +13,10 @@ import {
 import {themes} from './src/resources/themes';
 import Toast from 'react-native-toast-message';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import {MMKV} from 'react-native-mmkv';
+import {MMKVLoader} from 'react-native-mmkv-storage';
 
-export const storage = new MMKV();
+export const storage = new MMKVLoader().initialize();
+
 const App = () => {
   const scheme = useColorScheme();
   return (
