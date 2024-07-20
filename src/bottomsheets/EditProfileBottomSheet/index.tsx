@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {View, Text, Pressable, Platform, Image} from 'react-native';
 import BottomSheet from '@gorhom/bottom-sheet';
 import {StyleSheet} from 'react-native';
@@ -20,6 +20,7 @@ import {DeviceEventEmitter} from 'react-native';
 import {useLazyGetUserQuery, useUpdateUserMutation} from '../../services/Auth';
 import {useDispatch} from 'react-redux';
 import {setProfileImage, setUser} from '../../Slice/userSlice';
+import {ThemeContext, themes} from '../../resources/themes';
 
 type EditProfileBottomSheetProps = {
   Ref: React.Ref<BottomSheet>;
@@ -37,6 +38,7 @@ const EditProfileBottomSheet = ({
   Ref,
   UserData,
 }: EditProfileBottomSheetProps) => {
+  const scheme = useContext(ThemeContext);
   const dispatch = useDispatch();
   const snapPoints = ['50%'];
   const {control, handleSubmit} = useForm({
@@ -119,14 +121,6 @@ const EditProfileBottomSheet = ({
         includeBase64: true,
       },
       response => {
-        // if (response.didCancel) {
-        //   console.log('User cancelled camera picker');
-        // } else if (response.errorCode) {
-        //   console.log('Camera error: ', response.errorMessage);
-        // } else {
-        //   const imageUri =
-        //     Platform.OS === 'ios' ? response?.uri : response?.path;
-
         console.log('Image uri: ', response.assets[0]?.uri);
         setProfileURI(response.assets[0]?.uri);
 
@@ -155,8 +149,16 @@ const EditProfileBottomSheet = ({
   };
 
   return (
-    <BottomSheet index={-1} snapPoints={snapPoints} ref={Ref}>
-      <View style={styles.root}>
+    <BottomSheet
+      index={-1}
+      snapPoints={snapPoints}
+      ref={Ref}
+      backgroundStyle={{
+        backgroundColor:
+          scheme === 'dark' ? Colors.black : themes.light.backgroundColor,
+      }}
+      handleIndicatorStyle={{backgroundColor: themes[scheme].primaryTextColor}}>
+      <View style={[styles.root]}>
         <View style={styles.SelectImageContainer}>
           {profileURI ? (
             <Image
@@ -225,7 +227,6 @@ export default EditProfileBottomSheet;
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'flex-start',
   },

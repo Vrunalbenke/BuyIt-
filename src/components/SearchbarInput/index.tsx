@@ -58,6 +58,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter Regular',
     fontSize: wp(4.5),
     color: Colors.black,
-    width: wp(86),
+    width: wp(81),
   },
 });

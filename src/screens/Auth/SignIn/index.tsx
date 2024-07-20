@@ -22,12 +22,14 @@ import {storage} from '../../../../App';
 import {DeviceEventEmitter} from 'react-native';
 import {useDispatch} from 'react-redux';
 import {setUser} from '../../../Slice/userSlice';
+import {useTranslation} from 'react-i18next';
 
 type LoginFields = z.infer<typeof loginSchema>;
 
 type SignInProps = NativeStackScreenProps<RootStackParams, 'SignIn'>;
 const SignIn = ({navigation}: SignInProps) => {
   const scheme = useContext(ThemeContext);
+  const {t} = useTranslation();
   const {control, setValue, getValues, handleSubmit} = useForm<LoginFields>({
     defaultValues: {
       country_cca2: 'US',
@@ -155,7 +157,7 @@ const SignIn = ({navigation}: SignInProps) => {
           <UserTextInput
             control={control}
             name={'password'}
-            label="Password"
+            label={t('Password')}
             placeholder={'********'}
             disabled={false}
             right={true}
@@ -167,7 +169,7 @@ const SignIn = ({navigation}: SignInProps) => {
             inputMode={'text'}
           />
           <TextIconButton
-            NormalText={'Forgot Password?'}
+            NormalText={t('Forgot Password?')}
             NormalTextColor={scheme === 'dark' ? Colors.white : Colors.black}
             onPress={handleForgotPassword}
           />
@@ -176,13 +178,13 @@ const SignIn = ({navigation}: SignInProps) => {
 
       <View style={styles.ButtonContainer}>
         <LargeButton
-          BTNText="Next"
+          BTNText={t('Next')}
           onPress={handleSubmit(handleData)}
           isDisable={isLoading || GUIsLoading}
           loader={true}
         />
         <LargeButton
-          BTNText="Skip"
+          BTNText={t('Skip')}
           onPress={() =>
             navigation.reset({
               index: 0,
@@ -208,10 +210,10 @@ const SignIn = ({navigation}: SignInProps) => {
                 color: scheme === 'dark' ? Colors.white : Colors.black,
               },
             ]}>
-            Don't have an account?
+            {t('login.noaccount')}
           </Text>
           <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
-            <Text style={styles.SignUpText}> Sign Up</Text>
+            <Text style={styles.SignUpText}> {t('login.signup')}</Text>
           </TouchableOpacity>
         </View>
       </View>

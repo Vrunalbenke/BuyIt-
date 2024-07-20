@@ -15,7 +15,7 @@ import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import UserTextInput from '../../../components/UserTextInput';
 import {useForm} from 'react-hook-form';
 import PhoneNumberTextInput from '../../../components/PhoneNumberTextInput';
-import {ThemeContext} from '../../../resources/themes';
+import {ThemeContext, themes} from '../../../resources/themes';
 import ScrollableWrapper from '../../../components/ScrollableWrapper';
 import ToggleSwitch from '../../../components/ToggleSwitch';
 import LargeButton from '../../../components/LargeButton';
@@ -367,7 +367,16 @@ const AddBusiness = ({
   };
   return (
     <ScrollableWrapper contentContainerStyle={styles.ScrollableWrapper}>
-      <View style={styles.root}>
+      <View
+        style={[
+          styles.root,
+          {
+            backgroundColor:
+              scheme === 'dark'
+                ? themes.dark.backgroundColor
+                : themes.light.backgroundColor,
+          },
+        ]}>
         <View style={styles.HeaderContainer}>
           <View style={styles.HeaderTopContainer}>
             <TouchableOpacity
@@ -386,7 +395,11 @@ const AddBusiness = ({
               <></>
             </View>
           </View>
-          <Text style={styles.SubTitleText}>
+          <Text
+            style={[
+              styles.SubTitleText,
+              {color: scheme === 'dark' ? Colors.white : Colors.black},
+            ]}>
             Fill in some details about your business
           </Text>
         </View>
@@ -512,7 +525,13 @@ const AddBusiness = ({
             />
           )}
         </View>
-        <Text style={styles.ShareText}>Share with customers</Text>
+        <Text
+          style={[
+            styles.ShareText,
+            {color: scheme === 'dark' ? Colors.white : Colors.black},
+          ]}>
+          Share with customers
+        </Text>
         <View style={styles.SwitchContainer}>
           <ToggleSwitch
             label="Email"
@@ -530,18 +549,20 @@ const AddBusiness = ({
             <Text style={styles.ErrorText}>{errors.share_phone?.message}</Text>
           )}
         </View>
-        <LargeButton
-          BTNText={isUpdate ? 'Update' : 'Next'}
-          onPress={
-            isUpdate
-              ? handleSubmit(handleUpdateBusiness)
-              : handleSubmit(handleAddBusiness)
-          }
-          isDisable={
-            isUpdate ? UpdateBusinessIsLoading : CreateBusinessIsLoading
-          }
-          loader={true}
-        />
+        <View style={styles.BottomBTNContainer}>
+          <LargeButton
+            BTNText={isUpdate ? 'Update' : 'Next'}
+            onPress={
+              isUpdate
+                ? handleSubmit(handleUpdateBusiness)
+                : handleSubmit(handleAddBusiness)
+            }
+            isDisable={
+              isUpdate ? UpdateBusinessIsLoading : CreateBusinessIsLoading
+            }
+            loader={true}
+          />
+        </View>
       </View>
       <FlashListBottomSheet
         bottomSheetRef={bottomSheetRef}
@@ -557,9 +578,7 @@ const AddBusiness = ({
 export default AddBusiness;
 
 const styles = StyleSheet.create({
-  ScrollableWrapper: {
-    backgroundColor: '#FFF',
-  },
+  ScrollableWrapper: {},
   root: {
     flex: 1,
     justifyContent: 'flex-start',
@@ -592,7 +611,6 @@ const styles = StyleSheet.create({
   },
   SubTitleText: {
     fontSize: wp(4),
-    color: Colors.black,
     fontFamily: 'Inter Regular',
   },
   InputContainer: {
@@ -616,5 +634,8 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: Colors.errorRed,
     fontFamily: 'Inter Medium',
+  },
+  BottomBTNContainer: {
+    paddingBottom: 10,
   },
 });

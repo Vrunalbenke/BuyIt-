@@ -133,15 +133,6 @@ const CustomBottomTab = ({
             style={styles.routePressable}>
             <View style={styles.contentContainer}>
               <BottomTabIcon route={route} isFocused={isFocused} />
-              {/* {isFocused && (
-                <Text
-                  style={[
-                    styles.LabelText,
-                    {color: isFocused ? Colors.green : Colors.white},
-                  ]}>
-                  {route.name}
-                </Text>
-              )} */}
             </View>
           </Pressable>
         );

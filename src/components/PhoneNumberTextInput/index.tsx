@@ -18,6 +18,7 @@ import {
   widthPercentageToDP as wp,
   // heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import {useTranslation} from 'react-i18next';
 
 type DisplayCountryPickerProps<FormFieldValues extends FieldValues> = {
   control: Control<FormFieldValues>;
@@ -100,11 +101,12 @@ const PhoneNumberTextInput = <FormFieldValues extends FieldValues>({
   placeholder,
   Optional,
 }: UserTextInputProps<FormFieldValues>) => {
+  const {t} = useTranslation();
   return (
     <UserTextInput
       control={control}
       name={'phone_number'}
-      label="Phone Number"
+      label={t('Phone Number')}
       placeholder={placeholder}
       disabled={false}
       secureTextEntry={false}

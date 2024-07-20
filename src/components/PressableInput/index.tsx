@@ -1,9 +1,10 @@
 import {Pressable, StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, {useContext} from 'react';
 import {Colors} from '../../resources/colors';
 import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import {Control, Controller, FieldValues, Path} from 'react-hook-form';
 import FastImage from 'react-native-fast-image';
+import {ThemeContext} from '../../resources/themes';
 
 type PressableInputProps<FormFieldValues extends FieldValues> = {
   control: Control<FormFieldValues>;
@@ -23,6 +24,7 @@ const PressableInput = <FormFieldValues extends FieldValues>({
   onPress,
   placeholder,
 }: PressableInputProps<FormFieldValues>) => {
+  const scheme = useContext(ThemeContext);
   return (
     <Controller
       control={control}
@@ -32,7 +34,13 @@ const PressableInput = <FormFieldValues extends FieldValues>({
           <View style={styles.MainContainer}>
             {label && (
               <View style={styles.LabelContainer}>
-                <Text style={styles.LabelText}>{label}</Text>
+                <Text
+                  style={[
+                    styles.LabelText,
+                    {color: scheme === 'dark' ? Colors.gray : Colors.black},
+                  ]}>
+                  {label}
+                </Text>
                 <Text style={styles.MandatoryText}>*</Text>
               </View>
             )}
@@ -58,7 +66,12 @@ const PressableInput = <FormFieldValues extends FieldValues>({
                 style={[
                   styles.Input,
                   {
-                    color: value === undefined ? Colors.gray : Colors.black,
+                    color:
+                      value === undefined
+                        ? Colors.gray
+                        : scheme === 'dark'
+                        ? Colors.white
+                        : Colors.black,
                   },
                 ]}>
                 {value ? value : placeholder}

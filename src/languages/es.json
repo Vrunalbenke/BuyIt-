@@ -1,0 +1,24 @@
+{
+  "phonenumber": "Teléfono",
+  "password": "Contraseña",
+  "next": "Siguiente",
+  "skip": "Omitir",
+  "name": "Nombre",
+  "email": "Correo electrónico",
+  "confirmpassword": "Confirmar contraseña",
+  "optional": "Opcional",
+  "iagree": "Estoy de acuerdo con el",
+  "terms&condition": "Términos y condiciones",
+  "privacypolicy": "Política de privacidad",
+
+  "login": {
+    "forgotpassword": "¿Olvidó su contraseña?",
+    "signup": "Regístrate",
+    "don'thaveaccount": "¿No tienes cuenta?"
+  },
+
+  "signup": {
+    "allowsms": "Permitir SMS en el número de teléfono superior",
+    "alreadyhaveaccount": "¿Ya tienes una cuenta?"
+  }
+}

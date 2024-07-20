@@ -104,7 +104,13 @@ const Profile = ({
         },
       ]}>
       <View style={styles.HeaderContainer}>
-        <Text style={styles.HeaderText}>Account Details</Text>
+        <Text
+          style={[
+            styles.HeaderText,
+            {color: scheme === 'dark' ? Colors.white : Colors.black},
+          ]}>
+          Account Details
+        </Text>
       </View>
       <View style={styles.ProfileContainer}>
         <View style={styles.ProfileLeftContainer}>
@@ -129,15 +135,35 @@ const Profile = ({
             </View>
           )}
           <View style={styles.UserInfoContainer}>
-            <Text style={styles.NameText}>{userData?.name}</Text>
+            <Text
+              style={[
+                styles.NameText,
+                {color: scheme === 'dark' ? Colors.white : Colors.black},
+              ]}>
+              {userData?.name}
+            </Text>
             <View style={styles.ContantInfoContainer}>
               <Ionicons name="call" size={18} color={Colors.orange} />
-              <Text style={styles.phoneText}>{userData?.phone_number}</Text>
+              <Text
+                style={[
+                  [
+                    styles.phoneText,
+                    {color: scheme === 'dark' ? Colors.white : Colors.black},
+                  ],
+                ]}>
+                {userData?.phone_number}
+              </Text>
             </View>
             {userData?.email && (
               <View style={styles.ContantInfoContainer}>
                 <Ionicons name="mail" size={18} color={Colors.orange} />
-                <Text style={styles.EmailText}>{userData?.email}</Text>
+                <Text
+                  style={[
+                    styles.EmailText,
+                    {color: scheme === 'dark' ? Colors.white : Colors.black},
+                  ]}>
+                  {userData?.email}
+                </Text>
               </View>
             )}
           </View>
@@ -187,7 +213,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: wp(2),
     fontFamily: 'Inter Medium',
     fontSize: wp(7),
-    color: Colors.green,
+    // color: Colors.green,
   },
   ProfileContainer: {
     width: wp(100),

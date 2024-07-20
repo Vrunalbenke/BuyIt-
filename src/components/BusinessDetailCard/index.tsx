@@ -1,11 +1,13 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {StyleSheet, View, Text, Pressable} from 'react-native';
 import {Colors} from '../../resources/colors';
 import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import ToggleSwitch from '../ToggleSwitch';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {ThemeContext} from '../../resources/themes';
 
 const BusinessDetailCard = ({item, colorCode}) => {
+  const scheme = useContext(ThemeContext);
   return (
     <View style={styles.BusinessContainer}>
       <View
@@ -18,13 +20,29 @@ const BusinessDetailCard = ({item, colorCode}) => {
         <Text style={styles.ImageText}>{item.name[0]}</Text>
       </View>
       <View style={styles.BusinessDetailContainer}>
-        <Text style={styles.NameText}>{item.name}</Text>
-        <Text style={styles.DescText}>{item?.description}</Text>
+        <Text
+          style={[
+            styles.NameText,
+            {color: scheme === 'dark' ? Colors.white : Colors.black},
+          ]}>
+          {item.name}
+        </Text>
+        <Text
+          style={[
+            styles.DescText,
+            {color: scheme === 'dark' ? Colors.white : Colors.black},
+          ]}>
+          {item?.description}
+        </Text>
       </View>
       <View style={styles.BusinessIconContainer}>
         <ToggleSwitch />
         <Pressable>
-          <Ionicons name="qr-code-outline" size={wp(6)} />
+          <Ionicons
+            name="qr-code-outline"
+            size={wp(6)}
+            color={scheme === 'dark' ? Colors.white : Colors.black}
+          />
         </Pressable>
       </View>
     </View>

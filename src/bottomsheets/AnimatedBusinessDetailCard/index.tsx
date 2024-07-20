@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {View, Text, StyleSheet, Pressable} from 'react-native';
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import Animated, {
@@ -14,8 +14,10 @@ import {Dimensions} from 'react-native';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {RootStackParams} from '../../navigation/StackNavigator';
 import {SearchBusinessResponse} from '../../services/Business/businessTypes';
+import {ThemeContext} from '../../resources/themes';
 
 const AnimatedBusinessDetailCard = ({item, colorCode, handleBusinessEdit}) => {
+  const scheme = useContext(ThemeContext);
   const navigation = useNavigation<NavigationProp<RootStackParams>>();
   const pressed = useSharedValue<boolean>(false);
   const offset = useSharedValue<number>(0);
@@ -23,6 +25,7 @@ const AnimatedBusinessDetailCard = ({item, colorCode, handleBusinessEdit}) => {
 
   console.log('Screen width in pixels:', screenWidth);
   const pan = Gesture.Pan()
+    .activeOffsetX([-30, 10])
     .onStart(() => {
       pressed.value = true;
     })
@@ -67,8 +70,16 @@ const AnimatedBusinessDetailCard = ({item, colorCode, handleBusinessEdit}) => {
             <Pressable
               style={styles.IconPressable}
               onPress={() => handleManageServices(item)}>
-              <Ionicons name="card-outline" size={wp(5)} color={Colors.black} />
-              <Text style={styles.HiddenText}>
+              <Ionicons
+                name="card-outline"
+                size={wp(5)}
+                color={scheme === 'dark' ? Colors.white : Colors.black}
+              />
+              <Text
+                style={[
+                  styles.HiddenText,
+                  {color: scheme === 'dark' ? Colors.white : Colors.black},
+                ]}>
                 {item.is_service ? 'Manage Services' : 'Manage Products'}
               </Text>
             </Pressable>
@@ -78,17 +89,29 @@ const AnimatedBusinessDetailCard = ({item, colorCode, handleBusinessEdit}) => {
               <Ionicons
                 name="create-outline"
                 size={wp(5)}
-                color={Colors.black}
+                color={scheme === 'dark' ? Colors.white : Colors.black}
               />
-              <Text style={styles.HiddenText}>Edit</Text>
+              <Text
+                style={[
+                  styles.HiddenText,
+                  {color: scheme === 'dark' ? Colors.white : Colors.black},
+                ]}>
+                Edit
+              </Text>
             </Pressable>
             <Pressable style={styles.IconPressable}>
               <Ionicons
                 name="trash-outline"
                 size={wp(5)}
-                color={Colors.black}
+                color={scheme === 'dark' ? Colors.white : Colors.black}
               />
-              <Text style={styles.HiddenText}>Delete</Text>
+              <Text
+                style={[
+                  styles.HiddenText,
+                  {color: scheme === 'dark' ? Colors.white : Colors.black},
+                ]}>
+                Delete
+              </Text>
             </Pressable>
           </View>
         </Animated.View>
@@ -122,7 +145,6 @@ const styles = StyleSheet.create({
   HiddenText: {
     fontSize: wp(3.2),
     fontFamily: 'Inter Regular',
-    color: Colors.black,
     textTransform: 'capitalize',
   },
 });

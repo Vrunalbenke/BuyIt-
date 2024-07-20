@@ -15,6 +15,7 @@ import {ThemeContext, themes} from './src/resources/themes';
 import Toast from 'react-native-toast-message';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {MMKV} from 'react-native-mmkv';
+import i18n from './src/languages';
 
 export const storage = new MMKV();
 const App = () => {
@@ -26,13 +27,27 @@ const App = () => {
     storage.set('theme', res ? res : scheme);
   }, []);
 
+  useEffect(() => {
+    const lang = storage.getString('lang');
+    if (lang) {
+      i18n.changeLanguage(lang);
+    } else {
+      i18n.changeLanguage('en');
+      storage.set('lang', 'en');
+    }
+  }, []);
+
   return (
     <SafeAreaProvider>
       <GestureHandlerRootView style={styles.root}>
         <Provider store={store}>
           <SafeAreaView style={styles.root}>
             <StatusBar
-              backgroundColor={themes[scheme].backgroundColor}
+              backgroundColor={
+                scheme === 'dark'
+                  ? themes.dark.backgroundColor
+                  : themes.light.backgroundColor
+              }
               barStyle={scheme === 'light' ? 'dark-content' : 'light-content'}
             />
             <ThemeContext.Provider value={scheme}>

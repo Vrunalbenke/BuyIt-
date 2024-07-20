@@ -23,11 +23,13 @@ import Toast from 'react-native-toast-message';
 import {useUpdateSearchRadiusMutation} from '../../../services/Auth';
 import {ThemeContext, themes} from '../../../resources/themes';
 import ToggleSwitch from '../../../components/ToggleSwitch';
+import {useTranslation} from 'react-i18next';
 
 const Setting = ({
   navigation,
 }: NativeStackScreenProps<RootStackParams, 'Setting'>) => {
   const scheme = useContext(ThemeContext);
+  const {i18n} = useTranslation();
   const ScreenListData = [
     {
       id: '1',
@@ -168,7 +170,9 @@ const Setting = ({
     storage.set(item?.type, item?.abbreviation);
     DeviceEventEmitter.emit(item?.type, item?.abbreviation);
     if (item.type === 'lang') {
-      setSelectedLang(item.abbreviation);
+      i18n.changeLanguage(item.abbreviation).then(() => {
+        setSelectedLang(item.abbreviation);
+      });
     } else {
       setSelectedRadius(item.abbreviation);
       const body = {
@@ -220,7 +224,7 @@ const Setting = ({
           <Ionicons
             name={'chevron-back-outline'}
             size={wp(8)}
-            color={Colors.green}
+            color={scheme === 'dark' ? Colors.white : Colors.black}
           />
         </Pressable>
       </View>
@@ -256,13 +260,20 @@ const Setting = ({
         ItemSeparatorComponent={renderSeparator}
       />
       <View style={styles.ThemeContainer}>
-        <Text
-          style={[
-            styles.ThemeText,
-            {color: scheme === 'dark' ? Colors.white : Colors.black},
-          ]}>
-          Theme
-        </Text>
+        <View style={styles.ThemeRightContainer}>
+          <Ionicons
+            name="contrast-outline"
+            size={wp(6)}
+            color={scheme === 'dark' ? Colors.white : Colors.black}
+          />
+          <Text
+            style={[
+              styles.ThemeText,
+              {color: scheme === 'dark' ? Colors.white : Colors.black},
+            ]}>
+            Dark Mode
+          </Text>
+        </View>
         <ToggleSwitch
           // label="Email"
           changeValue={handleToggle}
@@ -292,6 +303,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: wp(5),
+  },
+  ThemeRightContainer: {
+    flexDirection: 'row',
+    gap: 10,
+    alignItems: 'center',
   },
   ThemeText: {
     fontSize: wp(5),

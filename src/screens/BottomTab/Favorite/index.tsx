@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {View, Text, StyleSheet, Pressable} from 'react-native';
 import {Colors} from '../../../resources/colors';
 import {
@@ -19,8 +19,10 @@ import ScrollableWrapper from '../../../components/ScrollableWrapper';
 import {BusinessType} from '../Home';
 import BusinessTypeCard from '../../../components/BusinessTypeCard';
 import Toast from 'react-native-toast-message';
+import {ThemeContext, themes} from '../../../resources/themes';
 
 const Favorite = () => {
+  const scheme = useContext(ThemeContext);
   const [searchString, setSearchString] = useState('');
   const [randomHexCodeArray, setRandomHexCodeArray] = useState<string[]>();
 
@@ -103,8 +105,20 @@ const Favorite = () => {
         </View>
         <View style={styles.ItemInfoContainer}>
           <View style={styles.ItemNameDescContainer}>
-            <Text style={styles.NameText}>{item.name}</Text>
-            <Text style={styles.DescText}>{item.description}</Text>
+            <Text
+              style={[
+                styles.NameText,
+                {color: scheme === 'dark' ? Colors.white : Colors.black},
+              ]}>
+              {item.name}
+            </Text>
+            <Text
+              style={[
+                styles.DescText,
+                {color: scheme === 'dark' ? Colors.white : Colors.black},
+              ]}>
+              {item.description}
+            </Text>
           </View>
           <Pressable
             onPress={() => {
@@ -124,10 +138,25 @@ const Favorite = () => {
   // );
 
   return (
-    <View style={styles.root}>
-      <View style={styles.HeaderContainer}>
+    <View
+      style={[
+        styles.root,
+        {
+          backgroundColor:
+            scheme === 'dark'
+              ? themes.dark.backgroundColor
+              : themes.light.backgroundColor,
+        },
+      ]}>
+      <View
+        style={[
+          styles.HeaderContainer,
+          {
+            borderBottomColor: scheme === 'dark' ? Colors.gray : '#d2d2d2',
+          },
+        ]}>
         <Text style={styles.HeaderText}> Favorite</Text>
-        <View style={styles.SearchContainer}>
+        <View style={[styles.SearchContainer]}>
           <SearchbarInput
             value={searchString}
             setValue={setSearchString}
@@ -173,7 +202,11 @@ const Favorite = () => {
         )}
         {businessTypes?.length === 0 &&
           (FBData === undefined || FBData?.length === 0) && (
-            <Text style={styles.EmptyFavoriteBusinessText}>
+            <Text
+              style={[
+                styles.EmptyFavoriteBusinessText,
+                {color: scheme === 'dark' ? Colors.white : Colors.black},
+              ]}>
               Explore and add your favorite businesses
             </Text>
           )}
@@ -190,11 +223,10 @@ const styles = StyleSheet.create({
   },
   HeaderContainer: {
     width: wp(100),
-    height: hp(12),
+    // height: hp(12),
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     borderBottomWidth: 1.5,
-    borderBottomColor: '#d2d2d2',
     paddingVertical: wp(2),
   },
   HeaderText: {
@@ -203,13 +235,7 @@ const styles = StyleSheet.create({
     fontSize: wp(7),
     color: Colors.green,
   },
-  SearchContainer: {
-    backgroundColor: Colors.white,
-    // shadowColor: '#000',
-    // shadowOffset: {width: 1, height: 2},
-    // shadowOpacity: 0.2,
-    // shadowRadius: 3,
-  },
+  SearchContainer: {},
   FavoriteContainer: {
     // flex: 1,
     width: wp(100),
@@ -260,19 +286,16 @@ const styles = StyleSheet.create({
     width: wp(55),
     fontFamily: 'Inter Medium',
     fontSize: wp(5),
-    color: Colors.black,
   },
   DescText: {
     width: wp(55),
     fontFamily: 'Inter Regular',
     fontSize: wp(3.5),
     flexWrap: 'wrap',
-    color: Colors.black,
   },
   EmptyFavoriteBusinessText: {
     fontFamily: 'Inter Regular',
     fontSize: wp(4),
-    color: Colors.black,
     textAlign: 'center',
     paddingTop: wp(4),
   },

@@ -1,11 +1,12 @@
 import {StyleSheet, Text, Pressable, View} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {MotiView, useAnimationState} from 'moti';
 import {Colors} from '../../resources/colors';
 import {
   widthPercentageToDP as wp,
   // heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import {ThemeContext} from '../../resources/themes';
 type ToggleSwitchProps = {
   label?: string;
   disabled: boolean;
@@ -19,6 +20,7 @@ const ToggleSwitch = ({
   changeValue,
   value,
 }: ToggleSwitchProps) => {
+  const scheme = useContext(ThemeContext);
   const [toggle, setToggle] = useState(false);
 
   useEffect(() => {
@@ -37,7 +39,7 @@ const ToggleSwitch = ({
   });
   const containerAnimationState = useAnimationState({
     off: {
-      backgroundColor: Colors.darkLightGray,
+      backgroundColor: scheme === 'dark' ? Colors.gray : Colors.darkLightGray,
     },
     on: {
       backgroundColor: Colors.green,
@@ -82,7 +84,13 @@ const ToggleSwitch = ({
         <Text
           style={[
             styles.LabelText,
-            {color: disabled ? Colors.gray : Colors.black},
+            {
+              color: disabled
+                ? Colors.gray
+                : scheme === 'dark'
+                ? Colors.white
+                : Colors.black,
+            },
           ]}>
           {label}
         </Text>

@@ -1,0 +1,24 @@
+{
+  "phonenumber": "Phone Number",
+  "password": "Password",
+  "next": "Next",
+  "skip": "Skip",
+  "name": "Name",
+  "email": "Email",
+  "confirmpassword": "Confirm Password",
+  "optional": "Optional",
+  "iagree": "I agree to the",
+  "terms&condition": "Terms and conditions",
+  "privacypolicy": "Privacy Policy",
+
+  "login": {
+    "forgotpassword": "Forgot Password?",
+    "signup": "Sign Up",
+    "noaccount": "Don’t have an account?"
+  },
+
+  "signup": {
+    "allowsms": "Allow sms on the phone number above",
+    "haveaccount": "Already have an account?"
+  }
+}

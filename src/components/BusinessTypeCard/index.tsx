@@ -10,11 +10,8 @@ import {MotiView} from 'moti';
 import Toast from 'react-native-toast-message';
 import {
   useBusinessByTypeQuery,
-  useBusinessTypesQuery,
   useMarkFavoriteBusinessTypeMutation,
-  useSearchBusinessMutation,
 } from '../../services/Business';
-import LottieView from 'lottie-react-native';
 import {setSearchBusinessList} from '../../Slice/businessSlice';
 import {useDispatch} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
@@ -92,7 +89,7 @@ const BusinessTypeCard = ({item, index}: BusinessTypeCardProp) => {
         style={styles.BusinessTypeContainer}
         from={{opacity: 0, translateY: 100}}
         animate={{opacity: 1, translateY: 0}}
-        transition={{delay: index * 100, type: 'timing'}}>
+        transition={{delay: index * 150, type: 'timing'}}>
         <View style={styles.ImageContainer}>
           <FastImage
             style={styles.BusinessIcon}
