@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import BottomSheet from '@gorhom/bottom-sheet';
 import {View, Text, Pressable} from 'react-native';
 import {FlashList, ListRenderItem} from '@shopify/flash-list';
@@ -11,6 +11,7 @@ import {
 } from 'react-native-responsive-screen';
 import {useSelector} from 'react-redux';
 import {Colors} from '../../resources/colors';
+import {ThemeContext, themes} from '../../resources/themes';
 
 type BusinesssListBottomSheetProps = {
   bottomSheetRef: React.RefObject<BottomSheet | null>;
@@ -23,6 +24,7 @@ const BusinessListBottomSheet = ({
   busniessDetailRef,
   setBusinessDetail,
 }: BusinesssListBottomSheetProps) => {
+  const scheme = useContext(ThemeContext);
   const snapPoints = ['50%', '75%', '100%'];
   const {searchBusinessList} = useSelector(state => state?.business);
   console.log('searchBusinessList', searchBusinessList);
@@ -30,7 +32,7 @@ const BusinessListBottomSheet = ({
   const handleBusiness = item => {
     console.log(item);
     setBusinessDetail(item);
-    bottomSheetRef.current?.close();
+    // bottomSheetRef.current?.close();
     busniessDetailRef.current?.snapToIndex(1);
   };
 
@@ -44,7 +46,11 @@ const BusinessListBottomSheet = ({
         <View style={styles.ItemContainer}>
           <View style={styles.LeftContainer}>
             <Text style={styles.BusinessNameText}>{item.name}</Text>
-            <Text style={styles.BusinessMilesText}>
+            <Text
+              style={[
+                styles.BusinessMilesText,
+                {color: scheme === 'dark' ? Colors.darkLightGray : Colors.gray},
+              ]}>
               {item.distance} miles away
             </Text>
           </View>
@@ -77,7 +83,18 @@ const BusinessListBottomSheet = ({
       ref={bottomSheetRef}
       snapPoints={snapPoints}
       // enablePanDownToClose
-      style={styles.BottomSheet}>
+      backgroundStyle={{
+        backgroundColor:
+          scheme === 'dark'
+            ? themes.dark.backgroundColor
+            : themes.light.backgroundColor,
+      }}
+      handleIndicatorStyle={{
+        width: wp(20),
+        height: wp(1.3),
+        backgroundColor: themes[scheme].primaryTextColor,
+      }}
+      style={[styles.BottomSheet]}>
       <View style={styles.root}>
         {searchBusinessList ? (
           <FlashList
@@ -86,7 +103,17 @@ const BusinessListBottomSheet = ({
             renderItem={handleRendering}
             contentContainerStyle={styles.FlastListContentStyle}
             estimatedItemSize={50}
-            // ItemSeparatorComponent={() => <View style={styles.Separator} />}
+            ItemSeparatorComponent={() => (
+              <View
+                style={[
+                  styles.Separator,
+                  {
+                    borderColor:
+                      scheme === 'dark' ? Colors.darkLightGray : Colors.gray,
+                  },
+                ]}
+              />
+            )}
             bounces={false}
             showsVerticalScrollIndicator={false}
           />
@@ -104,7 +131,6 @@ const styles = StyleSheet.create({
   BottomSheet: {
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    // backgroundColor: '#000',
   },
   root: {
     height: hp(86),
@@ -115,8 +141,8 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
   Separator: {
-    height: wp(0.1),
-    borderWidth: wp(0.1),
+    // height: wp(0.1),
+    borderBottomWidth: wp(0.2),
   },
   ActivityIndicator: {
     marginVertical: 10,
@@ -145,7 +171,6 @@ const styles = StyleSheet.create({
   BusinessMilesText: {
     fontFamily: 'Inter Regular',
     fontSize: wp(4),
-    color: Colors.gray,
   },
   RightContainer: {
     flex: 1,

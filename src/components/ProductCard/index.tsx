@@ -1,11 +1,13 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {Pressable, Text} from 'react-native';
 import {StyleSheet, View} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {Colors} from '../../resources/colors';
+import {ThemeContext} from '../../resources/themes';
 const ProductCard = ({ProductData, ProductImage, IsService, colorCode}) => {
+  const scheme = useContext(ThemeContext);
   return (
     <View style={styles.MainContainer}>
       <View style={styles.ImageContainer}>
@@ -28,15 +30,33 @@ const ProductCard = ({ProductData, ProductImage, IsService, colorCode}) => {
                 backgroundColor: colorCode,
               },
             ]}>
-            <Text style={styles.ImageText}>{ProductData.name[0]}</Text>
+            <Text
+              style={[
+                styles.ImageText,
+                {color: scheme === 'dark' ? Colors.white : Colors.black},
+              ]}>
+              {ProductData.name[0]}
+            </Text>
           </View>
         )}
       </View>
       <View style={styles.LeftContainer}>
         <View style={styles.LeftTopContainer}>
           <View style={styles.ProductInfoContainer}>
-            <Text style={styles.NameText}>{ProductData.name}</Text>
-            <Text style={styles.DescText}>{ProductData.description} </Text>
+            <Text
+              style={[
+                styles.NameText,
+                {color: scheme === 'dark' ? Colors.white : Colors.black},
+              ]}>
+              {ProductData.name}
+            </Text>
+            <Text
+              style={[
+                styles.DescText,
+                {color: scheme === 'dark' ? Colors.white : Colors.black},
+              ]}>
+              {ProductData.description}{' '}
+            </Text>
           </View>
 
           <View style={styles.ProductEditContainer}>
@@ -57,11 +77,20 @@ const ProductCard = ({ProductData, ProductImage, IsService, colorCode}) => {
           </View>
         </View>
         <View style={styles.PriceQuantityContainer}>
-          <Text style={styles.PriceText}>
-            Price: {ProductData.price}/{ProductData.unit}
+          <Text
+            style={[
+              styles.PriceText,
+              {color: scheme === 'dark' ? Colors.white : Colors.black},
+            ]}>
+            Price: {ProductData.price}
+            {ProductData.unit ? `/${ProductData.unit}` : ''}
           </Text>
           {!IsService && (
-            <Text style={styles.QuantityText}>
+            <Text
+              style={[
+                styles.QuantityText,
+                {color: scheme === 'dark' ? Colors.white : Colors.black},
+              ]}>
               Quantity: {ProductData.quantity}
             </Text>
           )}
@@ -80,9 +109,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
     borderColor: '#ddd',
-    paddingHorizontal: wp(1),
     paddingVertical: wp(2),
     gap: wp(2),
+    paddingLeft: wp(2),
+    paddingRight: wp(1),
   },
 
   ImageContainer: {

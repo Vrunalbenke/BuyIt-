@@ -27,6 +27,8 @@ const Favorite = () => {
   const [randomHexCodeArray, setRandomHexCodeArray] = useState<string[]>();
 
   const [businessTypes, setBusinessTypes] = useState<BusinessType[]>([]);
+  const {data: FBData, isSuccess: FBIsSuccess} =
+    useGetFavoriteBusinessQuery(null);
 
   const {data: BusinessTypesData, isSuccess: BusinessTypesIsSuccess} =
     useBusinessTypesQuery(null);
@@ -54,9 +56,6 @@ const Favorite = () => {
       setBusinessTypes(BusinessTypesArray.filter(item => item.isFavorite));
     }
   }, [FavoriteBusinessTypesData, BusinessTypesData, BusinessTypesIsSuccess]);
-
-  const {data: FBData, isSuccess: FBIsSuccess} =
-    useGetFavoriteBusinessQuery(null);
 
   useEffect(() => {
     if (FBIsSuccess) {

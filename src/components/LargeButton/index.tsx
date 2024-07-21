@@ -10,7 +10,7 @@ import {
   // heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import {Colors} from '../../resources/colors';
-import {ThemeContext, themes} from '../../resources/themes';
+import {ThemeContext} from '../../resources/themes';
 
 type LargeButtonProps = {
   BTNText: string;
@@ -89,6 +89,6 @@ const styles = StyleSheet.create({
   },
   BTNText: {
     fontFamily: 'Inter Regular',
-    fontSize: 16,
+    fontSize: wp(4.5),
   },
 });

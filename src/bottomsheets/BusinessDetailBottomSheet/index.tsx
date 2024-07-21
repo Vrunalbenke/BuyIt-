@@ -1,5 +1,5 @@
 import BottomSheet, {BottomSheetScrollView} from '@gorhom/bottom-sheet';
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   Pressable,
   StyleSheet,
@@ -18,13 +18,13 @@ import {
 import ProductCard from '../../components/ProductCard';
 import {SearchBusinessResponse} from '../../services/Business/businessTypes';
 import {generateRandomHexCode} from '../../utils/RandomHexCodeGenerator';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated';
-
+import Animated, {useAnimatedStyle, withTiming} from 'react-native-reanimated';
+import {ThemeContext, themes} from '../../resources/themes';
+import RatingStar from '../../components/RatingStars';
+import WriteAReview from '../../components/WriteAReview';
+import ReviewCard from '../../components/ReviewCard';
 const FirstRoute = ({business}) => {
+  const scheme = useContext(ThemeContext);
   const handleFavorite = () => {};
   console.log(business, '<><><>');
   return (
@@ -32,8 +32,20 @@ const FirstRoute = ({business}) => {
       <BottomSheetScrollView>
         <View style={styles.BusinessFirstContainer}>
           <View style={styles.BusinessTitleContainer}>
-            <Text style={styles.NameText}>{business?.name}</Text>
-            <Text style={styles.AliasText}>{business?.alias}</Text>
+            <Text
+              style={[
+                styles.NameText,
+                {color: scheme === 'dark' ? Colors.white : Colors.black},
+              ]}>
+              {business?.name}
+            </Text>
+            <Text
+              style={[
+                styles.AliasText,
+                {color: scheme === 'dark' ? Colors.white : Colors.black},
+              ]}>
+              {business?.alias}
+            </Text>
           </View>
           <View style={styles.ShareFavoriteIconContainer}>
             <Pressable onPress={handleFavorite}>
@@ -54,9 +66,19 @@ const FirstRoute = ({business}) => {
         </View>
         {business?.description && (
           <View style={styles.BusinessInfoContainer}>
-            <Text style={styles.DescText}>Description</Text>
+            <Text
+              style={[
+                styles.DescText,
+                {color: scheme === 'dark' ? Colors.white : Colors.black},
+              ]}>
+              Description
+            </Text>
             <View style={styles.BusinessDescription}>
-              <Text style={styles.BusinessDescriptionText}>
+              <Text
+                style={[
+                  styles.BusinessDescriptionText,
+                  {color: scheme === 'dark' ? Colors.white : Colors.black},
+                ]}>
                 {business?.description}
               </Text>
             </View>
@@ -65,15 +87,29 @@ const FirstRoute = ({business}) => {
         {(business?.share_email === 'True' ||
           business?.share_phone === 'True') && (
           <View style={styles.BusinessContactContainer}>
-            <Text style={styles.DescText}>Contacts</Text>
+            <Text
+              style={[
+                styles.DescText,
+                {color: scheme === 'dark' ? Colors.white : Colors.black},
+              ]}>
+              Contacts
+            </Text>
             <View>
               {business?.share_phone === 'True' && (
-                <Text style={styles.BusinessDescriptionText}>
+                <Text
+                  style={[
+                    styles.BusinessDescriptionText,
+                    {color: scheme === 'dark' ? Colors.white : Colors.black},
+                  ]}>
                   {business?.country_code}-{business?.phone_number}
                 </Text>
               )}
               {business?.share_email === 'True' && (
-                <Text style={styles.BusinessDescriptionText}>
+                <Text
+                  style={[
+                    styles.BusinessDescriptionText,
+                    {color: scheme === 'dark' ? Colors.white : Colors.black},
+                  ]}>
                   {business?.email}
                 </Text>
               )}
@@ -84,15 +120,30 @@ const FirstRoute = ({business}) => {
           business?.website !== 'None' ||
           business?.facebook !== 'None') && (
           <View style={styles.BusinessInfoContainer}>
-            <Text style={styles.DescText}>Socials</Text>
+            <Text
+              style={[
+                styles.DescText,
+                ,
+                {color: scheme === 'dark' ? Colors.white : Colors.black},
+              ]}>
+              Socials
+            </Text>
             {business?.instagram !== 'None' && (
-              <View style={styles.SocialContainer}>
+              <View
+                style={[
+                  styles.SocialContainer,
+                  {color: scheme === 'dark' ? Colors.white : Colors.black},
+                ]}>
                 <Ionicons
                   name="logo-instagram"
                   size={wp(7)}
                   color={Colors.black}
                 />
-                <Text style={styles.BusinessDescriptionText}>
+                <Text
+                  style={[
+                    styles.BusinessDescriptionText,
+                    {color: scheme === 'dark' ? Colors.white : Colors.black},
+                  ]}>
                   {business?.instagram}
                 </Text>
               </View>
@@ -104,7 +155,11 @@ const FirstRoute = ({business}) => {
                   size={wp(7)}
                   color={Colors.black}
                 />
-                <Text style={styles.BusinessDescriptionText}>
+                <Text
+                  style={[
+                    styles.BusinessDescriptionText,
+                    {color: scheme === 'dark' ? Colors.white : Colors.black},
+                  ]}>
                   {business?.facebook}
                 </Text>
               </View>
@@ -116,7 +171,11 @@ const FirstRoute = ({business}) => {
                   size={wp(7)}
                   color={Colors.black}
                 />
-                <Text style={styles.BusinessDescriptionText}>
+                <Text
+                  style={[
+                    styles.BusinessDescriptionText,
+                    {color: scheme === 'dark' ? Colors.white : Colors.black},
+                  ]}>
                   {business?.website}
                 </Text>
               </View>
@@ -135,11 +194,7 @@ const SecondRoute = ({business, ProductData, PIData}) => {
   }, []);
   // console.log(PIData[ProductData[0]?.name]);
   return (
-    <View
-      style={{
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}>
+    <View style={styles.SecondRouteContainer}>
       <View style={styles.HeaderContainer}>
         <Text style={styles.HeaderText}>Products</Text>
         <Pressable style={styles.EditContainer}>
@@ -163,23 +218,165 @@ const SecondRoute = ({business, ProductData, PIData}) => {
     </View>
   );
 };
-const ThirdRoute = ({business}) => (
-  <View style={styles.ThirdRouteContainer}>
-    <Text style={{color: Colors.green, fontSize: wp(10)}}>
-      {business?.alias}
-    </Text>
-  </View>
-);
+const ThirdRoute = ({business}) => {
+  const scheme = useContext(ThemeContext);
+  const [star, setStar] = useState(0);
+  console.log(business, '🤖🤖🤖🤖🤖🤖🤖');
+  const data = [
+    {
+      id: 1,
+      name: 'John Doe',
+      stars: 4,
+      comment:
+        'Great service and friendly staff! The product quality exceeded my expectations.',
+      date: '2024-07-21',
+    },
+    {
+      id: 2,
+      name: 'Jane Smith',
+      stars: 5,
+      comment:
+        'Excellent experience, highly recommend! The support team was very helpful.',
+      date: '2024-07-20',
+    },
+    {
+      id: 3,
+      name: 'Michael Johnson',
+      stars: 3,
+      comment: 'Good service but the delivery was a bit slow.',
+      date: '2024-07-19',
+    },
+    {
+      id: 4,
+      name: 'Emily Davis',
+      stars: 5,
+      comment: 'Absolutely loved it! Will definitely come back.',
+      date: '2024-07-18',
+    },
+    {
+      id: 5,
+      name: 'David Wilson',
+      stars: 2,
+      comment: 'Not satisfied with the product quality.',
+      date: '2024-07-17',
+    },
+    {
+      id: 6,
+      name: 'Sarah Miller',
+      stars: 4,
+      comment: 'Very good overall, but there is room for improvement.',
+      date: '2024-07-16',
+    },
+    {
+      id: 7,
+      name: 'Robert Brown',
+      stars: 5,
+      comment: 'Fantastic! Everything was perfect.',
+      date: '2024-07-15',
+    },
+    {
+      id: 8,
+      name: 'Jessica Williams',
+      stars: 3,
+      comment: 'Average experience, could be better.',
+      date: '2024-07-14',
+    },
+    {
+      id: 9,
+      name: 'Daniel Jones',
+      stars: 4,
+      comment: 'Good value for the price. Satisfied with the purchase.',
+      date: '2024-07-13',
+    },
+    {
+      id: 10,
+      name: 'Laura Garcia',
+      stars: 5,
+      comment: 'Loved it! Highly recommend this service.',
+      date: '2024-07-12',
+    },
+  ];
 
-const renderScene = (props, ProductData, PIData) =>
+  return (
+    <View style={styles.ThirdRouteContainer}>
+      <View style={styles.TopContainer}>
+        <View style={styles.RatingContainer}>
+          <Text
+            style={[
+              styles.AverageRatingText,
+              {color: scheme === 'dark' ? Colors.white : Colors.black},
+            ]}>
+            4.9
+          </Text>
+          <Text
+            style={[
+              styles.TotalRatingText,
+              {color: scheme === 'dark' ? Colors.white : Colors.black},
+            ]}>
+            OUT OF 5
+          </Text>
+        </View>
+        <View style={styles.StarContainer}>
+          <RatingStar
+            averageRating={4.9}
+            setStar={setStar}
+            isRating={false}
+            sizeMutliple={1}
+          />
+          <Text
+            style={[
+              styles.TotalRatingText,
+              {color: scheme === 'dark' ? Colors.white : Colors.black},
+            ]}>
+            165 ratings
+          </Text>
+        </View>
+      </View>
+      <View style={styles.ReviewContainer}>
+        <Text
+          style={[
+            styles.WriteAReviewText,
+            {color: scheme === 'dark' ? Colors.white : Colors.black},
+          ]}>
+          Write a Review
+        </Text>
+        <WriteAReview businessID={business?.id} />
+      </View>
+      <View style={styles.ReviewFlashList}>
+        <Text
+          style={[
+            styles.ReviewTitleText,
+            {color: scheme === 'dark' ? Colors.white : Colors.black},
+          ]}>
+          10 Reviews
+        </Text>
+        <BottomSheetScrollView
+          bounces={false}
+          showsVerticalScrollIndicator={false}>
+          <View>
+            {data.map((review, index) => (
+              <ReviewCard key={index} item={review} />
+            ))}
+          </View>
+        </BottomSheetScrollView>
+      </View>
+    </View>
+  );
+};
+
+const renderScene = (business, ProductData, PIData) =>
   SceneMap({
     first: () => {
-      return <FirstRoute business={props} />;
+      return <FirstRoute business={business} />;
     },
     second: () => (
-      <SecondRoute business={props} ProductData={ProductData} PIData={PIData} />
+      <SecondRoute
+        business={business}
+        ProductData={ProductData}
+        PIData={PIData}
+      />
     ),
-    third: () => <ThirdRoute business={props} />,
+    third: () => <ThirdRoute business={business} />,
   });
 
 type BusinessDetailBottomSheetProps = {
@@ -190,6 +387,7 @@ const BusinessDetailBottomSheet = ({
   bottomSheetRef,
   business,
 }: BusinessDetailBottomSheetProps) => {
+  const scheme = useContext(ThemeContext);
   const [index, setIndex] = useState(0);
 
   const {width} = useWindowDimensions();
@@ -228,24 +426,52 @@ const BusinessDetailBottomSheet = ({
     });
 
     return (
-      <View style={styles.tabBar}>
-        <Animated.View
-          style={[styles.AnimatedView, {width: TAB_WIDTH}, AnimatedStyle]}>
-          <View style={styles.slidingTab} />
-        </Animated.View>
-        {props.navigationState.routes.map((route, i) => {
-          return (
-            <Pressable style={[styles.tabItem]} onPress={() => setIndex(i)}>
-              <Animated.Text
-                style={[
-                  styles.TopTabBarText,
-                  {color: index === i ? Colors.white : Colors.green},
-                ]}>
-                {route.title}
-              </Animated.Text>
-            </Pressable>
-          );
-        })}
+      <View
+        style={[
+          styles.tabBar,
+          {
+            borderBottomColor:
+              scheme === 'dark' ? Colors.darkLightGray : Colors.darkGray,
+          },
+        ]}>
+        <View style={styles.BackIconContainer}>
+          <Pressable onPress={() => bottomSheetRef?.current.close()}>
+            <Ionicons
+              name="arrow-back-outline"
+              size={wp(7)}
+              color={scheme === 'dark' ? Colors.white : Colors.black}
+            />
+          </Pressable>
+        </View>
+        <View style={styles.tabBarRoutesContainer}>
+          <Animated.View
+            style={[styles.AnimatedView, {width: TAB_WIDTH}, AnimatedStyle]}>
+            <View style={styles.slidingTab} />
+          </Animated.View>
+          {props.navigationState.routes.map((route, i) => {
+            return (
+              <Pressable
+                key={i}
+                style={[styles.tabItem]}
+                onPress={() => setIndex(i)}>
+                <Animated.Text
+                  style={[
+                    styles.TopTabBarText,
+                    {
+                      color:
+                        index !== i
+                          ? Colors.green
+                          : scheme === 'dark'
+                          ? Colors.black
+                          : Colors.white,
+                    },
+                  ]}>
+                  {route.title}
+                </Animated.Text>
+              </Pressable>
+            );
+          })}
+        </View>
       </View>
     );
   };
@@ -259,7 +485,18 @@ const BusinessDetailBottomSheet = ({
       enableHandlePanningGesture
       enableContentPanningGesture
       enableOverDrag={true}
-      overDragResistanceFactor={1}>
+      overDragResistanceFactor={1}
+      backgroundStyle={{
+        backgroundColor:
+          scheme === 'dark'
+            ? themes.dark.backgroundColor
+            : themes.light.backgroundColor,
+      }}
+      handleIndicatorStyle={{
+        width: wp(20),
+        height: wp(1.3),
+        backgroundColor: themes[scheme].primaryTextColor,
+      }}>
       <TabView
         navigationState={{index, routes}}
         renderScene={renderScene(business, ProductData, PIData)}
@@ -289,6 +526,7 @@ const styles = StyleSheet.create({
     width: wp(100),
     paddingHorizontal: wp(4),
     paddingVertical: wp(2),
+    gap: 10,
   },
   BusinessTitleContainer: {
     gap: 5,
@@ -296,13 +534,11 @@ const styles = StyleSheet.create({
   NameText: {
     fontSize: wp(6),
     fontFamily: 'Inter Medium',
-    color: Colors.black,
     textAlign: 'center',
   },
   AliasText: {
     fontSize: wp(4),
     fontFamily: 'Inter Regular',
-    color: Colors.black,
     textAlign: 'center',
   },
   ShareFavoriteIconContainer: {
@@ -318,7 +554,6 @@ const styles = StyleSheet.create({
   DescText: {
     fontSize: wp(5),
     fontFamily: 'Inter Medium',
-    color: Colors.black,
   },
   BusinessDescription: {
     flexDirection: 'row',
@@ -330,7 +565,6 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     fontSize: wp(4.3),
     fontFamily: 'Inter Regular',
-    color: Colors.black,
   },
   BusinessContactContainer: {
     flexDirection: 'column',
@@ -343,7 +577,6 @@ const styles = StyleSheet.create({
   ContactTitleText: {
     fontSize: wp(5),
     fontFamily: 'Inter Medium',
-    color: Colors.black,
   },
   ContactDetails: {
     paddingVertical: wp(1),
@@ -351,7 +584,6 @@ const styles = StyleSheet.create({
   ContactText: {
     fontSize: wp(4.5),
     fontFamily: 'Inter Regular',
-    color: Colors.black,
   },
   CenteredView: {
     justifyContent: 'center',
@@ -366,6 +598,10 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     gap: 3,
+  },
+  SecondRouteContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   HeaderContainer: {
     paddingVertical: 10,
@@ -394,14 +630,56 @@ const styles = StyleSheet.create({
   ThirdRouteContainer: {
     justifyContent: 'center',
     alignItems: 'center',
+    flex: 1,
+  },
+  TopContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    width: wp(100),
+    paddingHorizontal: wp(4),
+    paddingVertical: wp(1),
+  },
+  RatingContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    gap: 5,
+  },
+  AverageRatingText: {
+    fontSize: wp(9.5),
+    fontFamily: 'Inter Bold',
+  },
+  TotalRatingText: {
+    fontSize: wp(3.5),
+    fontFamily: 'Inter Medium',
+  },
+  StarContainer: {
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    gap: 5,
+  },
+  ReviewContainer: {
+    width: wp(100),
+    paddingHorizontal: wp(4),
+    paddingVertical: wp(2),
+    gap: 10,
+  },
+  WriteAReviewText: {
+    fontSize: wp(4.5),
+    fontFamily: 'Inter Medium',
+  },
+  ReviewFlashList: {
+    flex: 1,
   },
   tabBar: {
+    flexDirection: 'column',
+  },
+  BackIconContainer: {
+    paddingLeft: 10,
+  },
+  tabBarRoutesContainer: {
     flexDirection: 'row',
-    borderBottomWidth: 0.5,
-    borderBottomColor: Colors.darkGray,
-    paddingVertical: 10,
-    // backgroundColor: Colors.green,
-    gap: 7,
+    paddingVertical: 5,
   },
   AnimatedView: {
     ...StyleSheet.absoluteFillObject,
@@ -427,5 +705,10 @@ const styles = StyleSheet.create({
   TopTabBarText: {
     fontSize: wp(4.7),
     fontFamily: 'Inter Medium',
+  },
+  ReviewTitleText: {
+    fontSize: wp(5),
+    fontFamily: 'Inter Medium',
+    paddingHorizontal: wp(4),
   },
 });

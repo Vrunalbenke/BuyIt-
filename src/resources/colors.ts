@@ -15,6 +15,7 @@ export const Colors = {
   orange: '#ff954f',
   transparent: 'transparent',
   extremeLightGreen: '#eff8ee',
+  gold: '#FFD700',
 };
 
 // export const productColors = [
