@@ -400,7 +400,7 @@ const AddBusiness = ({
               styles.SubTitleText,
               {color: scheme === 'dark' ? Colors.white : Colors.black},
             ]}>
-            Fill in some details about your business
+            Fill in some details about your business -- test
           </Text>
         </View>
         <View style={styles.InputContainer}>
