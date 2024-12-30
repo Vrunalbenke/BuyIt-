@@ -14,6 +14,7 @@ type PressableInputProps<FormFieldValues extends FieldValues> = {
   disabled?: boolean;
   onPress: () => void;
   url?: string | undefined;
+  isBGWhite?: boolean;
 };
 const PressableInput = <FormFieldValues extends FieldValues>({
   control,
@@ -23,6 +24,7 @@ const PressableInput = <FormFieldValues extends FieldValues>({
   url,
   onPress,
   placeholder,
+  isBGWhite = false,
 }: PressableInputProps<FormFieldValues>) => {
   const scheme = useContext(ThemeContext);
   return (
@@ -37,7 +39,10 @@ const PressableInput = <FormFieldValues extends FieldValues>({
                 <Text
                   style={[
                     styles.LabelText,
-                    {color: scheme === 'dark' ? Colors.gray : Colors.black},
+                    {
+                      color:
+                        scheme === 'dark' ? Colors.darkLightGray : Colors.black,
+                    },
                   ]}>
                   {label}
                 </Text>
@@ -47,9 +52,13 @@ const PressableInput = <FormFieldValues extends FieldValues>({
             <Pressable
               disabled={disabled}
               onPress={onPress}
-              style={styles.InputContainer}>
+              style={[styles.InputContainer]}>
               {url && (
-                <View style={styles.ImageContainer}>
+                <View
+                  style={[
+                    styles.ImageContainer,
+                    {backgroundColor: isBGWhite ? Colors.white : 'transparent'},
+                  ]}>
                   <FastImage
                     style={styles.ImageSize}
                     source={{

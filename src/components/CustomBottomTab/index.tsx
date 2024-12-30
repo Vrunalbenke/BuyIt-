@@ -1,7 +1,7 @@
 import React, {useContext, useEffect} from 'react';
 import {BottomTabBarProps} from '@react-navigation/bottom-tabs';
 import {StyleSheet} from 'react-native';
-import {View, Text, Pressable} from 'react-native';
+import {View, Pressable} from 'react-native';
 import {Colors} from '../../resources/colors';
 import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import BottomTabIcon from '../BottomTabIcon';
@@ -20,7 +20,6 @@ const CustomBottomTab = ({
   navigation,
 }: BottomTabBarProps) => {
   const dispatch = useDispatch();
-  const insets = useSafeAreaInsets();
   const scheme = useContext(ThemeContext);
   const {width} = useWindowDimensions();
   // const MARGIN = 10;
@@ -29,7 +28,7 @@ const CustomBottomTab = ({
 
   const [
     searchBusiness,
-    {data: SBData, isError: SBIsError, isSuccess: SBIsSuccess, error: SBError},
+    {data: SBData, isError: SBIsError, isSuccess: SBIsSuccess},
   ] = useSearchBusinessMutation();
 
   useEffect(() => {

@@ -11,7 +11,7 @@ const ReviewCard = ({item}) => {
     <View style={styles.root}>
       <View style={styles.ProfileInfoContainer}>
         <View style={styles.ProfileContainer}>
-          <Text>{item.name?.slice(0, 1)}</Text>
+          <Text>{item?.user_name?.slice(0, 1)}</Text>
         </View>
         <View style={styles.NameRatingContainer}>
           <View style={styles.NameDateContainer}>
@@ -20,7 +20,7 @@ const ReviewCard = ({item}) => {
                 styles.NameText,
                 {color: scheme === 'dark' ? Colors.white : Colors.black},
               ]}>
-              {item.name}
+              {item?.user_name}
             </Text>
             <Text
               style={[
@@ -32,7 +32,7 @@ const ReviewCard = ({item}) => {
           </View>
           {/* <View style={styles.RatingInfoContainer}> */}
           <RatingStars
-            averageRating={item.stars}
+            averageRating={item?.rating}
             isRating={false}
             sizeMutliple={0.7}
           />
@@ -45,7 +45,7 @@ const ReviewCard = ({item}) => {
           styles.CommentText,
           {color: scheme === 'dark' ? Colors.white : Colors.black},
         ]}>
-        {item.comment}
+        {item.feedback_msg}
       </Text>
     </View>
   );

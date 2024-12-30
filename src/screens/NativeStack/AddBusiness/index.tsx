@@ -298,6 +298,11 @@ const AddBusiness = ({
         rest.phone_number = '';
       }
       rest['business_id'] = EditBusiness?.id;
+      rest.business_type =
+        rest.business_type === 'Pop-up Store'
+          ? 'PopUpStore'
+          : rest.business_type;
+      rest.business_type = rest.business_type.replace(/\s/g, '');
       console.log('Before calling Update business API', rest);
       updateBusiness(rest);
     } else {
@@ -322,6 +327,11 @@ const AddBusiness = ({
       if (!rest.phone_number) {
         rest.phone_number = '';
       }
+      rest.business_type =
+        rest.business_type === 'Pop-up Store'
+          ? 'PopUpStore'
+          : rest.business_type;
+      rest.business_type = rest.business_type.replace(/\s/g, '');
       rest['id'] = EditBusiness?.id;
       updateBusiness(rest);
     }
@@ -400,7 +410,7 @@ const AddBusiness = ({
               styles.SubTitleText,
               {color: scheme === 'dark' ? Colors.white : Colors.black},
             ]}>
-            Fill in some details about your business -- test
+            Fill in some details about your business{' '}
           </Text>
         </View>
         <View style={styles.InputContainer}>
@@ -412,6 +422,7 @@ const AddBusiness = ({
             onPress={handleBottomSheet}
             url={url}
             placeholder={'Select a business'}
+            isBGWhite={true}
           />
           <UserTextInput
             control={control}

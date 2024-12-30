@@ -94,7 +94,12 @@ const UserTextInput = <FormFieldValues extends FieldValues>({
                 <Text
                   style={[
                     styles.LabelText,
-                    {color: scheme === 'dark' ? Colors.gray : Colors.darkGray},
+                    {
+                      color:
+                        scheme === 'dark'
+                          ? Colors.darkLightGray
+                          : Colors.darkGray,
+                    },
                   ]}>
                   {label}
                 </Text>

@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {memo, useEffect} from 'react';
 import {StyleSheet, View, Text} from 'react-native';
 import {Pressable} from 'react-native';
 import FastImage from 'react-native-fast-image';
@@ -36,8 +36,6 @@ const BusinessTypeCard = ({item, index}: BusinessTypeCardProp) => {
 
   const body = {
     business_type: item.name.replace(/\s/g, ''),
-    // latitude: 37.57381618303843,
-    // longitude: -122.01406369190072,
   };
   const {data: BTListData} = useBusinessByTypeQuery(body);
 
@@ -89,7 +87,7 @@ const BusinessTypeCard = ({item, index}: BusinessTypeCardProp) => {
         style={styles.BusinessTypeContainer}
         from={{opacity: 0, translateY: 100}}
         animate={{opacity: 1, translateY: 0}}
-        transition={{delay: index * 150, type: 'timing'}}>
+        transition={{delay: index * 100, type: 'timing'}}>
         <View style={styles.ImageContainer}>
           <FastImage
             style={styles.BusinessIcon}
@@ -136,7 +134,7 @@ const BusinessTypeCard = ({item, index}: BusinessTypeCardProp) => {
   );
 };
 
-export default BusinessTypeCard;
+export default memo(BusinessTypeCard);
 
 const styles = StyleSheet.create({
   BusinessTypeContainer: {
@@ -167,7 +165,6 @@ const styles = StyleSheet.create({
   },
   BottomContainer: {
     flexDirection: 'row',
-    // justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
   },

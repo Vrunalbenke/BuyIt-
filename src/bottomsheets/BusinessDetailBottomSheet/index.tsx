@@ -23,6 +23,7 @@ import {ThemeContext, themes} from '../../resources/themes';
 import RatingStar from '../../components/RatingStars';
 import WriteAReview from '../../components/WriteAReview';
 import ReviewCard from '../../components/ReviewCard';
+
 const FirstRoute = ({business}) => {
   const scheme = useContext(ThemeContext);
   const handleFavorite = () => {};
@@ -137,7 +138,9 @@ const FirstRoute = ({business}) => {
                 <Ionicons
                   name="logo-instagram"
                   size={wp(7)}
-                  color={Colors.black}
+                  color={
+                    scheme === 'dark' ? Colors.darkLightGray : Colors.black
+                  }
                 />
                 <Text
                   style={[
@@ -153,7 +156,9 @@ const FirstRoute = ({business}) => {
                 <Ionicons
                   name="logo-facebook"
                   size={wp(7)}
-                  color={Colors.black}
+                  color={
+                    scheme === 'dark' ? Colors.darkLightGray : Colors.black
+                  }
                 />
                 <Text
                   style={[
@@ -169,7 +174,9 @@ const FirstRoute = ({business}) => {
                 <Ionicons
                   name="globe-outline"
                   size={wp(7)}
-                  color={Colors.black}
+                  color={
+                    scheme === 'dark' ? Colors.darkLightGray : Colors.black
+                  }
                 />
                 <Text
                   style={[
@@ -306,7 +313,7 @@ const ThirdRoute = ({business}) => {
               styles.AverageRatingText,
               {color: scheme === 'dark' ? Colors.white : Colors.black},
             ]}>
-            4.9
+            {business?.average_rating ? business.average_rating : 0}
           </Text>
           <Text
             style={[
@@ -318,7 +325,9 @@ const ThirdRoute = ({business}) => {
         </View>
         <View style={styles.StarContainer}>
           <RatingStar
-            averageRating={4.9}
+            averageRating={
+              business?.average_rating ? business.average_rating : 0
+            }
             setStar={setStar}
             isRating={false}
             sizeMutliple={1}
@@ -328,7 +337,7 @@ const ThirdRoute = ({business}) => {
               styles.TotalRatingText,
               {color: scheme === 'dark' ? Colors.white : Colors.black},
             ]}>
-            165 ratings
+            {business?.user_feedback?.length} ratings
           </Text>
         </View>
       </View>
@@ -342,24 +351,26 @@ const ThirdRoute = ({business}) => {
         </Text>
         <WriteAReview businessID={business?.id} />
       </View>
-      <View style={styles.ReviewFlashList}>
-        <Text
-          style={[
-            styles.ReviewTitleText,
-            {color: scheme === 'dark' ? Colors.white : Colors.black},
-          ]}>
-          10 Reviews
-        </Text>
-        <BottomSheetScrollView
-          bounces={false}
-          showsVerticalScrollIndicator={false}>
-          <View>
-            {data.map((review, index) => (
-              <ReviewCard key={index} item={review} />
-            ))}
-          </View>
-        </BottomSheetScrollView>
-      </View>
+      {business?.user_feedback?.length > 0 && (
+        <View style={styles.ReviewFlashList}>
+          <Text
+            style={[
+              styles.ReviewTitleText,
+              {color: scheme === 'dark' ? Colors.white : Colors.black},
+            ]}>
+            {business?.user_feedback.length} Reviews
+          </Text>
+          <BottomSheetScrollView
+            bounces={false}
+            showsVerticalScrollIndicator={false}>
+            <View>
+              {business?.user_feedback.map((review, index) => (
+                <ReviewCard key={index} item={review} />
+              ))}
+            </View>
+          </BottomSheetScrollView>
+        </View>
+      )}
     </View>
   );
 };
@@ -641,8 +652,10 @@ const styles = StyleSheet.create({
     paddingVertical: wp(1),
   },
   RatingContainer: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
+    // flexDirection: 'row',
+    // alignItems: 'flex-end',
+    justifyContent: 'center',
+    alignItems: 'center',
     gap: 5,
   },
   AverageRatingText: {
